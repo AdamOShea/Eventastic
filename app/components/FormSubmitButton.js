@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 
 
-const FormSubmitButton = ({title}) => {
+const FormSubmitButton = ({title, onPress}) => {
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity onPress={onPress} style={styles.container}>
         <Text style={{fontSize: 18, color: 'rgba(32,69,41,1)'}}>{title}</Text>
     </TouchableOpacity>
   );

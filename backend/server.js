@@ -1,22 +1,9 @@
-// const axios = require('axios')
-
-// const express = require('express')
-// const { Pool } = require('pg');
-// const app = express()
-// const port = 8080
-
-// const pool = new Pool({
-//     user: 'postgres',
-//     host: 'localhost',
-//     database: 'postgres',
-//     password: 'postgres',
-//     port: 5432,
-// });
-
 const express = require('express')
 const app = express()
 const port = 3000
 const hostname = "192.168.1.33"
+const db = require("./models/db");
+const userRouter = require('./routes/user');
 
 app.get('/', (req, res) => {
   res.json({message:'hello'});
@@ -29,33 +16,55 @@ app.listen(port, hostname, () => {
 
 
 app.use(express.json());
+app.use(userRouter);
 
 
 
-app.post('/event', async (req, res) => {
-  // Validate the incoming JSON data
-  const { id, venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink } = req.body;
-  console.log(req.body);
-  // if (!title || !artist || !price) {
-  //   return res.status(400).send('One of the title, or artist, or price is missing in the data');
-  // }
+// app.post('/create-user', async (req, res) => {
+//   const {username, password, email} = req.body;
+//   console.log(req.body);
+  
+//   try {
+//     const query = `
+//       INSERT INTO User (username, password, email)
+//       VALUES ($1, $2, $3)
+//       RETURNING id;
+//       `;
+//     const values = [username, password, email];
+//     const result = await pool.query(query, values);
+//     res.status(201).send({ message: 'user stored', userID: result.rows[0].id });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send('some error occurred');
+//   }
+// });
 
-  try {
-    // try to send data to the database
-    const query = `
-      INSERT INTO albums (venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-      RETURNING id;
-    `;
-    const values = [id, venue, location, seller, date, time, artist, eventtype, genre, price, link];
 
-    const result = await pool.query(query, values);
-    res.status(201).send({ message: 'ticketmaster event stored', albumId: result.rows[0].id });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('some error has occured');
-  }
-});
+
+// app.post('/event', async (req, res) => {
+//   // Validate the incoming JSON data
+//   const { id, venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink } = req.body;
+//   console.log(req.body);
+//   // if (!title || !artist || !price) {
+//   //   return res.status(400).send('One of the title, or artist, or price is missing in the data');
+//   // }
+
+//   try {
+//     // try to send data to the database
+//     const query = `
+//       INSERT INTO albums (venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink)
+//       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+//       RETURNING id;
+//     `;
+//     const values = [id, venue, location, seller, date, time, artist, eventtype, genre, price, link];
+
+//     const result = await pool.query(query, values);
+//     res.status(201).send({ message: 'ticketmaster event stored', albumId: result.rows[0].id });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send('some error has occured');
+//   }
+// });
 
 
   // async function createAlbumsTable() {
@@ -79,47 +88,47 @@ app.post('/event', async (req, res) => {
   
 //createAlbumsTable();
 
-async function insertEvent() {
-  try {
-    const query = `
-      INSERT INTO public."Event"(
-	venue, eventlocation, seller, date, "time", artist, eventtype, genre, price, eventlink)
-	VALUES ('arena', 'dublin', 'tciketmaster', '2024-01-01', '18:00:00 GMT', 'skepta', 'music', 'rap', 40, 'test.com');
-    `;
+// async function insertEvent() {
+//   try {
+//     const query = `
+//       INSERT INTO public."Event"(
+// 	venue, eventlocation, seller, date, "time", artist, eventtype, genre, price, eventlink)
+// 	VALUES ('arena', 'dublin', 'tciketmaster', '2024-01-01', '18:00:00 GMT', 'skepta', 'music', 'rap', 40, 'test.com');
+//     `;
 
-      await pool.query(query);
-      console.log('insert succ');
-    } catch (err) {
-      console.error(err);
-      console.error('insert failed');
-    }
-}
+//       await pool.query(query);
+//       console.log('insert succ');
+//     } catch (err) {
+//       console.error(err);
+//       console.error('insert failed');
+//     }
+// }
 
-async function fetchTmEvents() {
-  let errors = [];
-  let j = 0;
-  try {
-    axios.get('https://app.ticketmaster.com/discovery/v2/events.json?size=200&city=Dublin&classificationName=music&countryCode=IE&apikey=ZtosAxJhw16nAepNAh2DwX8LGRB01mVG')
-    .then(function (res) {
-      console.log(Object.keys(res.data._embedded.events).length)
-      for(let i = 0; i < Object.keys(res.data._embedded.events).length; i++) {
-        try {
+// async function fetchTmEvents() {
+//   let errors = [];
+//   let j = 0;
+//   try {
+//     axios.get('https://app.ticketmaster.com/discovery/v2/events.json?size=200&city=Dublin&classificationName=music&countryCode=IE&apikey=ZtosAxJhw16nAepNAh2DwX8LGRB01mVG')
+//     .then(function (res) {
+//       console.log(Object.keys(res.data._embedded.events).length)
+//       for(let i = 0; i < Object.keys(res.data._embedded.events).length; i++) {
+//         try {
           
-          if (res.data._embedded.events[i].hasOwnProperty('name')) {
-            console.log(res.data._embedded.events[i].name);
-          }
+//           if (res.data._embedded.events[i].hasOwnProperty('name')) {
+//             console.log(res.data._embedded.events[i].name);
+//           }
           
-        } catch (err) {
-          errors[j] = err;
-          j++;
-        }
+//         } catch (err) {
+//           errors[j] = err;
+//           j++;
+//         }
         
-      }
+//       }
       
-    }); } catch (err) {
-      console.log(err);
-    }
-}
+//     }); } catch (err) {
+//       console.log(err);
+//     }
+// }
 
 
 //insertEvent();

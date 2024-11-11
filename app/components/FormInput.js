@@ -2,11 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet, Dimensions, TextInput } from 'react-native';
 import FormContainer from './FormContainer';
 
-const FormInput = ({placeholder, title}) => {
+const FormInput = props => {
+  const { placeholder, title } = props;
   return (
     <>
         <Text style={{ fontWeight: 'bold' }}>{title}</Text>
-        <TextInput placeholder={placeholder} style={styles.input}></TextInput>
+        <TextInput {...props} placeholder={placeholder} style={styles.input}></TextInput>
     </>
   );
 }
