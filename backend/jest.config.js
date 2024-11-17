@@ -1,10 +1,10 @@
-export default {
-    transform: {
-      "^.+\\.[t|j]sx?$": "babel-jest"
-    },
-    transformIgnorePatterns: [
-      "/node_modules/(?!your-node-module-to-transform)"
-    ],
-
-  };
+module.exports = {
+  preset: 'react-native',  // Use React Native preset
+  transform: {
+    '^.+\\.js$': 'babel-jest',
+  },
+  transformIgnorePatterns: [
+    "node_modules/(?!react-native|@react-native|react-navigation)"
+  ],
   
+};

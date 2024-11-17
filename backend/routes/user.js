@@ -1,10 +1,11 @@
-import express from 'express';
+const express = require('express');
 const router = express.Router();
 
-import { createUser, loginUser, findOneUser } from '../controllers/user.js';
+const { userValidation, validateRegister, validateLogin } = require('../middlewares/user.js');
+const { createUser, loginUser, findOneUser } = require('../controllers/user.js');
 
-router.post('/create-user', createUser);
-router.post('/login-user', loginUser);
+router.post('/create-user', validateRegister, userValidation, createUser);
+router.post('/login-user', validateLogin, userValidation, loginUser);
 router.post('/find-one-user', findOneUser);
 
-export default router;  // Use default export
+module.exports = router; // Use CommonJS export

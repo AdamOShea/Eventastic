@@ -1,6 +1,4 @@
-
 import { pool } from '../models/db.js';
-
 import { register } from '../../app/methods/register';  // Use import instead of require
 
 
@@ -8,7 +6,7 @@ describe('register', () => {
   
 
   beforeEach(async () => {
-    
+    global.alert = jest.fn();
 
     // Ensure no users exist with this email before each test
     const values = { email: 'newuser@example.com' };
@@ -33,10 +31,11 @@ describe('register', () => {
 
   it('should create a new user if the user does not exist', async () => {
   
-    const values = { email: 'newuser@example.com', username: 'New User', password: 'password' };
+    const values = { email: 'newuser@example.com', username: 'New User', password: 'password', confirmPassword: 'password' };
     const result = await register(values);
   
     expect(result).toMatchObject({ message: 'User created successfully'});
+    expect(alert).not.toHaveBeenCalled();
   });
 
 });

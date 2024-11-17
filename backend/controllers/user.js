@@ -1,8 +1,7 @@
-import { pool } from '../models/db.js';
+const { pool } = require('../models/db');
 
-
-export const createUser = async (req, res) => {
-  const { username, password, email } = req.body;
+const createUser = async (req, res) => {
+  const { username, password, confirmPassword, email } = req.body;
   console.log(req.body);
 
   try {
@@ -22,11 +21,10 @@ export const createUser = async (req, res) => {
   }
 };
 
-
-export const findOneUser = async (req, res) => {
+const findOneUser = async (req, res) => {
   const { email } = req.body;
   console.log(req.body);
-  
+
   try {
     const query = `
       SELECT * FROM public."User" 
@@ -47,11 +45,36 @@ export const findOneUser = async (req, res) => {
   }
 };
 
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  console.log(req.body);
 
-export const loginUser = async (req, res) => {
-    try{
-        const query = ``;
-    } catch (err) {
-        console.error(err);
+  try {
+    const query = `
+      SELECT * FROM public."User" 
+      WHERE email = ($1);
+    `;
+    const values = [email];
+    const result = await pool.query(query, values);
+
+    if (result.rows.length === 0) {
+      return res.status(404).send({ message: 'User not Found' });
     }
+
+    const user = result.rows[0];
+
+    if (user.email !== email || user.password !== password) {
+      return res.json({ success: false, message: 'Email or password is incorrect' });
+    }
+    res.json({ success: true, user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('some error occurred');
+  }
+};
+
+module.exports = {
+  createUser,
+  findOneUser,
+  loginUser,
 };

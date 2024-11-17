@@ -1,14 +1,18 @@
-const client = require('../api/client');  // CommonJS import for the HTTP client
+const client = require('../api/client');  
+
+
 
 const register = async (values) => {
   try {
     // First, try to find the user
+    console.log("first try ");
     const response = await client.post('/find-one-user', values);
 
     // If the user exists, return their userID
     if (response.status === 200 && response.data.userID) {
       return { message: 'User already exists', userID: response.data.userID };
     }
+
   } catch (error) {
     // Handle specific 500 status error from /find-one-user API
     if (error.response && error.response.status === 500) {
@@ -20,16 +24,18 @@ const register = async (values) => {
     if (error.response && error.response.status === 404) {
       // User not found, proceed to user creation logic
         try {
+          console.log("404 try");
             const createResponse = await client.post('/create-user', values);
 
             if (createResponse.status === 201) {
-                return { message: 'User created successfully', userID: createResponse.data.userID };
+                return { message: createResponse.data.message, userID: createResponse.data.userID };
             } else {
-            throw new Error('some error occurred');
+              console.log("404 else")
+              return {message : createResponse.data.message}
             }
         } catch (error) {
             console.error(error);
-            throw new Error('some error occurred');  // Handle failure to create user
+            console.log("404 catch")
         }
     } else {
       // Any other unexpected error, general catch-all

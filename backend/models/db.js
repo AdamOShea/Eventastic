@@ -1,5 +1,4 @@
-import pkg from 'pg';  // Import the entire pg package
-const { Pool } = pkg;  // Extract Pool from the imported package
+const { Pool } = require('pg'); // Directly import Pool from the pg package
 
 const pool = new Pool({
   user: 'postgres',
@@ -9,4 +8,4 @@ const pool = new Pool({
   port: 5432,
 });
 
-export { pool };
+module.exports = { pool }; // Export using CommonJS syntax

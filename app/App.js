@@ -34,7 +34,7 @@ export default function App() {
             </LoginHeader>
           </View>
           <View style={{flexDirection:'row', padding: 30}}>
-            <LoginSelector backgroundColor={loginColourInterpolate} title='login' onPress={() => scrollView.current.scrollTo({x: 0})}></LoginSelector>
+            <LoginSelector backgroundColor={loginColourInterpolate} title='Login' onPress={() => scrollView.current.scrollTo({x: 0})}></LoginSelector>
             <LoginSelector backgroundColor={registerColourInterpolate} title='Register' onPress={() => scrollView.current.scrollToEnd()}></LoginSelector>
               
           </View>

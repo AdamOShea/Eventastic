@@ -1,17 +1,19 @@
 import React, {useState} from 'react';
-import { View, Text, StyleSheet, Dimensions, TextInput } from 'react-native';
+import { StyleSheet } from 'react-native';
 import FormContainer from './FormContainer';
 import FormInput from './FormInput';
 import FormSubmitButton from './FormSubmitButton';
+import { login } from '../methods/login';
 
 const LoginForm = () => {
 
   const [userInfo, setUserInfo] = useState({
+    email: '',
     password: '',
-    email: ''
+    
   });
 
-  const {password, email} = userInfo;
+  const {email, password} = userInfo;
 
   const submitForm = () => {
     //isvalid
@@ -23,21 +25,11 @@ const LoginForm = () => {
     setUserInfo({...userInfo, [fieldName]: value});
   };
 
-  const login = async (values) => {
-    try {
-      const res = await client.post('/login-user', {
-      ...values
-      });
-      console.log(res.data);
-    }catch (err) {
-      console.error(err);
-    }
-  }
 
   return (
     <FormContainer>
-        <FormInput value={email} onChangeText={(value) => handleOnChangeText(value, 'email')} title='Email' placeholder='email@google.com'></FormInput>
-        <FormInput value={password} secureTextEntry onChangeText={(value) => handleOnChangeText(value, 'password')} title='Password' placeholder='*******'></FormInput>
+        <FormInput value={email} onChangeText={(value) => handleOnChangeText(value, 'email')} autoCapitalize='none' title='Email' placeholder='email@google.com'></FormInput>
+        <FormInput value={password} secureTextEntry onChangeText={(value) => handleOnChangeText(value, 'password')} autoCapitalize='none' title='Password' placeholder='*******'></FormInput>
         <FormSubmitButton onPress={submitForm} title='Login'></FormSubmitButton>
     </FormContainer>
   );

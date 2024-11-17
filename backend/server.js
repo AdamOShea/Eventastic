@@ -1,6 +1,7 @@
-import express from 'express';
-import { pool } from './models/db.js';  // Import using ES module syntax
-import userRouter from './routes/user.js';
+const express = require('express');
+const { pool } = require('./models/db'); // Adjust the path as necessary
+const userRouter = require('./routes/user');
+
 
 const app = express();
 const port = 3000;
