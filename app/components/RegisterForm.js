@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import FormContainer from './FormContainer';
 import FormInput from './FormInput';
 import FormSubmitButton from './FormSubmitButton';
-import client from '../api/client';
+import {register} from '../methods/register';
+
 
 
 const RegisterForm = () => {
@@ -25,20 +26,6 @@ const RegisterForm = () => {
     register(userInfo);
   }
 
-  const register = async (values) => {
-    try {
-      const res = await client.post('/create-user', {
-      ...values
-      });
-      console.log(res.data);
-    }catch (err) {
-      console.error(err);
-    }
-    
-
-    
-  };
-
   return (
     <FormContainer>
       <FormInput value={username} onChangeText={(value) => handleOnChangeText(value, 'username')} title='Username' placeholder='example123'></FormInput>
@@ -51,4 +38,3 @@ const RegisterForm = () => {
 }
 
 export default RegisterForm;
-

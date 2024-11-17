@@ -1,3 +1,3 @@
-import axios from 'axios';
+const axios = require('axios');
 
-export default axios.create({baseURL: 'http://192.168.1.33:3000'});
+module.exports = axios.create({ baseURL: 'http://192.168.1.33:3000' });
