@@ -19,6 +19,10 @@ const LoginForm = () => {
     login(userInfo);
   }
 
+  const handleOnChangeText = (value, fieldName) => {
+    setUserInfo({...userInfo, [fieldName]: value});
+  };
+
   const login = async (values) => {
     try {
       const res = await client.post('/login-user', {

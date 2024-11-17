@@ -15,5 +15,5 @@ const FormInput = props => {
 export default FormInput;
 
 const styles = StyleSheet.create({
-    input: {borderWidth: 1, borderColor: 'black', height: 35, borderRadius: 8, fontSize: 16, paddingLeft:10, marginBottom: 20}
+    input: { borderWidth: 1, borderColor: 'black', height: 45, borderRadius: 8, fontSize: 16, paddingLeft:10, marginBottom: 20}
 })

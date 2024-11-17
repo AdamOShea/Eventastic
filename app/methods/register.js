@@ -38,7 +38,6 @@ const register = async (values) => {
     }
   }
 
-  // If the user doesn't exist, create a new user
   
 };
 

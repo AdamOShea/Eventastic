@@ -1,3 +1,7 @@
-const axios = require('axios');
+const axios = require('axios').default; // Explicitly use `.default`
 
-module.exports = axios.create({ baseURL: 'http://192.168.1.33:3000' });
+const client = axios.create({
+  baseURL: 'http://192.168.1.33:3000',
+});
+
+module.exports = client;
