@@ -10,18 +10,16 @@ const login = async (values) => {
 
     if (response.status === 200 && response.data.success) {
       console.log("Login successful");
-      return { message: 'User logged in', user: response.data.user };
-    } else if (response.status === 404) {
-      // Handle 404 errors manually
-      return { message: 'Not logged in' };
+      return { message: 'Signed in', user: response.data.user };
     } else {
       // Handle other responses that are not 404 but still have success false
-      return { message: 'Not logged in' };
+      console.log(response);
+      return { message: response.data.message };
     }
   } catch (error) {
     console.error("Login error:", error);
     // Handle unexpected errors
-    return { message: 'Not logged in' };
+    return { message: 'unknown error' };
   }
 };
 

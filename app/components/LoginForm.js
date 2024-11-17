@@ -4,6 +4,7 @@ import FormContainer from './FormContainer';
 import FormInput from './FormInput';
 import FormSubmitButton from './FormSubmitButton';
 import { login } from '../methods/login';
+import {Alert} from 'react-native';
 
 const LoginForm = () => {
 
@@ -18,7 +19,15 @@ const LoginForm = () => {
   const submitForm = () => {
     //isvalid
     console.log(userInfo);
-    login(userInfo);
+    login(userInfo).then((response) => {
+      console.log(response); // This will log the resolved message.
+      
+      if (response.message === "Signed in") {
+        Alert.alert('Success', "Signed in");
+      } else {
+        Alert.alert('Error', response.message);
+      }
+    });
   }
 
   const handleOnChangeText = (value, fieldName) => {

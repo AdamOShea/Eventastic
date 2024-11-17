@@ -15,7 +15,7 @@ describe('Login functionality with real database', () => {
 
     const result = await login(values);
 
-    expect(result.message).toBe('User logged in');
+    expect(result.message).toBe('Signed in');
     expect(result.user).toBeDefined();
     expect(result.user.email).toBe('test@example.com');
   });

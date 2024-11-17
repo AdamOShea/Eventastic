@@ -58,15 +58,15 @@ const loginUser = async (req, res) => {
     const result = await pool.query(query, values);
 
     if (result.rows.length === 0) {
-      return res.status(404).send({ message: 'User not Found' });
+      res.status(404).json({ message: 'User not Found' });
     }
 
     const user = result.rows[0];
 
     if (user.email !== email || user.password !== password) {
-      return res.json({ success: false, message: 'Email or password is incorrect' });
+      res.json({ success: false, message: 'Email or password is incorrect' });
     }
-    res.json({ success: true, user });
+    res.json({ success: true, user, message: "Signed in" });
   } catch (err) {
     console.error(err);
     res.status(500).send('some error occurred');
