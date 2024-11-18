@@ -1,43 +1,28 @@
-const express = require('express')
-const app = express()
-const port = 3000
-const hostname = "192.168.1.33"
-const db = require("./models/db");
+const express = require('express');
+const { pool } = require('./models/db'); // Adjust the path as necessary
 const userRouter = require('./routes/user');
 
+
+const app = express();
+const port = 3000;
+const hostname = '192.168.1.33';
+
 app.get('/', (req, res) => {
-  res.json({message:'hello'});
+  res.json({ message: 'hello' });
 });
-
-app.listen(port, hostname, () => {
-  console.log(`Example app listening on port ${hostname}:${port}`)
-})
-
-
 
 app.use(express.json());
 app.use(userRouter);
 
+app.listen(port, hostname, () => {
+  console.log(`Example app listening on port ${hostname}:${port}`);
+});
 
 
-// app.post('/create-user', async (req, res) => {
-//   const {username, password, email} = req.body;
-//   console.log(req.body);
-  
-//   try {
-//     const query = `
-//       INSERT INTO User (username, password, email)
-//       VALUES ($1, $2, $3)
-//       RETURNING id;
-//       `;
-//     const values = [username, password, email];
-//     const result = await pool.query(query, values);
-//     res.status(201).send({ message: 'user stored', userID: result.rows[0].id });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('some error occurred');
-//   }
-// });
+
+
+
+
 
 
 

@@ -2,7 +2,9 @@ import React, {useState} from 'react';
 import FormContainer from './FormContainer';
 import FormInput from './FormInput';
 import FormSubmitButton from './FormSubmitButton';
-import client from '../api/client';
+import {register} from '../methods/register';
+import {Alert} from 'react-native';
+
 
 
 const RegisterForm = () => {
@@ -22,22 +24,18 @@ const RegisterForm = () => {
   const submitForm = () => {
     //isvalid
     console.log(userInfo);
-    register(userInfo);
+    register(userInfo).then((response) => {
+      console.log(response); // This will log the resolved message.
+      
+      if (response.message === "User created successfully") {
+        Alert.alert('Success', "Registered: " + username);
+      } else {
+        Alert.alert('Error', response);
+      }
+    });
+    
+    
   }
-
-  const register = async (values) => {
-    try {
-      const res = await client.post('/create-user', {
-      ...values
-      });
-      console.log(res.data);
-    }catch (err) {
-      console.error(err);
-    }
-    
-
-    
-  };
 
   return (
     <FormContainer>
@@ -51,4 +49,3 @@ const RegisterForm = () => {
 }
 
 export default RegisterForm;
-
