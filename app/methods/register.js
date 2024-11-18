@@ -28,11 +28,11 @@ const register = async (values) => {
             const createResponse = await client.post('/create-user', values);
 
             if (createResponse.status === 201) {
-              console.log(createResponse);
+              //console.log(createResponse);
                 return { message: createResponse.data.message};
             } else {
               console.log("404 else")
-              console.log(createResponse.data.message);
+              //console.log(createResponse.data.message);
               return createResponse.data.message
             }
         } catch (error) {

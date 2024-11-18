@@ -47,31 +47,40 @@ const findOneUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body);
+
+  // Validate the request body
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
+  }
 
   try {
     const query = `
       SELECT * FROM public."User" 
-      WHERE email = ($1);
+      WHERE email = $1;
     `;
     const values = [email];
     const result = await pool.query(query, values);
 
+    // Check if user exists
     if (result.rows.length === 0) {
-      res.status(404).json({ message: 'User not Found' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     const user = result.rows[0];
 
-    if (user.email !== email || user.password !== password) {
-      res.json({ success: false, message: 'Email or password is incorrect' });
+    // Validate user credentials
+    if (user.password !== password) {
+      return res.status(401).json({ message: 'Email or password is incorrect' });
     }
-    res.json({ success: true, user, message: "Signed in" });
+
+    // Successful login
+    res.status(200).json({ success: true, user, message: 'Signed in' });
   } catch (err) {
     console.error(err);
-    res.status(500).send('some error occurred');
+    res.status(500).send('An error occurred');
   }
 };
+
 
 module.exports = {
   createUser,
