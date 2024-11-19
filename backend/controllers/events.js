@@ -1,23 +1,25 @@
 const { pool } = require('../models/db');
 
 const eventsFromDb = async (req, res) => {
-    const {searchQuery} = req.body;
-    console.log(req.body);
+    const {input} = req.body;
+    console.log(input);
 
     try {
         const query = `
-            SELECT * FROM public."events"
-            WHERE title ILIKE '%($1)%'
-            or artists ILIKE '%($1)%'
-            or eventtype ILIKE '%($1)%'
-            or genre ILIKE '%($1)%';
+            SELECT * FROM public."Event"
+            WHERE title ILIKE ($1)
+            or artist ILIKE ($1)
+            or eventtype ILIKE ($1)
+            or genre ILIKE ($1);
             `;
         
-        const values = [searchQuery];
+        const values = [`%${input}%`];
         const result = await pool.query(query, values);
-        const event = res.json(result.rows[0]);
-        res.json({success: true, event});
+        
+        res.json({success: true, events: result.rows});
     } catch (err) {
         console.error(err);
     }
 };
+
+module.exports = { eventsFromDb};

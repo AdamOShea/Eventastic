@@ -3,6 +3,6 @@ const router = express.Router();
 
 const { eventsFromDb } = require('../controllers/events');
 
-router.post('/eventsFromDb', eventsFromDb);
+router.post('/events-from-db', eventsFromDb);
 
 module.exports = router;
