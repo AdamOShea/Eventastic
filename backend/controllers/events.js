@@ -1,6 +1,8 @@
 const { pool } = require('../models/db');
 const axios = require('axios');
-const apiKey = require('dotenv').config();
+require('dotenv').config();
+
+const apiKey = process.env.TICKETMASTER_API_KEY;
 
 const eventsFromDb = async (req, res) => {
     const {keyword} = req.body;
@@ -17,6 +19,8 @@ const eventsFromDb = async (req, res) => {
         
         const values = [`%${keyword}%`];
         const result = await pool.query(query, values);
+
+        console.log("returning from db: " +keyword);
         
         res.json({success: true, events: result.rows});
     } catch (err) {
