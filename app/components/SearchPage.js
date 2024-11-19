@@ -7,9 +7,9 @@ import FormSubmitButton from './FormSubmitButton';
 import { fetchEvents } from '../methods/fetchEvents';
 
 export default function SearchPage()  {
-  const [searchQuery, setSearchQuery] = useState({input: ''});
+  const [searchQuery, setSearchQuery] = useState({keyword: ''});
 
-  const {input} = searchQuery; 
+  const {keyword} = searchQuery; 
 
   
 
@@ -36,7 +36,7 @@ export default function SearchPage()  {
 
   return (
     <><LoginHeader></LoginHeader><FormContainer>
-      <FormInput value={input} onChangeText={(value) => handleOnChangeText(value, 'input')} title='Search for Events Below' placeholder='Music/Sports/etc...'></FormInput>
+      <FormInput value={keyword} onChangeText={(value) => handleOnChangeText(value, 'keyword')} title='Search for Events Below' placeholder='Music/Sports/etc...'></FormInput>
       <FormSubmitButton onPress={submitForm} title='Search'></FormSubmitButton>
     </FormContainer></>
   );
