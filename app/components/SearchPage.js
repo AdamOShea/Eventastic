@@ -16,7 +16,13 @@ export default function SearchPage()  {
   const submitForm = async () => {
     fetchEvents(searchQuery).then(async (response) => {
       console.log(response);
-      Alert.alert('Success', response.events[0].title);
+      try {
+        Alert.alert('Success', response.events[0].title + '\n€' + response.events[1].price);
+      } catch (err) {
+        console.log(err);
+        Alert.alert('Error', 'Failed to fetch events.');
+      }
+      
     }).catch((err) => {
       console.error('Error:', err);
       Alert.alert('Error', 'Failed to fetch events.');
