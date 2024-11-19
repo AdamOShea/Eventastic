@@ -15,8 +15,8 @@ describe('register', () => {
     
   });
 
-  afterEach(() => {
-    
+  afterAll( async ()  => {
+    await pool.end();
   });
 
   it('should return user ID if the user already exists', async () => {

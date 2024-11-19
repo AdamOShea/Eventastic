@@ -1,6 +1,7 @@
 const express = require('express');
 const { pool } = require('./models/db'); // Adjust the path as necessary
 const userRouter = require('./routes/user');
+const eventsRouter = require('./routes/events');
 
 
 const app = express();
@@ -13,9 +14,10 @@ app.get('/', (req, res) => {
 
 app.use(express.json());
 app.use(userRouter);
+app.use(eventsRouter);
 
 app.listen(port, hostname, () => {
-  console.log(`Example app listening on port ${hostname}:${port}`);
+  console.log(`EireLive server listening on port ${hostname}:${port}`);
 });
 
 

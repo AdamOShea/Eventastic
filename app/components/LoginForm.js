@@ -5,8 +5,9 @@ import FormInput from './FormInput';
 import FormSubmitButton from './FormSubmitButton';
 import { login } from '../methods/login';
 import {Alert} from 'react-native';
+import { StackActions } from '@react-navigation/native';
 
-const LoginForm = () => {
+const LoginForm = ({navigation}) => {
 
   const [userInfo, setUserInfo] = useState({
     email: '',
@@ -16,7 +17,7 @@ const LoginForm = () => {
 
   const {email, password} = userInfo;
 
-  const submitForm = () => {
+  const submitForm = async () => {
     //isvalid
     console.log(userInfo);
     login(userInfo).then((response) => {
@@ -24,7 +25,13 @@ const LoginForm = () => {
       
       if (response.message === "Signed in") {
         Alert.alert('Success', "Signed in");
-      } else {
+        setUserInfo('', '');
+        navigation.dispatch(
+          StackActions.replace('SearchPage', {
+            user: response.user
+          })
+        );
+      } else { 
         Alert.alert('Error', response.message);
       }
     });

@@ -7,7 +7,7 @@ describe('Login functionality with real database', () => {
   });
 
   afterAll(async () => {
-    
+    await pool.end();
   });
 
   test('should log in successfully with valid credentials', async () => {
@@ -25,7 +25,7 @@ describe('Login functionality with real database', () => {
 
     const result = await login(values);
 
-    expect(result.message).toBe('Not logged in');
+    expect(result.message).toBe('Email or password is incorrect');
   });
 
   test('should return 404 for non-existent user', async () => {
@@ -33,15 +33,15 @@ describe('Login functionality with real database', () => {
 
     const result = await login(values);
 
-    expect(result.message).toBe('Not logged in');
+    expect(result.message).toBe('User not found');
   });
 
-  test('should handle unexpected errors gracefully', async () => {
+  test('should handle empty inputs', async () => {
     // Simulate an unexpected error by passing null values
     const values = { email: null, password: null };
 
     const result = await login(values);
 
-    expect(result.message).toBe('Not logged in');
+    expect(result.message).toBe('Email is empty');
   });
 });
