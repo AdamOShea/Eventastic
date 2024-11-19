@@ -1,5 +1,6 @@
 const { pool } = require('../models/db');
 const axios = require('axios');
+const apiKey = require('dotenv').config();
 
 const eventsFromDb = async (req, res) => {
     const {keyword} = req.body;
@@ -25,7 +26,7 @@ const eventsFromDb = async (req, res) => {
 
 const apiToDb = async(req, res) => {
     const keyword = req.body.keyword;
-    const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?size=200&keyword=${encodeURIComponent(keyword)}&apikey=ZtosAxJhw16nAepNAh2DwX8LGRB01mVG`; // Replace with your API URL
+    const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?size=200&keyword=${encodeURIComponent(keyword)}&apikey=${apiKey}`; // Replace with your API URL
 
   try {
     // Fetch data from the API
