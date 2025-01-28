@@ -8,4 +8,4 @@ router.post('/create-user', validateRegister, userValidation, createUser);
 router.post('/login-user', validateLogin, userValidation, loginUser);
 router.post('/find-one-user', findOneUser);
 
-module.exports = router; // Use CommonJS export
+module.exports = router; 

@@ -1,14 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer} from '@react-navigation/native';
-
 import LoginRegisterPage from './components/LoginRegisterPage';
 import SearchPage from './components/SearchPage';
 
 const Stack = createStackNavigator();
-
-
 
 export default function App() {
 

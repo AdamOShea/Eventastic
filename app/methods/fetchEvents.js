@@ -14,14 +14,12 @@ const fetchEvents = async (values) => {
     };
 
     try {
-        
         const dbResponse = await client.post('/events-from-db', values);
 
         if (dbResponse.status === 200 && dbResponse.data.success && dbResponse.data.events[0].title) {
             
             return { message: 'fetched from db', events: dbResponse.data.events };
       } else {
-           
             console.log("fetch db 404");
             return { message: "fail fetching from db 404" };
       }
