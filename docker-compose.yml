@@ -13,8 +13,8 @@ services:
     environment:
       - NODE_ENV=development
       - TICKETMASTER_API_KEY=${TICKETMASTER_API_KEY}
-    env_file:
-      - ./backend/.env
+    # env_file:
+    #   - ./backend/.env
     # depends_on:
     #   - db
 
