@@ -26,6 +26,8 @@ jobs:
           # echo "API_URL=${{ secrets.API_URL }}" > .env
           echo "TICKETMASTER_API_KEY=${{ secrets.TICKETMASTER_API_KEY }}" >> .env
 
+          cd ..
+
           # Pull latest code
           git pull origin dev
 
