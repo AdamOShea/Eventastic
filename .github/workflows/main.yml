@@ -36,5 +36,5 @@ jobs:
           docker-compose up -d --build
 
           # Show logs to verify deployment
-          # docker-compose logs -f backend
-        command_timeout: 600
+          docker-compose logs -f backend
+        
