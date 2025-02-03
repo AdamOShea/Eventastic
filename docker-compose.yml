@@ -12,7 +12,6 @@ services:
       - /usr/src/app/node_modules
     environment:
       - NODE_ENV=development
-      - TICKETMASTER_API_KEY=${TICKETMASTER_API_KEY}
     # env_file:
     #   - ./backend/.env
     # depends_on:
@@ -45,6 +44,6 @@ services:
   #   volumes:
   #     - pgadmin_data:/var/lib/pgadmin
 
-volumes:
-  postgres_data:
-  pgadmin_data:
+# volumes:
+#   postgres_data:
+#   pgadmin_data:
