@@ -42,5 +42,5 @@ jobs:
           docker-compose up -d --build
 
           # Show logs to verify deployment
-          docker-compose logs -f backend
+          # docker-compose logs -f backend
         
