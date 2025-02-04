@@ -6,7 +6,7 @@ const createUser = async (req, res) => {
 
   try {
     const query = `
-      INSERT INTO public."User" (username, password, email)
+      INSERT INTO eventastic."User" (username, password, email)
       VALUES ($1, $2, $3)
       RETURNING userid;
     `;
@@ -27,7 +27,7 @@ const findOneUser = async (req, res) => {
 
   try {
     const query = `
-      SELECT * FROM public."User" 
+      SELECT * FROM eventastic."User" 
       WHERE email = ($1);
     `;
     const values = [email];
@@ -55,7 +55,7 @@ const loginUser = async (req, res) => {
 
   try {
     const query = `
-      SELECT * FROM public."User" 
+      SELECT * FROM eventastic."User" 
       WHERE email = $1;
     `;
     const values = [email];

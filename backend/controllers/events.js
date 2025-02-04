@@ -10,7 +10,7 @@ const eventsFromDb = async (req, res) => {
 
     try {
         const query = `
-            SELECT * FROM public."Event"
+            SELECT * FROM eventastic."Event"
             WHERE title ILIKE ($1)
             or artist ILIKE ($1)
             or eventtype ILIKE ($1)
@@ -42,7 +42,7 @@ const apiToDb = async(req, res) => {
 
     // Prepare SQL insert statement
     const insertQuery = `
-      INSERT INTO public."Event" ( venue, eventlocation, date, time, artist, eventtype, genre, price, eventlink, title)
+      INSERT INTO eventastic."Event" ( venue, eventlocation, date, time, artist, eventtype, genre, price, eventlink, title)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       ON CONFLICT (eventlink) DO NOTHING; -- Prevent duplicate entries
     `;
