@@ -28,7 +28,7 @@ export default function LoginRegisterPage({navigation}) {
   return (
         <View style={{flex: 1, paddingTop: 90, backgroundColor: 'white'}}>
           <View style={{height:80}}>
-            <LoginHeader heading='EireLive'>
+            <LoginHeader heading='Eventastic'>
             </LoginHeader>
           </View>
           <View style={{flexDirection:'row', padding: 30}}>

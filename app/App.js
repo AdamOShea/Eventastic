@@ -3,10 +3,15 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer} from '@react-navigation/native';
 import LoginRegisterPage from './components/LoginRegisterPage';
 import SearchPage from './components/SearchPage';
+import { registerRootComponent } from 'expo';
+import 'react-native-gesture-handler';
+import {enableScreens} from 'react-native-screens';
+
+enableScreens();
 
 const Stack = createStackNavigator();
 
-export default function App() {
+function App() {
 
   return (
     <NavigationContainer>
@@ -18,3 +23,4 @@ export default function App() {
   );
 }
   
+export default registerRootComponent(App);
