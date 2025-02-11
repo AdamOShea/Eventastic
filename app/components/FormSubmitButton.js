@@ -15,7 +15,7 @@ export default FormSubmitButton;
 const styles = StyleSheet.create({
     container: {
         height: 45,
-        backgroundColor: 'rgba(32,69,41,1)',
+        backgroundColor: '#6785c7',
         borderRadius: 8,
         justifyContent: 'center',
         alignItems: 'center'

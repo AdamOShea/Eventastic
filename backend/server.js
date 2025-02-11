@@ -2,6 +2,12 @@ const express = require('express');
 const { pool } = require('./models/db'); // Adjust the path as necessary
 const userRouter = require('./routes/user');
 const eventsRouter = require('./routes/events');
+const cors = require('cors');
+
+const allowedOrigins = [
+  'exp://192.168.X.X:8081',
+  'http://eventastic.tech'
+];
 
 
 const app = express();
@@ -15,6 +21,16 @@ app.get('/', (req, res) => {
 app.use(express.json());
 app.use(userRouter);
 app.use(eventsRouter);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
 
 app.listen(port, hostname, () => {
   console.log(`EireLive server listening on port ${hostname}:${port}`);

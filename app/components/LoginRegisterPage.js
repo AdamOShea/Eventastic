@@ -15,12 +15,12 @@ export default function LoginRegisterPage({navigation}) {
   const scrollView = useRef();
   const loginColourInterpolate = animation.interpolate({
     inputRange: [0, width],
-    outputRange: ['rgba(32,69,41,1)', 'rgba(27,27,51,0.4)']
+    outputRange: ['#6785c7', 'rgba(27,27,51,0.4)']
   })
 
   const registerColourInterpolate = animation.interpolate({
     inputRange: [0, width],
-    outputRange: ['rgba(27,27,51,0.4)', 'rgba(32,69,41,1)']
+    outputRange: ['rgba(27,27,51,0.4)', '#6785c7']
   })
 
   
