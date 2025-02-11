@@ -11,17 +11,17 @@ describe('Login functionality with real database', () => {
   });
 
   test('should log in successfully with valid credentials', async () => {
-    const values = { email: 'test@example.com', password: 'password' };
+    const values = { email: 'test@gmail.com', password: 'password' };
 
     const result = await login(values);
 
     expect(result.message).toBe('Signed in');
     expect(result.user).toBeDefined();
-    expect(result.user.email).toBe('test@example.com');
+    expect(result.user.email).toBe('test@gmail.com');
   });
 
   test('should not log in with invalid credentials', async () => {
-    const values = { email: 'test@example.com', password: 'wrongpassword' };
+    const values = { email: 'test@gmail.com', password: 'wrongpassword' };
 
     const result = await login(values);
 
