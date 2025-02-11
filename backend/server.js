@@ -6,7 +6,7 @@ const cors = require('cors');
 
 const allowedOrigins = [
   'exp://192.168.X.X:8081',
-  'http://eventastic.tech'
+  'http://eventastic.tech:3000'
 ];
 
 
