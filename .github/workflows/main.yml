@@ -10,8 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+    
     - name: Checkout Latest Code
       uses: actions/checkout@v3
+      script: |
+        mkdir -p new_version
       with:
         path: new_version  # Checkout code in a separate directory
 
