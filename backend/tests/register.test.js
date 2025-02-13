@@ -4,6 +4,8 @@ import { register } from '../../app/methods/register';  // Use import instead of
 
 describe('register', () => {
 
+  jest.setTimeout(60000)
+
   beforeEach(async () => {
     console.log("Connecting to DB for beforeEach...");
   
