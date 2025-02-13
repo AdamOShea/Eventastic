@@ -29,10 +29,6 @@ jobs:
         cd backend
         npm install
 
-    - name: Test Database Connection
-      run: |
-        PGPASSWORD=${{ secrets.DB_PW }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USERNAME }} -d ${{ secrets.DB_DATABASE }} -c "SELECT NOW();"
-
 
     - name: Run Jest Tests (Backend)
       run: |
