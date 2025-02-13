@@ -15,7 +15,7 @@ jobs:
     - name: Checkout Latest Code
       uses: actions/checkout@v3
       with:
-        path: new_version  # Checkout code in a separate directory
+        path: new_version/EireLive  # Checkout code in a separate directory
 
     - name: debug
       run: cd new_version && ls
