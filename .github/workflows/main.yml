@@ -29,6 +29,11 @@ jobs:
         cd backend
         npm install
 
+    - name: Test Database Connection
+      run: |
+        PGPASSWORD=${{ secrets.DB_PW }} psql -h ${{ secrets.DB_HOST }} -U ${{ secrets.DB_USERNAME }} -d ${{ secrets.DB_DATABASE }} -c "SELECT NOW();"
+
+
     - name: Run Jest Tests (Backend)
       run: |
         cd new_version/EireLive/backend
