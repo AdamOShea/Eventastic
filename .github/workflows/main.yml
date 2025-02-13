@@ -14,9 +14,9 @@ jobs:
     
     - name: Checkout Latest Code
       uses: actions/checkout@v3
-      script: |
-        mkdir -p new_version
       with:
+        script: |
+          mkdir -p new_version
         path: new_version  # Checkout code in a separate directory
 
 
