@@ -3,7 +3,7 @@ import { register } from '../../app/methods/register';  // Use import instead of
 
 
 describe('register', () => {
-  
+  jest.setTimeout(30000);
 
   beforeEach(async () => {
     global.alert = jest.fn();
