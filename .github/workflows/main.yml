@@ -23,7 +23,10 @@ jobs:
 
     - name: Install Dependencies (Backend)
       run: |
-        cd new_version/EireLive/backend
+        cd new_version/EireLive/app
+        npm install
+        cd ..
+        cd backend
         npm install
 
     - name: Run Jest Tests (Backend)
