@@ -3,20 +3,38 @@ import { register } from '../../app/methods/register';  // Use import instead of
 
 
 describe('register', () => {
-  jest.setTimeout(30000);
 
   beforeEach(async () => {
     
 
     // Ensure no users exist with this email before each test
     const values = { email: 'newuser@example.com' };
-    await pool.query('DELETE FROM eventastic."User" WHERE email = $1', [values.email]);
+
+    try {
+      const startTime = Date.now();
+  
+      // Ensure no users exist with this email before each test
+      await pool.query('DELETE FROM eventastic."User" WHERE email = $1', [
+        values.email,
+      ]);
+  
+      console.log(`DB cleanup completed in ${Date.now() - startTime}ms`);
+    } catch (error) {
+      console.error("DB cleanup failed:", error);
+    }
+    
 
     
   });
 
   afterAll( async ()  => {
-    await pool.end();
+    console.log("Closing DB connection...");
+    try {
+      await pool.end();
+      console.log("DB connection closed successfully.");
+    } catch (error) {
+      console.error("Error closing DB connection:", error);
+    }
   });
 
   it('should return user ID if the user already exists', async () => {
