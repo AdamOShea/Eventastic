@@ -17,6 +17,9 @@ jobs:
       with:
         path: new_version  # Checkout code in a separate directory
 
+    - name: debug
+      run: pwd
+
 
     - name: Install Dependencies (Backend)
       run: |
