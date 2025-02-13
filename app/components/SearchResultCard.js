@@ -1,14 +1,15 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet, Image, } from 'react-native';
+import { format } from 'date-fns';
 
 export default function SearchResultCard({item}) {
   return (
     <View style={styles.card}>
-      <Image source={{ uri: item.image }} style={styles.image} />
+      <Image source={{ uri: '../assets/eventastic.png' }} style={styles.image} />
       <View style={styles.details}>
         <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.date}>{item.date}</Text>
-        <Text style={styles.location}>{item.location}</Text>
+        <Text style={styles.date}>{format(new Date(item.date), 'dd-LLL-yyyy')}</Text>
+        <Text style={styles.location}>{item.eventlocation.trim()}, {item.venue}</Text>
       </View>
     </View>
   );

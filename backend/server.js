@@ -19,7 +19,7 @@ app.use(eventsRouter);
 
 
 app.listen(port, hostname, () => {
-  console.log(`EireLive server listening on port ${hostname}:${port}`);
+  console.log(`Eventastic server listening on port ${hostname}:${port}`);
 });
 
 
