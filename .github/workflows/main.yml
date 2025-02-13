@@ -18,7 +18,7 @@ jobs:
         path: new_version  # Checkout code in a separate directory
 
     - name: debug
-      run: cd new_verison && ls
+      run: cd new_version && ls
 
 
     - name: Install Dependencies (Backend)
