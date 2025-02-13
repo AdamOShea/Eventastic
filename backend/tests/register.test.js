@@ -7,23 +7,9 @@ describe('register', () => {
   jest.setTimeout(60000)
 
   beforeEach(async () => {
-    console.log("Connecting to DB for beforeEach...");
+    
   
-    const values = { email: "newuser@example.com" };
-    try {
-      const startTime = Date.now();
-      
-      const result = await pool.query(
-        'DELETE FROM eventastic."User" WHERE email = $1',
-        [values.email]
-      );
-  
-      console.log(
-        `DB cleanup completed in ${Date.now() - startTime}ms, rows affected: ${result.rowCount}`
-      );
-    } catch (error) {
-      console.error("DB cleanup failed:", error);
-    }
+    
   });
   
 
@@ -31,9 +17,11 @@ describe('register', () => {
     console.log("Closing DB connection...");
   
     try {
+
       console.log(`Active clients before closing: ${pool.totalCount}`);
       await pool.end();
       console.log("DB connection closed successfully.");
+
     } catch (error) {
       console.error("Error closing DB connection:", error);
     }
@@ -51,6 +39,22 @@ describe('register', () => {
   
 
   it('should create a new user if the user does not exist', async () => {
+    const delValues = { email: "newuser@example.com" };
+    try {
+      const startTime = Date.now();
+      
+      const result = await pool.query(
+        'DELETE FROM eventastic."User" WHERE email = $1',
+        [delValues.email]
+      );
+  
+      console.log(
+        `DB cleanup completed in ${Date.now() - startTime}ms, rows affected: ${result.rowCount}`
+      );
+    } catch (error) {
+      console.error("DB cleanup failed:", error);
+    }
+
     global.alert = jest.fn();
     const values = { email: 'newuser@example.com', username: 'New User', password: 'password', confirmPassword: 'password' };
     const result = await register(values);
