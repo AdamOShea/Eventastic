@@ -6,7 +6,7 @@ describe('register', () => {
   jest.setTimeout(30000);
 
   beforeEach(async () => {
-    global.alert = jest.fn();
+    
 
     // Ensure no users exist with this email before each test
     const values = { email: 'newuser@example.com' };
@@ -30,7 +30,7 @@ describe('register', () => {
   
 
   it('should create a new user if the user does not exist', async () => {
-  
+    global.alert = jest.fn();
     const values = { email: 'newuser@example.com', username: 'New User', password: 'password', confirmPassword: 'password' };
     const result = await register(values);
   
