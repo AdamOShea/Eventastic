@@ -14,17 +14,17 @@ describe('register', () => {
   
 
   afterAll(async () => {
-    console.log("Closing DB connection...");
+    // console.log("Closing DB connection...");
   
-    try {
+    // try {
 
-      console.log(`Active clients before closing: ${pool.totalCount}`);
-      await pool.end();
-      console.log("DB connection closed successfully.");
+    //   console.log(`Active clients before closing: ${pool.totalCount}`);
+    //   await pool.end();
+    //   console.log("DB connection closed successfully.");
 
-    } catch (error) {
-      console.error("Error closing DB connection:", error);
-    }
+    // } catch (error) {
+    //   console.error("Error closing DB connection:", error);
+    // }
   });
   
 
@@ -61,6 +61,8 @@ describe('register', () => {
   
     expect(result).toMatchObject({ message: 'User created successfully'});
     expect(alert).not.toHaveBeenCalled();
+
+    await pool.end();
   });
 
 });
