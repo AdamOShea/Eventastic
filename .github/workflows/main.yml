@@ -32,7 +32,7 @@ jobs:
     - name: Run Jest Tests (Backend)
       run: |
         cd new_version/EireLive/backend
-        npm test
+        npm test -- --detectOpenHandles --verbose --runInBand
       env:
         DB_USERNAME: ${{ secrets.DB_USERNAME }}
         DB_PASSWORD: ${{ secrets.DB_PW }}
