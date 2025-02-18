@@ -42,7 +42,7 @@ describe('register', () => {
   
 
   it('should return user ID if the user already exists', async () => {
-    const existingUserID = '56d5e96c-12bf-4b17-adbf-9de3f056ee32'; 
+    const existingUserID = '4100febd-1cb8-45ed-91e8-ca242ac97e6f'; 
   
     const values = { email: 'test@gmail.com', username: 'Tester', password: 'password' };
     const result = await register(values);
