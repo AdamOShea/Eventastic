@@ -1,6 +1,7 @@
 const client = require('../api/client');  
 
 const fetchEvents = async (values) => {
+    
     try {
         const apiResponse = await client.post('/api-to-db', values);
 
