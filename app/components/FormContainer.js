@@ -10,6 +10,7 @@ export default function FormContainer({children}) {
 const styles = StyleSheet.create({
     container: {
         width: Dimensions.get('window').width,
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
+        paddingVertical: 20,
     }
 })

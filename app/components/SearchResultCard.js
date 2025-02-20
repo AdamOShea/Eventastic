@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 export default function SearchResultCard({item}) {
   return (
     <View style={styles.card}>
-      <Image source={{ uri: '../assets/eventastic.png' }} style={styles.image} />
+      <Image source={ require( '../assets/eventastic.png')} style={styles.image} />
       <View style={styles.details}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.date}>{format(new Date(item.date), 'dd-LLL-yyyy')}</Text>
@@ -17,6 +17,7 @@ export default function SearchResultCard({item}) {
 
 const styles = StyleSheet.create({
   card: {
+    height: 150,
     flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 10,

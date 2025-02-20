@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, Alert, FlatList, SafeAreaView } from 'react-native';
+import { View, Text, Alert, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import FormContainer from './FormContainer';
 import FormInput from './FormInput';
 import LoginHeader from './LoginHeader';
 import FormSubmitButton from './FormSubmitButton';
 import { fetchEvents } from '../methods/fetchEvents';
 import SearchResultCard from './SearchResultCard';
-
+import SearchPageHeader from './SearchPageHeader';
+import { MenuProvider, Menu, MenuOptions, MenuOption, MenuTrigger, } from 'react-native-popup-menu';
+ 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState({ keyword: '' });
   const [events, setEvents] = useState([]); // State to store event search results
-
   const { keyword } = searchQuery;
 
   const submitForm = async () => {
@@ -29,13 +30,19 @@ export default function SearchPage() {
     }
   };
 
+  const handleFilterPress = () => {
+    <MenuProvider>
+
+    </MenuProvider>
+  };
+
   const handleOnChangeText = (value, fieldName) => {
     setSearchQuery({ ...searchQuery, [fieldName]: value });
   };
 
   return (
-    <>
-      <LoginHeader />
+    <View style={{flex: 1, paddingTop:50}}>
+      <SearchPageHeader heading="Find an Event"/>
       <FormContainer>
         <FormInput
           value={keyword}
@@ -45,14 +52,44 @@ export default function SearchPage() {
         <FormSubmitButton onPress={submitForm} title="Search" />
       </FormContainer>
 
-      <SafeAreaView>
+      <View style={styles.filterButtonContainer}>
+        <TouchableOpacity style={styles.filterButton} onPress={handleFilterPress}>
+          <Text style={styles.filterText}>Filters</Text>
+        </TouchableOpacity>
+      </View>
+
+      <SafeAreaView stlye={{height:'90%'}}>
         <FlatList
           data={events} // Use updated events from state
           keyExtractor={(item) => item.eventid.toString()} // Ensure id is a string
           renderItem={({ item }) => <SearchResultCard item={item} />}
-          ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>No events found.</Text>}
+          initialNumToRender={20}
+          maxToRenderPerBatch={20}
+          windowSize={10}
+          ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>Search for events, and they'll appear here.</Text>}
+          ListFooterComponent={<View style={{ height:250}} />}
         />
       </SafeAreaView>
-    </>
+    </View>
   );
 }
+
+const styles = {
+  filterButtonContainer: {
+    alignItems: 'flex-start', // Align to the left
+    paddingLeft: 20, // Adjust left padding
+    
+  },
+  filterButton: {
+    backgroundColor: '#6785c7',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    
+  },
+  filterText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+};

@@ -16,11 +16,11 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen component={LoginRegisterPage} name='LoginRegisterPage'/>
+        
         <Stack.Screen component={SearchPage} name='SearchPage'/>
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-  
+//  <Stack.Screen component={LoginRegisterPage} name='LoginRegisterPage'/> 
 export default registerRootComponent(App);

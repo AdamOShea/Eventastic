@@ -1,11 +1,11 @@
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, Image} from 'react-native';
 
-const LoginHeader = ({heading}) => {
+const LoginHeader = ({}) => {
 
     return (
         <>
             <View style={styles.container}>
-                <Text style={styles.heading}>{heading}</Text>
+                <Image source={ require( '../assets/eventastic.png')} style={styles.image} />
             </View>
         </>
     );
@@ -16,12 +16,12 @@ const styles = StyleSheet.create({
         height:100, 
         alignItems: 'center'
     },
-    heading: {
-        fontSize: 50,
-        fontWeight: 'bold',
-        color: 'black',
-        textAlign: 'center'
-     }
+    image: {
+        width: 160,
+        height: 160,
+        borderRadius: 8,
+        
+    }
     
 })
 
