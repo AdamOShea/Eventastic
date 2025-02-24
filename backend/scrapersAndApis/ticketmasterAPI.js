@@ -19,8 +19,8 @@ const ticketmasterAPI = async (keyword) => {
     `;
 
     for (const event of events) {
-      const venue = event._embedded?.venues?.[0]?.name || 'Unknown';
-      const eventLocation = event._embedded?.venues?.[0]?.city?.name || 'Unknown';
+      const venue = event._embedded?.venues?.[0]?.name || 'unknown venue';
+      const eventLocation = event._embedded?.venues?.[0]?.city?.name || 'Unknown city';
       const date = event.dates?.start?.localDate || null;
       const time = event.dates?.start?.localTime || null;
       const artist = event._embedded?.attractions?.[0]?.name || 'Unknown';
