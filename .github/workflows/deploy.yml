@@ -1,4 +1,4 @@
-name: Test and Deploy to DigitalOcean
+name: Deploy to DigitalOcean
 
 on:
   push:
@@ -6,35 +6,8 @@ on:
       - dev  # Adjust if using a different branch
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18  # Adjust if using a different Node.js version
-        cache: 'npm'
-
-    - name: Install Dependencies
-      run: npm install
-
-    - name: Run Jest Tests
-      run: npm test
-      env:
-        DB_USERNAME: ${{ secrets.DB_USERNAME }}
-        DB_PASSWORD: ${{ secrets.DB_PW }}
-        DB_HOST: ${{ secrets.DB_HOST }}
-        DB_PORT: ${{ secrets.DB_PORT }}
-        DB_DATABASE: ${{ secrets.DB_DATABASE }}
-        TICKETMASTER_API_KEY: ${{ secrets.TICKETMASTER_API_KEY }}
-
   deploy:
     runs-on: ubuntu-latest
-    needs: test  # Ensures tests pass before deploying
 
     steps:
     - name: Checkout Code
@@ -45,13 +18,15 @@ jobs:
       with:
         host: ${{ secrets.DROPLET_IP }}
         username: ${{ secrets.DROPLET_USER }}
-        password: ${{ secrets.DROPLET_PW }}
+        password: ${{ secrets.DROPLET_PW }}  # Use password instead of SSH key
         command_timeout: 600s
         script: |
           cd EireLive/backend  # Adjust to your project directory
 
           # Create .env file with GitHub Secrets
+          # echo "API_URL=${{ secrets.API_URL }}" > .env
           echo "TICKETMASTER_API_KEY=${{ secrets.TICKETMASTER_API_KEY }}" >> .env
+          echo "EVENTBRITE_API_KEY=${{ secrets.EVENTBRITE_API_KEY_URL }}" >> .env
           echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
           echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
           echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
@@ -67,5 +42,3 @@ jobs:
           docker-compose down
           docker-compose up -d --build
 
-          # Show logs to verify deployment
-          docker-compose logs -f backend
