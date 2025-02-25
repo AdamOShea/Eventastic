@@ -1,28 +1,27 @@
 {
   "expo": {
-    "name": "main",
+    "name": "Eventastic",
     "slug": "app",
-    "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/eventastic.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled" : true,
+    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/eventastic.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#899dca"
     },
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+    "extra": {
+      "eas": {
+        "projectId": "9a1e6fa6-5834-4510-9b1a-1ea3fe70ee6c"
       }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "android": {
+      "package": "com.giraffehat.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/eventastic.png",
+        "backgroundColor": "#899dca"
     }
   }
+}
 }

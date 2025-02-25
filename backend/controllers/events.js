@@ -1,8 +1,84 @@
 const { pool } = require('../models/db');
-const axios = require('axios');
-require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 
-const apiKey = process.env.TICKETMASTER_API_KEY;
+const apiDirectory = path.join(__dirname, '../scrapersAndApis')
+
+const apis = {};
+
+// import all APIs from the API folder
+fs.readdirSync(apiDirectory).forEach((file) => {
+  const filePath = path.join(apiDirectory, file);
+
+  if (file.endsWith('.js')) {
+    const apiName = path.basename(file, '.js');
+    apis[apiName] = require(filePath);
+  }
+});
+
+console.log('loaded APIs: ', apis);
+
+const apiToDb = async (req, res) => {
+  const { keyword } = req.body;
+  const { apis: selectedAPIs } = req.body;
+
+  console.log('🔎 Received payload at /api-to-db:', req.body); // ✅ Check entire body
+  console.log('👉 keyword:', keyword);
+  console.log('👉 selectedAPIs:', selectedAPIs);
+
+  console.log('selectedAPIs:', selectedAPIs);
+
+  if (Array.isArray(selectedAPIs) && selectedAPIs.length > 0) {
+    try {
+      // Create an array of promises by calling each API function
+      const apiPromises = selectedAPIs.map((api) => {
+        if (apis[api]) {
+          console.log(`Calling API: ${api}`);
+          return apis[api](keyword);  // Return the promise from each API call
+        } else {
+          console.log(`API "${api}" not found.`);
+          return Promise.resolve({message: `API "${api}" failed in its duties`}); // Resolve with null if the API is not found
+        }
+      });
+
+      // Wait for all API calls to complete asynchronously in parallel
+      const results = await Promise.allSettled(apiPromises);
+
+      // Optionally, you can log results or process them
+      results.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+          console.log(`${selectedAPIs[index]} succeeded:`, result.value);
+        } else {
+          console.error(`${selectedAPIs[index]} failed:`, result.reason);
+        }
+      });
+
+      res.status(200).json({
+        message: 'API calls completed.',
+        results: results.map((result, index) => ({
+          api: selectedAPIs[index],
+          status: result.status,
+          data: result.value || null,
+          error: result.reason || null,
+        })),
+      });
+
+    } catch (error) {
+      console.error('Error during API calls:', error);
+      res.status(500).send('An error occurred while processing the APIs.');
+    }
+  } else {
+    console.log('No valid APIs selected or selectedAPIs is not an array.');
+    res.status(400).send('No valid APIs selected.');
+  }
+};
+
+const detectAPIs = async (req, res) => {
+  const apiNames = Object.keys(apis);
+  res.json({apis: apiNames});
+  
+}
+
 
 const eventsFromDb = async (req, res) => {
     const {keyword} = req.body;
@@ -10,7 +86,7 @@ const eventsFromDb = async (req, res) => {
 
     try {
         const query = `
-            SELECT * FROM public."Event"
+            SELECT * FROM eventastic."Event"
             WHERE title ILIKE ($1)
             or artist ILIKE ($1)
             or eventtype ILIKE ($1)
@@ -22,58 +98,14 @@ const eventsFromDb = async (req, res) => {
 
         console.log("returning from db: " +keyword);
         
-        res.json({success: true, events: result.rows});
+        res.json({
+          success: true,
+          events: Array.isArray(result.rows) ? result.rows : [], // Ensure events is always an array
+        });
     } catch (err) {
         console.error(err);
     }
 };
 
-const apiToDb = async(req, res) => {
-    const keyword = req.body.keyword;
-    const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?size=200&keyword=${encodeURIComponent(keyword)}&apikey=${apiKey}`; // Replace with your API URL
 
-  try {
-    // Fetch data from the API
-    const response = await axios.get(apiUrl);
-    const events = response.data._embedded.events;
-    console.log("fetching from api: " + keyword);
-
-    //console.log(events[0] + '\n' + events[1]);
-
-    // Prepare SQL insert statement
-    const insertQuery = `
-      INSERT INTO public."Event" ( venue, eventlocation, date, time, artist, eventtype, genre, price, eventlink, title)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      ON CONFLICT (eventlink) DO NOTHING; -- Prevent duplicate entries
-    `;
-
-    // Iterate through the events and extract relevant attributes
-    for (const event of events) {
-      
-      const venue = event._embedded?.venues?.[0]?.name || 'Unknown';
-      const eventLocation = event._embedded?.venues?.[0]?.city?.name || 'Unknown';
-      const date = event.dates?.start?.localDate || null;
-      const time = event.dates?.start?.localTime || null;
-      const artist = event._embedded?.attractions?.[0]?.name || 'Unknown';
-      const eventType = event.classifications?.[0]?.segment?.name || 'Unknown';
-      const genre = event.classifications?.[0]?.genre?.name || 'Unknown';
-      const price = event.priceRanges?.[0]?.min || 0;
-      const eventLink = event.url || 'Unknown';
-      const title = event.name || 'Untitled';
-
-      // Insert the event into the database
-      await pool.query(insertQuery, [
-        venue, eventLocation, date, time, artist,
-        eventType, genre, price, eventLink, title,
-      ]);
-    }
-
-    res.status(200).send('Events successfully fetched and saved to the database.');
-  } catch (error) {
-    console.error('Error fetching or saving events:', error);
-    res.status(500).send('An error occurred while processing the request.');
-  }
-};
-
-
-module.exports = { eventsFromDb, apiToDb};
+module.exports = { eventsFromDb, apiToDb, detectAPIs};
