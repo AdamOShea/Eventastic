@@ -58,7 +58,7 @@ const apiToDb = async (req, res) => {
           error: result.reason || null,
         })),
       });
-      
+
     } catch (error) {
       console.error('Error during API calls:', error);
       res.status(500).send('An error occurred while processing the APIs.');
@@ -69,7 +69,11 @@ const apiToDb = async (req, res) => {
   }
 };
 
-
+const detectAPIs = async (req, res) => {
+  const apiNames = Object.keys(apis);
+  res.json({apis: apiNames});
+  
+}
 
 
 const eventsFromDb = async (req, res) => {
@@ -97,6 +101,4 @@ const eventsFromDb = async (req, res) => {
 };
 
 
-
-
-module.exports = { eventsFromDb, apiToDb};
+module.exports = { eventsFromDb, apiToDb, detectAPIs};

@@ -1,18 +1,30 @@
-import React, { useState } from 'react';
-import { View, Text, Alert, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Alert, FlatList, SafeAreaView } from 'react-native';
 import FormContainer from './FormContainer';
 import FormInput from './FormInput';
-import LoginHeader from './LoginHeader';
+import FilterMenu from './FilterMenu';
 import FormSubmitButton from './FormSubmitButton';
 import { fetchEvents } from '../methods/fetchEvents';
 import SearchResultCard from './SearchResultCard';
 import SearchPageHeader from './SearchPageHeader';
-import { MenuProvider, Menu, MenuOptions, MenuOption, MenuTrigger, } from 'react-native-popup-menu';
+import { detectAPIs } from '../methods/detectAPIs';
+
  
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState({ keyword: '' });
   const [events, setEvents] = useState([]); // State to store event search results
+  const [selectedAPIs, setSelectedAPIs] = useState([]);
+  const [apiOptions, setApiOptions] = useState([]);
   const { keyword } = searchQuery;
+
+  useEffect(() => {
+    const fetchAPIs = async () => {
+      const apis = await detectAPIs();
+      setApiOptions(apis);
+    };
+
+    fetchAPIs();
+  }, []);
 
   const submitForm = async () => {
     try {
@@ -28,12 +40,6 @@ export default function SearchPage() {
       console.error('Error fetching events:', err);
       Alert.alert('Error', 'Failed to fetch events.');
     }
-  };
-
-  const handleFilterPress = () => {
-    <MenuProvider>
-
-    </MenuProvider>
   };
 
   const handleOnChangeText = (value, fieldName) => {
@@ -52,11 +58,12 @@ export default function SearchPage() {
         <FormSubmitButton onPress={submitForm} title="Search" />
       </FormContainer>
 
-      <View style={styles.filterButtonContainer}>
-        <TouchableOpacity style={styles.filterButton} onPress={handleFilterPress}>
-          <Text style={styles.filterText}>Filters</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Filter Menu Component */}
+      <FilterMenu
+        apiOptions={apiOptions}
+        selectedAPIs={selectedAPIs}
+        onSelectionChange={(selected) => setSelectedAPIs(selected)}
+      />
 
       <SafeAreaView stlye={{height:'90%'}}>
         <FlatList
