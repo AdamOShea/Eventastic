@@ -94,7 +94,10 @@ const eventsFromDb = async (req, res) => {
 
         console.log("returning from db: " +keyword);
         
-        res.json({success: true, events: result.rows});
+        res.json({
+          success: true,
+          events: Array.isArray(result.rows) ? result.rows : [], // Ensure events is always an array
+        });
     } catch (err) {
         console.error(err);
     }

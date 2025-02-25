@@ -32,12 +32,12 @@ export default function SearchPage() {
 
   const submitForm = async () => {
     try {
-      const response = await fetchEvents({ ...searchQuery, apis: selectedAPIs }); 
-
-      if (response && response.events.length > 0) {
-        setEvents(response.events); // Update FlatList
+      const response = await fetchEvents({ ...searchQuery, apis: selectedAPIs });
+  
+      if (response?.events?.length > 0) {
+        setEvents(response.events); // 
       } else {
-        setEvents([]);
+        setEvents([]); // 
         Alert.alert('No Events Found', 'Try searching for something else.');
       }
     } catch (err) {
@@ -45,6 +45,7 @@ export default function SearchPage() {
       Alert.alert('Error', 'Failed to fetch events.');
     }
   };
+  
 
   const handleOnChangeText = (value, fieldName) => {
     setSearchQuery({ ...searchQuery, [fieldName]: value });
