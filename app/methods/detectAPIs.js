@@ -8,6 +8,7 @@ const detectAPIs = async () => {
       validateStatus: (status) => status < 500 // Don't reject on 4xx or 5xx errors
     });
 
+    console.log("API detection response: ", response.data);
 
     const data = response.data; // Ensure this returns a JSON object
 

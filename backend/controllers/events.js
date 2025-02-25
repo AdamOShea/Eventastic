@@ -22,6 +22,10 @@ const apiToDb = async (req, res) => {
   const { keyword } = req.body;
   const { selectedAPIs } = req.body;
 
+  console.log('🔎 Received payload at /api-to-db:', req.body); // ✅ Check entire body
+  console.log('👉 keyword:', keyword);
+  console.log('👉 selectedAPIs:', selectedAPIs);
+
   console.log('selectedAPIs:', selectedAPIs);
 
   if (Array.isArray(selectedAPIs) && selectedAPIs.length > 0) {

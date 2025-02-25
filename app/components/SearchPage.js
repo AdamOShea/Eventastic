@@ -19,11 +19,14 @@ export default function SearchPage() {
   useEffect(() => {
     const fetchAPIs = async () => {
       const apis = await detectAPIs();
+      console.log('APIs fetched in SearchPage:', apis); 
 
-      if (Array.isArray(apis)) {
-        setApiOptions(apis);
-        setSelectedAPIs(apis); // 
-        setSearchQuery((prev) => ({ ...prev, apis })); // Ensure apis are in searchQuery
+      if (Array.isArray(apis) && apis.length) {
+        setApiOptions(apis); 
+        setSelectedAPIs(apis); 
+        setSearchQuery((prev) => ({ ...prev, apis })); // 
+      } else {
+        console.warn('No APIs received or detected.');
       }
     };
 
