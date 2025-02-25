@@ -20,7 +20,7 @@ export default function SearchPage() {
   useEffect(() => {
     const fetchAPIs = async () => {
       const apis = await detectAPIs();
-      setApiOptions(apis);
+      setApiOptions(Array.isArray(apis) ? apis : []);
     };
 
     fetchAPIs();

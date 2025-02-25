@@ -8,12 +8,19 @@ const detectAPIs = async () => {
       validateStatus: (status) => status < 500 // Don't reject on 4xx or 5xx errors
     });
 
-    const data = await response.json();
-    return data.apis;
-  } catch (error) {
-    console.error("API detection error:", error);
-    // Handle unexpected errors
-    return { message: 'API detection error' };
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json(); // Ensure this returns a JSON object
+    if (!data || !Array.isArray(data.apis)) {
+      throw new Error('Invalid data format received from the server.');
+    }
+
+    return data.apis; // Should be an array like ["API 1", "API 2"]
+  } catch (err) {
+    console.error('API detection error:', err);
+    return []; // Return an empty array to prevent crashes on the frontend
   }
 };
 
