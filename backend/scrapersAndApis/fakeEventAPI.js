@@ -19,23 +19,34 @@ const fakeEventAPI = async (keyword) => {
     const events = Array.from({ length: 20 }, () => generateFakeEvent(keyword));
     console.log("Fetching from fakeEventAPI: " + keyword);
 
+
     try {
-        const insertQuery = `
-            INSERT INTO eventastic."Event" (venue, eventlocation, date, time, artist, eventtype, genre, price, eventlink, title)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-            ON CONFLICT (eventlink) DO NOTHING;
-            `;
-    
+      const insertQuery = `
+                  INSERT INTO eventastic."Event" (venue, eventlocation, date, time, artist, eventtype, genre, price, eventlink, title)
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                  ON CONFLICT (eventlink) DO NOTHING;
+                  `;
 
-    await pool.query(insertQuery, [
-        events.venue, events.eventLocation, events.date, events.time, events.artist,
-        events.eventType, events.genre, events.price, events.eventLink, events.title,
-      ]);
+      for (const event of events) {
 
-      return {message: 'Events from fakeEventAPI successfully fetched and saved to the database.'}
+        await pool.query(insertQuery, [
+          event.venue,
+          event.eventLocation,
+          event.date,
+          event.time,
+          event.artist,
+          event.eventType,
+          event.genre,
+          event.price,
+          event.eventLink,
+          event.title,
+        ]);
+      }
+  
+      return { message: 'Events from fakeEventAPI successfully fetched and saved to the database.' };
     } catch (error) {
-        console.error('Error fetching or saving events from ticketmasterAPI:', error);
-        throw new Error('An error occurred while processing the request for ticketmasterAPI.'); // Throw an error
+      console.error('Error saving events from fakeEventAPI:', error);
+      throw new Error('An error occurred while processing the request for fakeEventAPI.');
     }
 };
 

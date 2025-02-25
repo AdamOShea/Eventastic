@@ -33,17 +33,32 @@ const apiToDb = async (req, res) => {
           return apis[api](keyword);  // Return the promise from each API call
         } else {
           console.log(`API "${api}" not found.`);
-          return Promise.resolve(null); // Resolve with null if the API is not found
+          return Promise.resolve({message: `API "${api}" failed in its duties`}); // Resolve with null if the API is not found
         }
       });
 
       // Wait for all API calls to complete asynchronously in parallel
-      const results = await Promise.all(apiPromises);
+      const results = await Promise.allSettled(apiPromises);
 
       // Optionally, you can log results or process them
-      console.log('Results from all APIs:', results);
+      results.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+          console.log(`${selectedAPIs[index]} succeeded:`, result.value);
+        } else {
+          console.error(`${selectedAPIs[index]} failed:`, result.reason);
+        }
+      });
 
-      res.status(200).send('APIs successfully processed.');
+      res.status(200).json({
+        message: 'API calls completed.',
+        results: results.map((result, index) => ({
+          api: selectedAPIs[index],
+          status: result.status,
+          data: result.value || null,
+          error: result.reason || null,
+        })),
+      });
+      
     } catch (error) {
       console.error('Error during API calls:', error);
       res.status(500).send('An error occurred while processing the APIs.');
