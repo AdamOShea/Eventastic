@@ -5,12 +5,20 @@ const { pool } = require('../models/db'); // Assuming the pool object is correct
 const apiKey = process.env.TICKETMASTER_API_KEY;
 
 const ticketmasterAPI = async (keyword) => {
+  console.log(`🎫 ticketmasterAPI called with keyword: "${keyword}"`);
   const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?size=200&keyword=${encodeURIComponent(keyword)}&apikey=${apiKey}`;
 
   try {
     const response = await axios.get(apiUrl);
     const events = response.data._embedded.events;
     console.log("Fetching from ticketmasterAPI: " + keyword);
+
+    if (!response.data || !response.data._embedded) {
+      console.warn('⚠️ No events found or unexpected response format.');
+      return { message: 'No events found from Ticketmaster.' };
+    }
+
+    console.log('✅ Ticketmaster API response received:', response.data._embedded.events);
 
     const insertQuery = `
       INSERT INTO eventastic."Event" (venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink, title)
