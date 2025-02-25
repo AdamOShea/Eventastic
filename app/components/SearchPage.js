@@ -9,7 +9,7 @@ import SearchResultCard from './SearchResultCard';
 import SearchPageHeader from './SearchPageHeader';
 import { detectAPIs } from '../methods/detectAPIs';
 
-export default function SearchPage() {
+export default function SearchPage({ navigation }) {
   const [searchQuery, setSearchQuery] = useState({ keyword: '', apis: [] });
   const [events, setEvents] = useState([]);
   const [selectedAPIs, setSelectedAPIs] = useState([]);
@@ -80,7 +80,7 @@ export default function SearchPage() {
         <FlatList
           data={events}
           keyExtractor={(item) => item.eventid.toString()}
-          renderItem={({ item }) => <SearchResultCard item={item} />}
+          renderItem={({ item }) => <SearchResultCard item={item} navigation={navigation} />}
           ListEmptyComponent={
             <Text style={{ textAlign: 'center', marginTop: 20 }}>
               Search for events, and they'll appear here.
@@ -88,6 +88,7 @@ export default function SearchPage() {
           }
           ListFooterComponent={<View style={{ height: 250 }} />}
         />
+
       </SafeAreaView>
     </View>
   );

@@ -9,6 +9,9 @@ import 'react-native-gesture-handler';
 import {enableScreens} from 'react-native-screens';
 import { MenuProvider } from 'react-native-popup-menu';
 import { Provider as PaperProvider } from 'react-native-paper';
+import EventDetailsPage from "./components/EventDetailsPage";
+import AccommodationPage from "./components/AcommodationPage";
+import FlightsPage from "./components/FlightsPage";
 
 
 enableScreens();
@@ -22,13 +25,16 @@ function App() {
       <PaperProvider>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-
+            <Stack.Screen component={LoginRegisterPage} name='LoginRegisterPage'/> 
             <Stack.Screen component={SearchPage} name="SearchPage" />
+            <Stack.Screen component={EventDetailsPage} name="EventDetails" />
+            <Stack.Screen component={AccommodationPage} name="Accommodation" />
+            <Stack.Screen component={FlightsPage} name="Flights" />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
     </MenuProvider>
   );
 }
-//  <Stack.Screen component={LoginRegisterPage} name='LoginRegisterPage'/> 
+//  
 export default registerRootComponent(App);

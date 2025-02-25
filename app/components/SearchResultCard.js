@@ -1,17 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { format } from 'date-fns';
 
-export default function SearchResultCard({item}) {
+
+export default function SearchResultCard({ item, navigation }) {
+  const imageSource =
+    item.seller?.toLowerCase() === 'ticketmaster'
+      ? require('../assets/ticketmaster.png')
+      : require('../assets/eventastic.png');
+
   return (
-    <View style={styles.card}>
-      <Image source={ require( '../assets/eventastic.png')} style={styles.image} />
-      <View style={styles.details}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.date}>{format(new Date(item.date), 'dd-LLL-yyyy')}</Text>
-        <Text style={styles.location}>{item.eventlocation.trim()}, {item.venue}</Text>
+    <TouchableOpacity onPress={() => navigation.navigate('EventDetails', { event: item })}>
+      <View style={styles.card}>
+        <Image source={imageSource} style={styles.image} />
+        <View style={styles.details}>
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.date}>{format(new Date(item.date), 'dd-LLL-yyyy')}</Text>
+          <Text style={styles.location}>{item.eventlocation.trim()}, {item.venue}</Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
