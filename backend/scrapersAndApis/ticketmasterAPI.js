@@ -5,7 +5,7 @@ const { pool } = require('../models/db'); // Assuming the pool object is correct
 const apiKey = process.env.TICKETMASTER_API_KEY;
 
 const ticketmasterAPI = async (keyword) => {
-  console.log(`🎫 ticketmasterAPI called with keyword: "${keyword}"`);
+  console.log(`ticketmasterAPI called with keyword: "${keyword}"`);
   const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?size=200&keyword=${encodeURIComponent(keyword)}&apikey=${apiKey}`;
 
   try {
@@ -14,11 +14,11 @@ const ticketmasterAPI = async (keyword) => {
     console.log("Fetching from ticketmasterAPI: " + keyword);
 
     if (!response.data || !response.data._embedded) {
-      console.warn('⚠️ No events found or unexpected response format.');
+      console.warn('No events found or unexpected response format.');
       return { message: 'No events found from Ticketmaster.' };
     }
 
-    console.log('✅ Ticketmaster API response received:', response.data._embedded.events);
+    console.log('Ticketmaster API response received:', response.data._embedded.events);
 
     const insertQuery = `
       INSERT INTO eventastic."Event" (venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink, title)
@@ -29,7 +29,7 @@ const ticketmasterAPI = async (keyword) => {
     for (const event of events) {
       const venue = event._embedded?.venues?.[0]?.name || 'unknown venue';
       const eventLocation = event._embedded?.venues?.[0]?.city?.name || 'Unknown city';
-      const seller = 'Ticketmaster'
+      const seller = 'Ticketmaster';
       const date = event.dates?.start?.localDate || null;
       const time = event.dates?.start?.localTime || null;
       const artist = event._embedded?.attractions?.[0]?.name || 'Unknown';

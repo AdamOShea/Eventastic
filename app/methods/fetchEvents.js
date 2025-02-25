@@ -18,7 +18,7 @@ const fetchEvents = async (values) => {
   
     try {
       const dbResponse = await client.post('/events-from-db', values);
-      console.log("DB response data:", dbResponse.data); 
+      //console.log("DB response data:", dbResponse.data); 
   
       if (
         dbResponse.status === 200 &&
