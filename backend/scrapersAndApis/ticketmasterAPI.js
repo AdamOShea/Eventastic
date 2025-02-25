@@ -39,8 +39,18 @@ const ticketmasterAPI = async (keyword) => {
 
     return { message: 'Events from ticketmasterAPI successfully fetched and saved to the database.' }; // Return a result
   } catch (error) {
-    console.error('Error fetching or saving events from ticketmasterAPI:', error);
-    throw new Error('An error occurred while processing the request for ticketmasterAPI.'); // Throw an error
+
+    const errorDetails = {
+      message: error.message || 'Unknown error',
+      status: error.response?.status ?? null,
+      statusText: error.response?.statusText ?? null,
+      responseData: error.response?.data ?? null,
+      requestUrl: error.config?.url ?? null,
+      requestMethod: error.config?.method ?? null,
+    };
+
+    console.error('Error fetching or saving events from ticketmasterAPI:', errorDetails);
+    throw new Error(JSON.stringify(errorDetails)); // Throw an error
   }
 };
 
