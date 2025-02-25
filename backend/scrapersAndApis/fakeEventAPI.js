@@ -13,6 +13,7 @@ const generateFakeEvent = (keyword) => ({
     eventLink: faker.internet.url(),
     // image: faker.image.imageUrl(),
     title: `${faker.lorem.words(3)} ${keyword}` ,
+    seller: 'FakeEvents'
   });
 
 const fakeEventAPI = async (keyword) => {
@@ -22,8 +23,8 @@ const fakeEventAPI = async (keyword) => {
 
     try {
       const insertQuery = `
-                  INSERT INTO eventastic."Event" (venue, eventlocation, date, time, artist, eventtype, genre, price, eventlink, title)
-                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                  INSERT INTO eventastic."Event" (venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink, title)
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
                   ON CONFLICT (eventlink) DO NOTHING;
                   `;
 
@@ -32,6 +33,7 @@ const fakeEventAPI = async (keyword) => {
         await pool.query(insertQuery, [
           event.venue,
           event.eventLocation,
+          event.seller,
           event.date,
           event.time,
           event.artist,

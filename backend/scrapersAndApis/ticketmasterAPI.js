@@ -13,7 +13,7 @@ const ticketmasterAPI = async (keyword) => {
     console.log("Fetching from ticketmasterAPI: " + keyword);
 
     const insertQuery = `
-      INSERT INTO eventastic."Event" (venue, eventlocation, date, time, artist, eventtype, genre, price, eventlink, title)
+      INSERT INTO eventastic."Event" (venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink, title)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       ON CONFLICT (eventlink) DO NOTHING;
     `;
@@ -21,6 +21,7 @@ const ticketmasterAPI = async (keyword) => {
     for (const event of events) {
       const venue = event._embedded?.venues?.[0]?.name || 'unknown venue';
       const eventLocation = event._embedded?.venues?.[0]?.city?.name || 'Unknown city';
+      const seller = 'Ticketmaster'
       const date = event.dates?.start?.localDate || null;
       const time = event.dates?.start?.localTime || null;
       const artist = event._embedded?.attractions?.[0]?.name || 'Unknown';
@@ -32,7 +33,7 @@ const ticketmasterAPI = async (keyword) => {
 
       // Insert into database
       await pool.query(insertQuery, [
-        venue, eventLocation, date, time, artist,
+        venue, eventLocation, seller, date, time, artist,
         eventType, genre, price, eventLink, title,
       ]);
     }

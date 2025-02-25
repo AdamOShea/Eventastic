@@ -9,10 +9,9 @@ import SearchResultCard from './SearchResultCard';
 import SearchPageHeader from './SearchPageHeader';
 import { detectAPIs } from '../methods/detectAPIs';
 
- 
 export default function SearchPage() {
-  const [searchQuery, setSearchQuery] = useState({ keyword: '' });
-  const [events, setEvents] = useState([]); // State to store event search results
+  const [searchQuery, setSearchQuery] = useState({ keyword: '', apis: [] });
+  const [events, setEvents] = useState([]);
   const [selectedAPIs, setSelectedAPIs] = useState([]);
   const [apiOptions, setApiOptions] = useState([]);
   const { keyword } = searchQuery;
@@ -20,7 +19,12 @@ export default function SearchPage() {
   useEffect(() => {
     const fetchAPIs = async () => {
       const apis = await detectAPIs();
-      setApiOptions(Array.isArray(apis) ? apis : []);
+
+      if (Array.isArray(apis)) {
+        setApiOptions(apis);
+        setSelectedAPIs(apis); // 
+        setSearchQuery((prev) => ({ ...prev, apis })); // Ensure apis are in searchQuery
+      }
     };
 
     fetchAPIs();
@@ -28,12 +32,12 @@ export default function SearchPage() {
 
   const submitForm = async () => {
     try {
-      const response = await fetchEvents(searchQuery);
-      
+      const response = await fetchEvents({ ...searchQuery, apis: selectedAPIs }); 
+
       if (response && response.events.length > 0) {
-        setEvents(response.events); // Update FlatList with new results
+        setEvents(response.events); // Update FlatList
       } else {
-        setEvents([]); // Clear list if no results
+        setEvents([]);
         Alert.alert('No Events Found', 'Try searching for something else.');
       }
     } catch (err) {
@@ -47,8 +51,8 @@ export default function SearchPage() {
   };
 
   return (
-    <View style={{flex: 1, paddingTop:50}}>
-      <SearchPageHeader heading="Find an Event"/>
+    <View style={{ flex: 1, paddingTop: 50 }}>
+      <SearchPageHeader heading="Find an Event" />
       <FormContainer>
         <FormInput
           value={keyword}
@@ -58,45 +62,29 @@ export default function SearchPage() {
         <FormSubmitButton onPress={submitForm} title="Search" />
       </FormContainer>
 
-      {/* Filter Menu Component */}
+      
       <FilterMenu
         apiOptions={apiOptions}
         selectedAPIs={selectedAPIs}
-        onSelectionChange={(selected) => setSelectedAPIs(selected)}
+        onSelectionChange={(selected) => {
+          setSelectedAPIs(selected);
+          setSearchQuery((prev) => ({ ...prev, apis: selected })); // Keep searchQuery updated
+        }}
       />
 
-      <SafeAreaView stlye={{height:'90%'}}>
+      <SafeAreaView style={{ flex: 1 }}>
         <FlatList
-          data={events} // Use updated events from state
-          keyExtractor={(item) => item.eventid.toString()} // Ensure id is a string
+          data={events}
+          keyExtractor={(item) => item.eventid.toString()}
           renderItem={({ item }) => <SearchResultCard item={item} />}
-          initialNumToRender={20}
-          maxToRenderPerBatch={20}
-          windowSize={10}
-          ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>Search for events, and they'll appear here.</Text>}
-          ListFooterComponent={<View style={{ height:250}} />}
+          ListEmptyComponent={
+            <Text style={{ textAlign: 'center', marginTop: 20 }}>
+              Search for events, and they'll appear here.
+            </Text>
+          }
+          ListFooterComponent={<View style={{ height: 250 }} />}
         />
       </SafeAreaView>
     </View>
   );
 }
-
-const styles = {
-  filterButtonContainer: {
-    alignItems: 'flex-start', // Align to the left
-    paddingLeft: 20, // Adjust left padding
-    
-  },
-  filterButton: {
-    backgroundColor: '#6785c7',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    
-  },
-  filterText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-};
