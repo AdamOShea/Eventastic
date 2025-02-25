@@ -13,13 +13,8 @@ const ticketmasterAPI = async (keyword) => {
     const events = response.data._embedded.events;
     console.log("Fetching from ticketmasterAPI: " + keyword);
 
-    if (!response.data || !response.data._embedded) {
-      console.warn('No events found or unexpected response format.');
-      return { message: 'No events found from Ticketmaster.' };
-    }
 
-    console.log('Ticketmaster API response received:', response.data._embedded.events);
-
+    
     const insertQuery = `
       INSERT INTO eventastic."Event" (venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink, title)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
