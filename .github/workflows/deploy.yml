@@ -26,7 +26,7 @@ jobs:
           # Create .env file with GitHub Secrets
           # echo "API_URL=${{ secrets.API_URL }}" > .env
           echo "TICKETMASTER_API_KEY=${{ secrets.TICKETMASTER_API_KEY }}" >> .env
-          echo "EVENTBRITE_API_KEY=${{ secrets.EVENTBRITE_API_KEY_URL }}" > .env
+          echo "EVENTBRITE_API_KEY=${{ secrets.EVENTBRITE_API_KEY_URL }}" >> .env
           echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
           echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
           echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
