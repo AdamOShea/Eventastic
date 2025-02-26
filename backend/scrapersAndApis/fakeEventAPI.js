@@ -11,9 +11,10 @@ const generateFakeEvent = (keyword) => ({
     genre: faker.lorem.words(1),
     price: faker.commerce.price(10, 100, 2, '€'),
     eventLink: faker.internet.url(),
-    // image: faker.image.imageUrl(),
-    title: `${faker.lorem.words(3)} ${keyword}` ,
-    seller: 'FakeEvents'
+    image: faker.image.imageUrl(),
+    title: `${keyword} ${faker.lorem.words(3)} ` ,
+    seller: 'FakeEvents',
+    description: faker.lorem.paragraph({min: 3, max: 8}),
   });
 
 const fakeEventAPI = async (keyword) => {
@@ -23,8 +24,8 @@ const fakeEventAPI = async (keyword) => {
 
     try {
       const insertQuery = `
-                  INSERT INTO eventastic."Event" (venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink, title)
-                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+                  INSERT INTO eventastic."Event" (venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink, title, description, image)
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
                   ON CONFLICT (eventlink) DO NOTHING;
                   `;
 
@@ -42,6 +43,8 @@ const fakeEventAPI = async (keyword) => {
           event.price,
           event.eventLink,
           event.title,
+          event.description,
+          event.image
         ]);
       }
   

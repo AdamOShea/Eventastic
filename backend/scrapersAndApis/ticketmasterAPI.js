@@ -28,8 +28,8 @@ const ticketmasterAPI = async (keyword) => {
 
     const insertQuery = `
       INSERT INTO eventastic."Event" (
-        venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink, title
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink, title, description, image
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
       ON CONFLICT (eventlink) DO NOTHING;
     `;
 
@@ -45,10 +45,12 @@ const ticketmasterAPI = async (keyword) => {
       const price = event.priceRanges?.[0]?.min ?? 0;
       const eventLink = event.url || 'No Link';
       const title = event.name || 'Untitled Event';
+      const description = event.info || event.description || 'No event description found :/';
+      const image = event.images?.[0]?.url || null;
 
       try {
         await pool.query(insertQuery, [
-          venue, eventLocation, seller, date, time, artist, eventType, genre, price, eventLink, title
+          venue, eventLocation, seller, date, time, artist, eventType, genre, price, eventLink, title, description, image
         ]);
       } catch (dbError) {
         console.error(`Failed to insert event "${title}":`, dbError.message);
