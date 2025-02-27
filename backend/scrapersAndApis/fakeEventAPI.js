@@ -11,7 +11,7 @@ const generateFakeEvent = (keyword) => ({
     genre: faker.lorem.words(1),
     price: faker.commerce.price(10, 100, 2, '€'),
     eventLink: faker.internet.url(),
-    image: faker.image.imageUrl(),
+    image: faker.image.url(),
     title: `${keyword} ${faker.lorem.words(3)} ` ,
     seller: 'FakeEvents',
     description: faker.lorem.paragraph({min: 3, max: 8}),

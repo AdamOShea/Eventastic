@@ -3,10 +3,15 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { format } from 'date-fns';
 
 export default function InfoContainer({ event }) {
-  const imageSource =
-    event.seller?.toLowerCase() === 'ticketmaster'
-      ? require('../assets/ticketmaster.png')
-      : require('../assets/eventastic.png');
+  let imageSource;
+
+  if (event.image?.startsWith('http')) {
+    // If the image is a URL, use { uri: event.image }
+    imageSource = { uri: event.image };
+  } else {
+    // Default image if none is provided
+    imageSource = require('../assets/eventastic.png');
+  }
 
   return (
     <View style={styles.container}>
