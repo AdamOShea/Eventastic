@@ -25,7 +25,7 @@ function App() {
       <PaperProvider>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen component={LoginRegisterPage} name='LoginRegisterPage'/> 
+            
             <Stack.Screen component={SearchPage} name="SearchPage" />
             <Stack.Screen component={EventDetailsPage} name="EventDetails" />
             <Stack.Screen component={AccommodationPage} name="Accommodation" />
@@ -36,5 +36,5 @@ function App() {
     </MenuProvider>
   );
 }
-//  
+//  <Stack.Screen component={LoginRegisterPage} name='LoginRegisterPage'/> 
 export default registerRootComponent(App);

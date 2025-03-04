@@ -1,11 +1,11 @@
 require('dotenv').config();
-const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+const axios = require('axios');
 
-
-const getGoogleMapsEmbedUrl = (req, res) => {
-    const { location } = req.query; // Get the location from the request
+const getGeocoding = async (req, res) => {
+    const { location } = req.query;
     const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
-    console.log('📍 Incoming location request:', location);
+
+    console.log('📍 Geocoding request for location:', location);
     console.log('🔑 Google Maps API Key Loaded:', !!googleMapsApiKey);
 
     if (!location) {
@@ -13,14 +13,26 @@ const getGoogleMapsEmbedUrl = (req, res) => {
     }
 
     if (!googleMapsApiKey) {
-        console.error('❌ Google Maps API Key is missing!');
         return res.status(500).json({ error: 'Google Maps API Key not configured' });
     }
 
-    // Load API key from .env
-    const embedUrl = `https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=${encodeURIComponent(location)}`;
+    try {
+        const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
+            params: { address: location, key: googleMapsApiKey }
+        });
 
-    res.json({ embedUrl });
+        if (response.data.status !== 'OK' || !response.data.results.length) {
+            return res.status(404).json({ error: 'Location not found' });
+        }
+
+        const { lat, lng } = response.data.results[0].geometry.location;
+        console.log('✅ Geocoding result:', { lat, lng });
+
+        res.json({ latitude: lat, longitude: lng });
+    } catch (error) {
+        console.error('❌ Error fetching geolocation:', error.response?.data || error.message);
+        res.status(500).json({ error: 'Failed to fetch geolocation' });
+    }
 };
 
-module.exports = { getGoogleMapsEmbedUrl };
+module.exports = { getGeocoding };

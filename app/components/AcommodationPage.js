@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { WebView } from 'react-native-webview';
-import { getGoogleMapsEmbed } from '../methods/getGoogleMapsEmbed'; // Import the secure method
+import MapView, { Marker } from 'react-native-maps';
+import { getGeolocation } from '../methods/getGeolocation'; // ✅ Import new method
 
 export default function AccommodationPage({ route }) {
   const { event } = route.params;
@@ -14,20 +14,25 @@ export default function AccommodationPage({ route }) {
 
   const [showCheckInPicker, setShowCheckInPicker] = useState(false);
   const [showCheckOutPicker, setShowCheckOutPicker] = useState(false);
-  const [googleMapsUrl, setGoogleMapsUrl] = useState(null);
+  const [region, setRegion] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🗺 Fetch Google Maps Embed URL securely from backend
+  // 🗺 Fetch geolocation from backend
   useEffect(() => {
-    const fetchMapsUrl = async () => {
-      const embedUrl = await getGoogleMapsEmbed(event.eventlocation);
-      if (embedUrl) {
-        setGoogleMapsUrl(embedUrl);
+    const fetchCoordinates = async () => {
+      const geoData = await getGeolocation(event.eventlocation);
+      if (geoData) {
+        setRegion({
+          latitude: geoData.latitude,
+          longitude: geoData.longitude,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+        });
       }
       setLoading(false);
     };
 
-    fetchMapsUrl();
+    fetchCoordinates();
   }, [event.eventlocation]);
 
   return (
@@ -71,14 +76,16 @@ export default function AccommodationPage({ route }) {
         />
       )}
 
-      {/* 🌍 Google Maps Embed */}
+      {/* 🌍 Interactive Map */}
       <View style={styles.mapContainer}>
         {loading ? (
           <ActivityIndicator size="large" color="#6785c7" />
-        ) : googleMapsUrl ? (
-          <WebView source={{ uri: googleMapsUrl }} style={styles.map} />
+        ) : region ? (
+          <MapView style={styles.map} initialRegion={region}>
+            <Marker coordinate={region} title={event.title} description={event.eventlocation} />
+          </MapView>
         ) : (
-          <Text style={styles.errorText}>⚠️ Failed to load Google Maps.</Text>
+          <Text style={styles.errorText}>⚠️ Failed to load map.</Text>
         )}
       </View>
 
@@ -104,38 +111,8 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, alignItems: 'center' },
   title: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
   eventTitle: { fontSize: 18, marginVertical: 8, fontWeight: 'bold' },
-  dateButton: {
-    backgroundColor: '#6785c7',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    marginTop: 15,
-    width: '100%',
-    alignItems: 'center',
-  },
-  searchButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    marginTop: 30,
-    width: '100%',
-    alignItems: 'center',
-  },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  mapContainer: {
-    width: '100%',
-    height: 250,
-    marginTop: 20,
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  map: {
-    flex: 1,
-  },
-  errorText: {
-    color: 'red',
-    fontSize: 14,
-    textAlign: 'center',
-  },
+  mapContainer: { width: '100%', height: 300, marginTop: 20, borderRadius: 10 },
+  map: { flex: 1 },
+  errorText: { color: 'red', fontSize: 14, textAlign: 'center' },
 });
+
