@@ -1,118 +1,138 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import MapView, { Marker } from 'react-native-maps';
-import { getGeolocation } from '../methods/getGeolocation'; // ✅ Import new method
+import React, { useState, useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  FlatList,
+  ScrollView,
+} from 'react-native';
+import MapComponent from '../components/MapComponent';
+import SearchButton from '../components/SearchButton';
+import DatePicker from 'react-native-neat-date-picker';
+import { format } from 'date-fns';
 
 export default function AccommodationPage({ route }) {
   const { event } = route.params;
 
-  // 📅 Initialize dates: Check-in = Event Date, Check-out = +1 Day
+  // 📅 Initialize dates
   const eventDate = new Date(event.date);
+  const today = new Date();
+  const tomorrow = new Date(today.getTime() + 86400000);
+
   const [checkInDate, setCheckInDate] = useState(eventDate);
-  const [checkOutDate, setCheckOutDate] = useState(new Date(eventDate.getTime() + 86400000)); // +1 day
+  const [checkOutDate, setCheckOutDate] = useState(new Date(eventDate.getTime() + 86400000));
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [accommodations, setAccommodations] = useState([]); // List of results
 
-  const [showCheckInPicker, setShowCheckInPicker] = useState(false);
-  const [showCheckOutPicker, setShowCheckOutPicker] = useState(false);
-  const [region, setRegion] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const scrollY = useRef(new Animated.Value(0)).current; // Animation ref
 
-  // 🗺 Fetch geolocation from backend
-  useEffect(() => {
-    const fetchCoordinates = async () => {
-      const geoData = await getGeolocation(event.eventlocation);
-      if (geoData) {
-        setRegion({
-          latitude: geoData.latitude,
-          longitude: geoData.longitude,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        });
-      }
-      setLoading(false);
-    };
-
-    fetchCoordinates();
-  }, [event.eventlocation]);
+  // 🏨 Dummy Accommodation Data (Replace with API Call)
+  const fetchAccommodations = () => {
+    const dummyData = [
+      { id: '1', name: 'Luxury Hotel', price: '€200', rating: '⭐️⭐️⭐️⭐️⭐️' },
+      { id: '2', name: 'Budget Inn', price: '€80', rating: '⭐️⭐️⭐️' },
+      { id: '3', name: 'City Lodge', price: '€120', rating: '⭐️⭐️⭐️⭐️' },
+      { id: '4', name: 'Luxury Hotel', price: '€200', rating: '⭐️⭐️⭐️⭐️⭐️' },
+      { id: '5', name: 'Budget Inn', price: '€80', rating: '⭐️⭐️⭐️' },
+      { id: '6', name: 'City Lodge', price: '€120', rating: '⭐️⭐️⭐️⭐️' },
+      { id: '7', name: 'Luxury Hotel', price: '€200', rating: '⭐️⭐️⭐️⭐️⭐️' },
+      { id: '8', name: 'Budget Inn', price: '€80', rating: '⭐️⭐️⭐️' },
+      { id: '9', name: 'City Lodge', price: '€120', rating: '⭐️⭐️⭐️⭐️' },
+    ];
+    setAccommodations(dummyData);
+  };
 
   return (
-    <View style={styles.container}>
+    <Animated.ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 30 }}
+      onScroll={Animated.event(
+        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+        { useNativeDriver: false }
+      )}
+    >
       <Text style={styles.title}>Search Accommodation for:</Text>
       <Text style={styles.eventTitle}>{event.title}</Text>
       <Text>📍 Location: {event.eventlocation}, {event.venue}</Text>
-      <Text>📅 Event Date: {event.date}</Text>
+      <Text>📅 Event Date: {format(eventDate, 'dd-MMM-yyyy')}</Text>
 
-      {/* 🗓 Check-in Date Picker */}
-      <TouchableOpacity style={styles.dateButton} onPress={() => setShowCheckInPicker(true)}>
-        <Text style={styles.buttonText}>Check-in: {checkInDate.toDateString()}</Text>
+      {/* 🗓 Date Picker Button */}
+      <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.buttonText}>
+          {format(checkInDate, 'dd-MMM-yyyy')} → {format(checkOutDate, 'dd-MMM-yyyy')}
+        </Text>
       </TouchableOpacity>
-      {showCheckInPicker && (
-        <DateTimePicker
-          value={checkInDate}
-          mode="date"
-          display="default"
-          minimumDate={eventDate}
-          onChange={(event, selectedDate) => {
-            setShowCheckInPicker(false);
-            if (selectedDate) setCheckInDate(selectedDate);
-          }}
-        />
-      )}
 
-      {/* 🗓 Check-out Date Picker */}
-      <TouchableOpacity style={styles.dateButton} onPress={() => setShowCheckOutPicker(true)}>
-        <Text style={styles.buttonText}>Check-out: {checkOutDate.toDateString()}</Text>
-      </TouchableOpacity>
-      {showCheckOutPicker && (
-        <DateTimePicker
-          value={checkOutDate}
-          mode="date"
-          display="default"
-          minimumDate={new Date(checkInDate.getTime() + 86400000)}
-          onChange={(event, selectedDate) => {
-            setShowCheckOutPicker(false);
-            if (selectedDate) setCheckOutDate(selectedDate);
-          }}
-        />
-      )}
+      {/* 📅 Date Picker Component */}
+      <DatePicker
+        isVisible={showDatePicker}
+        mode="range"
+        minDate={tomorrow}
+        startDate={checkInDate}
+        endDate={checkOutDate}
+        onConfirm={(range) => {
+          setCheckInDate(new Date(range.startDate));
+          setCheckOutDate(new Date(range.endDate));
+          setShowDatePicker(false);
+        }}
+        onCancel={() => setShowDatePicker(false)}
+      />
 
-      {/* 🌍 Interactive Map */}
-      <View style={styles.mapContainer}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#6785c7" />
-        ) : region ? (
-          <MapView style={styles.map} initialRegion={region}>
-            <Marker coordinate={region} title={event.title} description={event.eventlocation} />
-          </MapView>
-        ) : (
-          <Text style={styles.errorText}>⚠️ Failed to load map.</Text>
-        )}
-      </View>
+      {/* 🌍 Map Component */}
+      <MapComponent eventLocation={event.venue + event.eventlocation} eventTitle={event.title} />
 
       {/* 🏨 Search Accommodation Button */}
-      <TouchableOpacity
-        style={styles.searchButton}
-        onPress={() => {
-          console.log('Searching for accommodation:', {
-            checkIn: checkInDate.toISOString().split('T')[0],
-            checkOut: checkOutDate.toISOString().split('T')[0],
-            location: event.eventlocation,
-          });
-          // Call accommodation API here
-        }}
-      >
-        <Text style={styles.buttonText}>Search Accommodation</Text>
-      </TouchableOpacity>
-    </View>
+      <SearchButton onPress={fetchAccommodations} />
+
+      {/* 🏨 Accommodation List (Moves Page Up as List Expands) */}
+      <FlatList
+        data={accommodations}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.accommodationCard}>
+            <Text style={styles.accommodationTitle}>{item.name}</Text>
+            <Text>{item.price}</Text>
+            <Text>{item.rating}</Text>
+          </View>
+        )}
+        scrollEnabled={false} // Prevent internal scrolling
+      />
+    </Animated.ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, alignItems: 'center' },
-  title: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
-  eventTitle: { fontSize: 18, marginVertical: 8, fontWeight: 'bold' },
-  mapContainer: { width: '100%', height: 300, marginTop: 20, borderRadius: 10 },
-  map: { flex: 1 },
-  errorText: { color: 'red', fontSize: 14, textAlign: 'center' },
-});
+  container: { flex: 1, padding: 20 },
+  title: { fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center' },
+  eventTitle: { fontSize: 18, marginVertical: 8, fontWeight: 'bold', textAlign: 'center' },
 
+  // 📅 Date Button
+  dateButton: {
+    width: '100%',
+    backgroundColor: '#6785c7',
+    paddingVertical: 12,
+    borderRadius: 10,
+    marginTop: 15,
+    alignItems: 'center',
+  },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold', textAlign: 'center' },
+
+  // 🏨 Accommodation Card
+  accommodationCard: {
+    backgroundColor: '#f8f8f8',
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+    alignItems: 'center',
+  },
+  accommodationTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});

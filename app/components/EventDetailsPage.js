@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import InfoContainer from './InfoContainer';
 import ExpandableDescription from './ExpandableDescription';
+import MapComponent from './MapComponent';
 
 export default function EventDetailsPage({ route, navigation }) {
   const { event } = route.params;
@@ -10,6 +11,8 @@ export default function EventDetailsPage({ route, navigation }) {
     <ScrollView contentContainerStyle={styles.container}>
       <InfoContainer event={event} />
       <ExpandableDescription event={event} />
+
+      <MapComponent eventLocation={event.venue + " " + event.eventlocation} eventTitle={event.title} />
 
       {/* 🚀 Action Buttons */}
       <TouchableOpacity style={styles.button}>
