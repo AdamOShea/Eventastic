@@ -4,10 +4,15 @@ import { format } from 'date-fns';
 
 
 export default function SearchResultCard({ item, navigation }) {
-  const imageSource =
-    item.seller?.toLowerCase() === 'ticketmaster'
-      ? require('../assets/ticketmaster.png')
-      : require('../assets/eventastic.png');
+  let imageSource;
+
+  if (item.image?.startsWith('http')) {
+    // If the image is a URL, use { uri: event.image }
+    imageSource = { uri: item.image };
+  } else {
+    // Default image if none is provided
+    imageSource = require('../assets/eventastic.png');
+  }
 
   return (
     <TouchableOpacity onPress={() => navigation.navigate('EventDetails', { event: item })}>

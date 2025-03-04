@@ -1,5 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Alert, FlatList, SafeAreaView } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import {
+  View,
+  Text,
+  Alert,
+  Animated,
+  FlatList,
+  TextInput,
+} from 'react-native';
 import FormContainer from './FormContainer';
 import FormInput from './FormInput';
 import FilterMenu from './FilterMenu';
@@ -16,31 +23,34 @@ export default function SearchPage({ navigation }) {
   const [apiOptions, setApiOptions] = useState([]);
   const { keyword } = searchQuery;
 
+  // 🔄 Scroll animation
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
+  const isSearchVisible = useRef(true);
+
+  // 🎥 Animated values for hiding & showing the search bar
+  const translateY = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     const fetchAPIs = async () => {
       const apis = await detectAPIs();
-      console.log('APIs fetched in SearchPage:', apis); 
-
       if (Array.isArray(apis) && apis.length) {
-        setApiOptions(apis); 
-        setSelectedAPIs(apis); 
-        setSearchQuery((prev) => ({ ...prev, apis })); // 
-      } else {
-        console.warn('No APIs received or detected.');
+        setApiOptions(apis);
+        setSelectedAPIs(apis);
+        setSearchQuery((prev) => ({ ...prev, apis }));
       }
     };
-
     fetchAPIs();
   }, []);
 
   const submitForm = async () => {
     try {
       const response = await fetchEvents({ ...searchQuery, apis: selectedAPIs });
-  
+
       if (response?.events?.length > 0) {
-        setEvents(response.events); // 
+        setEvents(response.events);
       } else {
-        setEvents([]); // 
+        setEvents([]);
         Alert.alert('No Events Found', 'Try searching for something else.');
       }
     } catch (err) {
@@ -48,48 +58,95 @@ export default function SearchPage({ navigation }) {
       Alert.alert('Error', 'Failed to fetch events.');
     }
   };
-  
 
   const handleOnChangeText = (value, fieldName) => {
     setSearchQuery({ ...searchQuery, [fieldName]: value });
   };
 
+  // 🔄 Handle Scroll Event
+  const handleScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+    {
+      useNativeDriver: false,
+      listener: (event) => {
+        const currentScrollY = event.nativeEvent.contentOffset.y;
+
+        // If user scrolls DOWN by 50px and search bar is visible, hide it
+        if (currentScrollY > lastScrollY.current + 50 && isSearchVisible.current) {
+          isSearchVisible.current = false;
+          Animated.timing(translateY, {
+            toValue: -300, // Move the search bar up
+            duration: 300,
+            useNativeDriver: false,
+          }).start();
+        }
+
+        // If user scrolls UP by 50px and search bar is hidden, show it
+        if (currentScrollY < lastScrollY.current - 50 && !isSearchVisible.current) {
+          isSearchVisible.current = true;
+          Animated.timing(translateY, {
+            toValue: 0, // Bring the search bar back down
+            duration: 300,
+            useNativeDriver: false,
+          }).start();
+        }
+
+        lastScrollY.current = currentScrollY; // Update last scroll position
+      },
+    }
+  );
+
   return (
-    <View style={{ flex: 1, paddingTop: 50 }}>
-      <SearchPageHeader heading="Find an Event" />
-      <FormContainer>
-        <FormInput
-          value={keyword}
-          onChangeText={(value) => handleOnChangeText(value, 'keyword')}
-          placeholder="Search for something here..."
-        />
-        <FormSubmitButton onPress={submitForm} title="Search" />
-      </FormContainer>
-
-      
-      <FilterMenu
-        apiOptions={apiOptions}
-        selectedAPIs={selectedAPIs}
-        onSelectionChange={(selected) => {
-          setSelectedAPIs(selected);
-          setSearchQuery((prev) => ({ ...prev, apis: selected })); // Keep searchQuery updated
+    <View style={{ flex: 1 }}>
+      {/* 🔍 Animated Search Bar */}
+      <Animated.View
+        style={{
+          transform: [{ translateY }],
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: 'white',
+          zIndex: 10,
         }}
-      />
+      >
+        <SearchPageHeader heading="Find an Event" />
 
-      <SafeAreaView style={{ flex: 1 }}>
-        <FlatList
-          data={events}
-          keyExtractor={(item) => item.eventid.toString()}
-          renderItem={({ item }) => <SearchResultCard item={item} navigation={navigation} />}
-          ListEmptyComponent={
-            <Text style={{ textAlign: 'center', marginTop: 20 }}>
-              Search for events, and they'll appear here.
-            </Text>
-          }
-          ListFooterComponent={<View style={{ height: 250 }} />}
+        <FormContainer>
+          <FormInput
+            value={keyword}
+            onChangeText={(value) => handleOnChangeText(value, 'keyword')}
+            placeholder="Search for something here..."
+            returnKeyType="search"
+            onSubmitEditing={submitForm} // Triggers search when "Done" is pressed
+          />
+          <FormSubmitButton onPress={submitForm} title="Search" />
+        </FormContainer>
+
+        <FilterMenu
+          apiOptions={apiOptions}
+          selectedAPIs={selectedAPIs}
+          onSelectionChange={(selected) => {
+            setSelectedAPIs(selected);
+            setSearchQuery((prev) => ({ ...prev, apis: selected }));
+          }}
         />
+      </Animated.View>
 
-      </SafeAreaView>
+      {/* 📜 Scrollable Events List */}
+      <Animated.FlatList
+        contentContainerStyle={{ paddingTop: 200, paddingBottom: 30 }} // Leaves space for hidden header
+        data={events}
+        keyExtractor={(item) => item.eventid.toString()}
+        renderItem={({ item }) => <SearchResultCard item={item} navigation={navigation} />}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        ListEmptyComponent={
+          <Text style={{ textAlign: 'center', marginTop: 20 }}>
+            Search for events, and they'll appear here.
+          </Text>
+        }
+      />
     </View>
   );
 }
