@@ -21,7 +21,7 @@ jobs:
         password: ${{ secrets.DROPLET_PW }}  # Use password instead of SSH key
         command_timeout: 600s
         script: |
-          cd EireLive/backend  # Adjust to your project directory
+          cd Eventastic/backend  # Adjust to your project directory
 
           # Create .env file with GitHub Secrets
           # echo "API_URL=${{ secrets.API_URL }}" > .env
