@@ -3,6 +3,7 @@ const userRouter = require('./routes/user');
 const eventsRouter = require('./routes/events');
 const mapsRouter = require('./routes/maps');
 const accommRouter = require('./routes/accommodation');
+const { pool } = require('./models/db');
 
 
 const app = express();

@@ -32,7 +32,7 @@ const accommApis = async (req, res) => {
   try {
     // Create an array of promises for calling selected API scripts
     const apiPromises = selectedAPIs.map((apiName) => {
-      const scriptPath = '../accommodation-apis/' + apis[apiName];
+      const scriptPath = apis[apiName];
 
       if (scriptPath) {
         console.log(`🚀 Calling API: ${apiName}`);
