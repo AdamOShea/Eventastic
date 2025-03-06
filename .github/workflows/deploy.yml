@@ -39,6 +39,7 @@ jobs:
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
 
           # ✅ Pull latest code
+          git reset --hard origin/dev 
           git pull origin dev
 
           # ✅ Restart the backend with new environment variables
