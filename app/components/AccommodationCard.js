@@ -1,13 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
-export default function AccommodationCard({ navigation, id, name, price, rating, details }) {
+export default function AccommodationCard({ navigation, id, name, price, rating, details, imageUrl }) {
   return (
-    <TouchableOpacity onPress={() => navigation.navigate('AccommodationDetails', { name, price, rating, details })}>
+    <TouchableOpacity onPress={() => navigation.navigate('AccommodationDetails', { name, price, rating, details, imageUrl })}>
       <View style={styles.card}>
-        <Text style={styles.title}>{name}</Text>
-        <Text>{price}</Text>
-        <Text>{rating}</Text>
+        {/* 🏨 Large Image */}
+        {/*<Image source={{ uri: imageUrl }} style={styles.image} />*/}
+        <Image source={require('../assets/eventastic.png')} style={styles.image}></Image>
+        {/* 📌 Title & Price */}
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>{name}</Text>
+          <Text style={styles.price}>{price}</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -15,18 +20,33 @@ export default function AccommodationCard({ navigation, id, name, price, rating,
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#f8f8f8',
-    padding: 15,
+    backgroundColor: '#fff',
     borderRadius: 10,
-    marginTop: 10,
+    overflow: 'hidden',
+    marginVertical: 10,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 3,
+    elevation: 3, // Make the card responsive
+    
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'contain' // Large image size
+  },
+  textContainer: {
+    padding: 10,
     alignItems: 'center',
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  price: {
+    fontSize: 16,
+    color: '#2c3e50',
   },
 });
