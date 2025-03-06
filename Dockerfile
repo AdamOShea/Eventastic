@@ -6,7 +6,7 @@ RUN apk add --no-cache python3 py3-pip
 
 # ✅ Set Python3 as default
 RUN ln -sf python3 /usr/bin/python
-
+RUN pip3 install --no-cache-dir pyairbnb
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
