@@ -23,16 +23,7 @@ jobs:
         script: |
           cd Eventastic/backend  # Adjust to your backend directory
 
-          # ✅ Ensure Python is Installed
-          sudo apt update && sudo apt install -y python3 python3-venv
-
-          # ✅ Create & Activate Virtual Environment
-          python3 -m venv venv
-          source venv/bin/activate
-
-          # ✅ Install Python Packages in Virtual Environment
-          pip install --upgrade pip
-          pip install pyairbnb
+        
 
           # ✅ Create .env file with GitHub Secrets
           echo "TICKETMASTER_API_KEY=${{ secrets.TICKETMASTER_API_KEY }}" > .env
