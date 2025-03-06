@@ -30,7 +30,7 @@ export default function EventDetailsPage({ route, navigation }) {
         style={styles.button}
         onPress={() => navigation.navigate('Flights', { event })}
       >
-        <Text style={styles.buttonText}>Search Accommodation & Flights</Text>
+        <Text style={styles.buttonText}>Search Flights</Text>
       </TouchableOpacity>
     </ScrollView>
   );

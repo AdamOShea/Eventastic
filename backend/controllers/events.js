@@ -2,7 +2,7 @@ const { pool } = require('../models/db');
 const fs = require('fs');
 const path = require('path');
 
-const apiDirectory = path.join(__dirname, '../scrapersAndApis')
+const apiDirectory = path.join(__dirname, '../events-apis')
 
 const apis = {};
 
