@@ -1,6 +1,13 @@
 # Use Node.js official image
 FROM node:18-alpine
 
+# Install dependencies
+RUN apt update && apt install -y python3 python3-pip
+
+# Upgrade pip and install required Python packages
+RUN pip3 install --upgrade pip
+RUN pip3 install pyairbnb
+
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
