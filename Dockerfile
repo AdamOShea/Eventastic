@@ -1,6 +1,11 @@
 # Use Node.js official image
 FROM node:18-alpine
 
+# ✅ Install Python & Pip in Alpine
+RUN apk add --no-cache python3 py3-pip
+
+# ✅ Set Python3 as default
+RUN ln -sf python3 /usr/bin/python
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
