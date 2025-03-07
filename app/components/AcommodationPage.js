@@ -1,12 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Animated,
   FlatList,
-  SafeAreaView, // ✅ Import SafeAreaView
+  ActivityIndicator,
 } from 'react-native';
 import MapComponent from '../components/MapComponent';
 import SearchButton from '../components/SearchButton';
@@ -14,9 +13,13 @@ import AccommodationCard from '../components/AccommodationCard';
 import DatePicker from 'react-native-neat-date-picker';
 import { format } from 'date-fns';
 import NoImageInfoContainer from './NoImageInfoContainer';
+import { fetchAccom } from '../methods/fetchAccom';
+import { getGeolocation } from '../methods/getGeolocation';
+import Constants from 'expo-constants';
 
 export default function AccommodationPage({ route, navigation }) {
   const { event } = route.params;
+  const GOOGLE_MAPS_API_KEY = Constants.expoConfig.extra.googleMapsApiKey;
 
   const eventDate = new Date(event.date);
   const today = new Date();
@@ -26,101 +29,141 @@ export default function AccommodationPage({ route, navigation }) {
   const [checkOutDate, setCheckOutDate] = useState(new Date(eventDate.getTime() + 86400000));
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [accommodations, setAccommodations] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const [displayedAccommodations, setDisplayedAccommodations] = useState([]);
+  const ITEMS_PER_LOAD = 5;
 
-  const scrollY = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (accommodations.length > 0) {
+      setDisplayedAccommodations(accommodations.slice(0, ITEMS_PER_LOAD));
+      setHasMore(accommodations.length > ITEMS_PER_LOAD);
+    }
+  }, [accommodations]);
 
-  const fetchAccommodations = () => {
-    const dummyData = [
-      { id: '1', name: 'Luxury Hotel', price: '€200', rating: '⭐️⭐️⭐️⭐️⭐️', details: 'A luxurious 5-star hotel with a spa and rooftop bar.' },
-      { id: '2', name: 'Budget Inn', price: '€80', rating: '⭐️⭐️⭐️', details: 'A budget-friendly option with free breakfast.' },
-      { id: '3', name: 'City Lodge', price: '€120', rating: '⭐️⭐️⭐️⭐️', details: 'A well-located lodge near city attractions.' },
-    ];
-    setAccommodations(dummyData);
+  const fetchAccommodations = async () => {
+    setLoading(true);
+    setAccommodations([]);
+
+    let geoData = await getGeolocation(`${event.venue}, ${event.eventlocation}`);
+
+    if (!geoData) {
+      console.warn(`❌ Geolocation failed for "${event.venue}, ${event.eventlocation}". Trying "${event.eventlocation}"...`);
+      geoData = await getGeolocation(event.eventlocation);
+    }
+
+    if (!geoData) {
+      console.error("❌ Geolocation failed. Cannot proceed with accommodation search.");
+      setLoading(false);
+      return;
+    }
+
+    const values = {
+      latitude: geoData.latitude,
+      longitude: geoData.longitude,
+      checkIn: format(checkInDate, 'yyyy-MM-dd'),
+      checkOut: format(checkOutDate, 'yyyy-MM-dd'),
+      apis: ["airbnb"],
+    };
+
+    console.log("🚀 Fetching accommodations with values:", values);
+
+    const apiResults = await fetchAccom(values);
+
+    if (apiResults?.results) {
+      const fetchedAccommodations = apiResults.results
+        .flatMap(api => api.data || [])
+        .map((accom, index) => ({
+          id: accom.room_id ? accom.room_id.toString() : `accom_${index}`,
+          name: accom.title,
+          price: `${accom.price.total.currency_symbol}${accom.price.total.amount}`,
+          rating: `⭐ ${accom.rating.value} (${accom.rating.reviewCount} reviews)`,
+          details: accom.category,
+          imageUrl: accom.images?.[0]?.url || require('../assets/eventastic.png'),
+        }));
+
+      setAccommodations(fetchedAccommodations);
+      setDisplayedAccommodations(fetchedAccommodations.slice(0, ITEMS_PER_LOAD));
+      setHasMore(fetchedAccommodations.length > ITEMS_PER_LOAD);
+    } else {
+      console.log("❌ API returned no results:", apiResults);
+    }
+
+    setLoading(false);
+  };
+
+  const loadMoreAccommodations = () => {
+    if (!hasMore) return;
+
+    const newIndex = displayedAccommodations.length;
+    const nextAccommodations = accommodations.slice(newIndex, newIndex + ITEMS_PER_LOAD);
+
+    setDisplayedAccommodations([...displayedAccommodations, ...nextAccommodations]);
+    setHasMore(newIndex + ITEMS_PER_LOAD < accommodations.length);
   };
 
   return (
-    
-      <Animated.ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}
-      >
-        {/* Event Information Section */}
-        <NoImageInfoContainer event={event}></NoImageInfoContainer>
+    <FlatList
+      data={displayedAccommodations}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => <AccommodationCard navigation={navigation} {...item} />}
+      onEndReached={loadMoreAccommodations}
+      onEndReachedThreshold={0.5}
+      ListHeaderComponent={
+        <>
+          {/* Event Information */}
+          <NoImageInfoContainer event={event} />
 
-        {/* Date Picker Button */}
-        <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
-          <Text style={styles.buttonText}>
-            {format(checkInDate, 'dd-MMM-yyyy')} → {format(checkOutDate, 'dd-MMM-yyyy')}
-          </Text>
-        </TouchableOpacity>
+          {/* Date Picker */}
+          <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
+            <Text style={styles.buttonText}>
+              {format(checkInDate, 'dd-MMM-yyyy')} → {format(checkOutDate, 'dd-MMM-yyyy')}
+            </Text>
+          </TouchableOpacity>
 
-        {/* Date Picker Modal */}
-        <DatePicker
-          isVisible={showDatePicker}
-          mode="range"
-          minDate={tomorrow}
-          startDate={checkInDate}
-          endDate={checkOutDate}
-          onConfirm={(range) => {
-            setCheckInDate(new Date(range.startDate));
-            setCheckOutDate(new Date(range.endDate));
-            setShowDatePicker(false);
-          }}
-          onCancel={() => setShowDatePicker(false)}
-        />
+          <DatePicker
+            isVisible={showDatePicker}
+            mode="range"
+            minDate={tomorrow}
+            startDate={checkInDate}
+            endDate={checkOutDate}
+            onConfirm={(range) => {
+              setCheckInDate(new Date(range.startDate));
+              setCheckOutDate(new Date(range.endDate));
+              setShowDatePicker(false);
+            }}
+            onCancel={() => setShowDatePicker(false)}
+          />
 
-        {/* Interactive Map */}
-        <MapComponent eventLocation={event.venue + event.eventlocation} eventTitle={event.title} />
+          {/* Interactive Map */}
+          <MapComponent eventVenue={event.venue} eventLocation={event.eventlocation} eventTitle={event.title} />
 
-        {/* Search Button */}
-        <SearchButton onPress={fetchAccommodations} />
+          {/* Search Button */}
+          <SearchButton onPress={fetchAccommodations} />
 
-        {/* Accommodation List */}
-        <FlatList
-          data={accommodations}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <AccommodationCard navigation={navigation} {...item} />
-          )}
-          scrollEnabled={false}
-        />
-      </Animated.ScrollView>
+          {/* Loading Indicator */}
+          {loading && <Text style={styles.loadingText}>Loading accommodations...</Text>}
+        </>
+      }
+      ListFooterComponent={hasMore ? <ActivityIndicator size="large" color="#6785c7" /> : null}
+      windowSize={5}
+      initialNumToRender={5}
+      maxToRenderPerBatch={5}
+      removeClippedSubviews={true}
+      getItemLayout={(data, index) => ({
+        length: 200,
+        offset: 200 * index,
+        index,
+      })}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-   // ✅ Background color to avoid transparency issues
   container: {
     flex: 1,
     paddingTop: 50,
     paddingHorizontal: 15,
-  },
-  contentContainer: {
-    paddingBottom: 30,
-  },
-  infoContainer: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 15,
-    marginTop: 10, // ✅ Adds space below status bar
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#2c3e50',
-  },
-  subText: {
-    fontSize: 16,
-    color: '#34495e',
-    marginTop: 5,
   },
   dateButton: {
     width: '100%',
@@ -135,5 +178,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  loadingText: {
+    textAlign: 'center',
+    marginTop: 10,
+    fontSize: 16,
+    color: '#666',
   },
 });

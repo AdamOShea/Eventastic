@@ -6,8 +6,7 @@ export default function AccommodationCard({ navigation, id, name, price, rating,
     <TouchableOpacity onPress={() => navigation.navigate('AccommodationDetails', { name, price, rating, details, imageUrl })}>
       <View style={styles.card}>
         {/* 🏨 Large Image */}
-        {/*<Image source={{ uri: imageUrl }} style={styles.image} />*/}
-        <Image source={require('../assets/eventastic.png')} style={styles.image}></Image>
+        <Image source={typeof imageUrl === 'string' ? { uri: imageUrl } : imageUrl} style={styles.image} />
         {/* 📌 Title & Price */}
         <View style={styles.textContainer}>
           <Text style={styles.title}>{name}</Text>
