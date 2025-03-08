@@ -80,7 +80,10 @@ export default function AccommodationPage({ route, navigation }) {
           rating: `⭐ ${accom.rating.value} (${accom.rating.reviewCount} reviews)`,
           details: accom.category,
           imageUrl: accom.images?.[0]?.url || require('../assets/eventastic.png'),
+          images: accom.images?.map(img => img.url) || [require('../assets/eventastic.png')], // ✅ Include all images
+          roomUrl: `https://www.airbnb.ie/rooms/${accom.room_id}`, // ✅ Airbnb room URL
         }));
+
 
       setAccommodations(fetchedAccommodations);
       setDisplayedAccommodations(fetchedAccommodations.slice(0, ITEMS_PER_LOAD));

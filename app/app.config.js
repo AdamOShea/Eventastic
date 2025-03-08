@@ -20,7 +20,9 @@ export default {
       }
     },
     android: {
+      permissions: ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
       package: "com.giraffehat.app",
+      usesCleartextTraffic: true,
       adaptiveIcon: {
         foregroundImage: "./assets/eventastic.png",
         backgroundColor: "#899dca"
