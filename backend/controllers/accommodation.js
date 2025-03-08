@@ -1,12 +1,13 @@
-const { callPythonApi } = require('../methods/callPythonApi'); // Import the function to run Python scripts
+const { callPythonApi } = require('../methods/callPythonApi'); // Function to run Python scripts
 const fs = require('fs');
 const path = require('path');
+const { mapAirbnb, mapBooking, mapExpedia } = require('../mappers/accommodationMappers'); // ✅ Import API mappers
 
 const apiDirectory = path.join(__dirname, '../accommodation-apis');
 
 const apis = {};
 
-// Import all Python API scripts from the accommodation-apis folder
+// ✅ Load all Python API scripts from the accommodation-apis folder
 fs.readdirSync(apiDirectory).forEach((file) => {
   if (file.endsWith('.py')) {
     const apiName = path.basename(file, '.py');
@@ -30,40 +31,57 @@ const accommApis = async (req, res) => {
   }
 
   try {
-    // Create an array of promises for calling selected API scripts
+    // ✅ Create an array of promises for calling selected API scripts
     const apiPromises = selectedAPIs.map((apiName) => {
       const scriptPath = apis[apiName];
 
       if (scriptPath) {
         console.log(`🚀 Calling API: ${apiName}`);
-        return callPythonApi(scriptPath, [latitude, longitude, checkIn, checkOut]); // Run Python script with arguments
+        return callPythonApi(scriptPath, [latitude, longitude, checkIn, checkOut])
+          .then((data) => ({ api: apiName, data })) // Return successful result
+          .catch((error) => ({ api: apiName, error: error.message })); // Handle failure
       } else {
         console.log(`❌ API "${apiName}" not found.`);
-        return Promise.resolve({ error: `API "${apiName}" does not exist.` });
+        return Promise.resolve({ api: apiName, error: `API "${apiName}" does not exist.` });
       }
     });
 
-    // Wait for all API calls to complete
-    const results = await Promise.allSettled(apiPromises);
+    // ✅ Wait for all API calls to complete
+    const results = await Promise.all(apiPromises);
 
-    // Process results
-    results.forEach((result, index) => {
-      if (result.status === 'fulfilled') {
-        console.log(`✅ ${selectedAPIs[index]} succeeded:`, result.value);
-      } else {
-        console.error(`❌ ${selectedAPIs[index]} failed:`, result.reason);
+    // ✅ Apply Mappers to API responses
+    const mappedResults = results.map(({ api, data, error }) => {
+      if (error) {
+        console.error(`❌ ${api} failed:`, error);
+        return { api, status: 'rejected', error, data: null };
       }
+
+      console.log(`✅ ${api} succeeded:`, data);
+
+      // Map response using appropriate function
+      let mappedData = [];
+      switch (api) {
+        case 'airbnb':
+          mappedData = mapAirbnb(data);
+          break;
+        case 'booking':
+          mappedData = mapBooking(data);
+          break;
+        case 'expedia':
+          mappedData = mapExpedia(data);
+          break;
+        default:
+          console.warn(`⚠️ No mapper available for API: ${api}`);
+          mappedData = data;
+      }
+
+      return { api, status: 'fulfilled', data: mappedData };
     });
 
-    // Send response
+    // ✅ Send response with mapped results
     res.status(200).json({
       message: 'API calls completed.',
-      results: results.map((result, index) => ({
-        api: selectedAPIs[index],
-        status: result.status,
-        data: result.value || null,
-        error: result.reason || null,
-      })),
+      results: mappedResults,
     });
   } catch (error) {
     console.error('❌ Error during API calls:', error);
@@ -71,6 +89,7 @@ const accommApis = async (req, res) => {
   }
 };
 
+// ✅ Endpoint to detect available APIs
 const detectAPIs = async (req, res) => {
   res.json({ apis: Object.keys(apis) });
 };

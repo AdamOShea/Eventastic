@@ -46,24 +46,22 @@ export default function AccommodationPage({ route, navigation }) {
     setAccommodations([]);
 
     let geoData = await getGeolocation(`${event.venue}, ${event.eventlocation}`);
-
     if (!geoData) {
-      console.warn(`❌ Geolocation failed for "${event.venue}, ${event.eventlocation}". Trying "${event.eventlocation}"...`);
-      geoData = await getGeolocation(event.eventlocation);
+        console.warn(`❌ Geolocation failed for "${event.venue}, ${event.eventlocation}". Trying "${event.eventlocation}"...`);
+        geoData = await getGeolocation(event.eventlocation);
     }
-
     if (!geoData) {
-      console.error("❌ Geolocation failed. Cannot proceed with accommodation search.");
-      setLoading(false);
-      return;
+        console.error("❌ Geolocation failed. Cannot proceed with accommodation search.");
+        setLoading(false);
+        return;
     }
 
     const values = {
-      latitude: geoData.latitude,
-      longitude: geoData.longitude,
-      checkIn: format(checkInDate, 'yyyy-MM-dd'),
-      checkOut: format(checkOutDate, 'yyyy-MM-dd'),
-      apis: ["airbnb"],
+        latitude: geoData.latitude,
+        longitude: geoData.longitude,
+        checkIn: format(checkInDate, 'yyyy-MM-dd'),
+        checkOut: format(checkOutDate, 'yyyy-MM-dd'),
+        apis: ["airbnb", "booking", "expedia"], // ✅ Request multiple APIs
     };
 
     console.log("🚀 Fetching accommodations with values:", values);
@@ -71,29 +69,22 @@ export default function AccommodationPage({ route, navigation }) {
     const apiResults = await fetchAccom(values);
 
     if (apiResults?.results) {
-      const fetchedAccommodations = apiResults.results
-        .flatMap(api => api.data || [])
-        .map((accom, index) => ({
-          id: accom.room_id ? accom.room_id.toString() : `accom_${index}`,
-          name: accom.title,
-          price: `${accom.price.total.currency_symbol}${accom.price.total.amount}`,
-          rating: `⭐ ${accom.rating.value} (${accom.rating.reviewCount} reviews)`,
-          details: accom.category,
-          imageUrl: accom.images?.[0]?.url || require('../assets/eventastic.png'),
-          images: accom.images?.map(img => img.url) || [require('../assets/eventastic.png')], // ✅ Include all images
-          roomUrl: `https://www.airbnb.ie/rooms/${accom.room_id}`, // ✅ Airbnb room URL
-        }));
+        // ✅ Combine all API data into a single array
+        const allAccommodations = apiResults.results
+            .filter(api => api.status === 'fulfilled' && Array.isArray(api.data)) // ✅ Only keep successful API data
+            .flatMap(api => api.data); // ✅ Merge all API results into a single list
 
-
-      setAccommodations(fetchedAccommodations);
-      setDisplayedAccommodations(fetchedAccommodations.slice(0, ITEMS_PER_LOAD));
-      setHasMore(fetchedAccommodations.length > ITEMS_PER_LOAD);
+        setAccommodations(allAccommodations);
+        setDisplayedAccommodations(allAccommodations.slice(0, ITEMS_PER_LOAD));
+        setHasMore(allAccommodations.length > ITEMS_PER_LOAD);
     } else {
-      console.log("❌ API returned no results:", apiResults);
+        console.log("❌ No accommodations found.");
     }
 
     setLoading(false);
   };
+
+
 
   const loadMoreAccommodations = () => {
     if (!hasMore) return;
@@ -142,7 +133,7 @@ export default function AccommodationPage({ route, navigation }) {
           <MapComponent eventVenue={event.venue} eventLocation={event.eventlocation} eventTitle={event.title} />
 
           {/* Search Button */}
-          <SearchButton onPress={fetchAccommodations} />
+          <SearchButton title='Search Accommodation' onPress={fetchAccommodations} />
 
           {/* Loading Indicator */}
           {loading && <Text style={styles.loadingText}>Loading accommodations...</Text>}

@@ -1,10 +1,10 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-export default function SearchButton({ onPress }) {
+export default function SearchButton({ onPress, text }) {
   return (
     <TouchableOpacity style={styles.searchButton} onPress={onPress}>
-      <Text style={styles.buttonText}>Search Accommodation</Text>
+      <Text style={styles.buttonText}>{text}</Text>
     </TouchableOpacity>
   );
 }
