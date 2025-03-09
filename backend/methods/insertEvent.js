@@ -1,8 +1,12 @@
-const { ticketmasterMapper } = require('../mappers/eventsMappers');
 const { pool } = require('../models/db');
 
-const insertEvents = async (events) => {
-  const mappedEvents = ticketmasterMapper(events);
+const insertEvents = async (events, mapper) => {
+  if (mapper = null) {
+    const mappedEvents = events;
+  } else {
+    const mappedEvents = mapper(events);
+  }
+  
 
   const insertQuery = `
     INSERT INTO eventastic."Event" (

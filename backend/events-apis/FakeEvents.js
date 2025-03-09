@@ -1,10 +1,9 @@
-
 const { pool } = require('../models/db');
 const { insertEvents } = require('../methods/insertEvent');
 const {generateFakeEvent} = require('../methods/generateFakeEvent');
 
 
-const fakeEventAPI = async (keyword) => {
+const FakeEvents = async (keyword) => {
     const events = Array.from({ length: 20 }, () => generateFakeEvent(keyword));
     console.log("Fetching from fakeEventAPI: " + keyword);
 
@@ -18,4 +17,4 @@ const fakeEventAPI = async (keyword) => {
     }
 };
 
-module.exports = fakeEventAPI;
+module.exports = FakeEvents;

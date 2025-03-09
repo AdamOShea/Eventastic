@@ -10,7 +10,7 @@ if (!apiKey) {
   process.exit(1); // Exit if the API key is missing
 }
 
-const ticketmasterAPI = async (keyword) => {
+const Ticketmaster = async (keyword) => {
   console.log(`ticketmasterAPI called with keyword: "${keyword}"`);
 
   const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?size=200&keyword=${encodeURIComponent(keyword)}&apikey=${apiKey}`;
@@ -47,4 +47,4 @@ const ticketmasterAPI = async (keyword) => {
   }
 };
 
-module.exports = ticketmasterAPI;
+module.exports = Ticketmaster;
