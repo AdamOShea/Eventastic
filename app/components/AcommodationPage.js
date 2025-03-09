@@ -133,7 +133,7 @@ export default function AccommodationPage({ route, navigation }) {
           <MapComponent eventVenue={event.venue} eventLocation={event.eventlocation} eventTitle={event.title} />
 
           {/* Search Button */}
-          <SearchButton title='Search Accommodation' onPress={fetchAccommodations} />
+          <SearchButton text='Search Accommodation' onPress={fetchAccommodations} />
 
           {/* Loading Indicator */}
           {loading && <Text style={styles.loadingText}>Loading accommodations...</Text>}
