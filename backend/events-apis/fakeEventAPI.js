@@ -1,4 +1,4 @@
-const { faker } = require('@faker-js/faker');
+
 const { pool } = require('../models/db');
 const { insertEvents } = require('../methods/insertEvent');
 const {generateFakeEvent} = require('../methods/generateFakeEvent');

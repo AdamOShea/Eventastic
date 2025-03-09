@@ -1,3 +1,5 @@
+const { faker } = require('@faker-js/faker');
+
 const generateFakeEvent = (keyword) => ({
     venue: faker.location.secondaryAddress(),
     eventLocation: `${faker.location.city()}, ${faker.location.country()}`,
