@@ -8,6 +8,18 @@ export default {
     icon: "./assets/eventastic.png",
     userInterfaceStyle: "light",
     newArchEnabled: true,
+    plugins: [
+      [
+        'expo-build-properties',
+        {
+          android: {
+            manifestApplicationAttributes: {
+              "android:usesCleartextTraffic": "true"  
+            }
+          }
+        }
+      ]
+    ],
     splash: {
       image: "./assets/eventastic.png",
       resizeMode: "cover",
