@@ -34,7 +34,8 @@ export default function AccommodationDetailsPage({ route }) {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
+    paddingTop: 50,
     padding: 20,
     backgroundColor: '#fff',
     alignItems: 'center',
@@ -46,11 +47,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   imageScroll: {
+    height: 220,
+    paddingTop:50,
     marginBottom: 15,
   },
   image: {
     width: 300,
-    height: 200,
+    height: 300,
     borderRadius: 10,
     marginHorizontal: 5,
   },

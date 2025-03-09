@@ -61,7 +61,7 @@ export default function AccommodationPage({ route, navigation }) {
         longitude: geoData.longitude,
         checkIn: format(checkInDate, 'yyyy-MM-dd'),
         checkOut: format(checkOutDate, 'yyyy-MM-dd'),
-        apis: ["airbnb", "booking", "expedia"], // ✅ Request multiple APIs
+        apis: ["airbnb", "booking", "expedia"], 
     };
 
     console.log("🚀 Fetching accommodations with values:", values);
@@ -69,10 +69,16 @@ export default function AccommodationPage({ route, navigation }) {
     const apiResults = await fetchAccom(values);
 
     if (apiResults?.results) {
-        // ✅ Combine all API data into a single array
+       
         const allAccommodations = apiResults.results
-            .filter(api => api.status === 'fulfilled' && Array.isArray(api.data)) // ✅ Only keep successful API data
-            .flatMap(api => api.data); // ✅ Merge all API results into a single list
+            .filter(api => api.status === 'fulfilled' && Array.isArray(api.data)) 
+            .flatMap(api => api.data); 
+
+        const uniqueAccommodations = Array.from(
+          new Map(allAccommodations.map(accom => [accom.room_id, accom])).values()
+        
+        );
+
 
         setAccommodations(allAccommodations);
         setDisplayedAccommodations(allAccommodations.slice(0, ITEMS_PER_LOAD));
@@ -98,6 +104,7 @@ export default function AccommodationPage({ route, navigation }) {
 
   return (
     <FlatList
+      contentContainerStyle={styles.container}
       data={displayedAccommodations}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => <AccommodationCard navigation={navigation} {...item} />}
@@ -108,13 +115,14 @@ export default function AccommodationPage({ route, navigation }) {
           {/* Event Information */}
           <NoImageInfoContainer event={event} />
 
-          {/* Date Picker */}
+          
           <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
             <Text style={styles.buttonText}>
               {format(checkInDate, 'dd-MMM-yyyy')} → {format(checkOutDate, 'dd-MMM-yyyy')}
             </Text>
           </TouchableOpacity>
-
+          
+          {/* Date Picker */}
           <DatePicker
             isVisible={showDatePicker}
             mode="range"
@@ -140,9 +148,9 @@ export default function AccommodationPage({ route, navigation }) {
         </>
       }
       ListFooterComponent={hasMore ? <ActivityIndicator size="large" color="#6785c7" /> : null}
-      windowSize={5}
-      initialNumToRender={5}
-      maxToRenderPerBatch={5}
+      windowSize={10}
+      initialNumToRender={10}
+      maxToRenderPerBatch={10}
       removeClippedSubviews={true}
       getItemLayout={(data, index) => ({
         length: 200,
@@ -155,7 +163,7 @@ export default function AccommodationPage({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    
     paddingTop: 50,
     paddingHorizontal: 15,
   },

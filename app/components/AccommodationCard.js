@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
-export default function AccommodationCard({ navigation, id, name, price, rating, details, imageUrl, images, roomUrl }) {
+export default function AccommodationCard({ navigation, name, price, rating, details, imageUrl, images, roomUrl }) {
   return (
     <TouchableOpacity 
       onPress={() => navigation.navigate('AccommodationDetails', { name, price, rating, details, images, roomUrl })}
@@ -14,7 +14,7 @@ export default function AccommodationCard({ navigation, id, name, price, rating,
         {/* 📌 Title, Price & Rating */}
         <View style={styles.textContainer}>
           <Text style={styles.title}>{name}</Text>
-          <Text style={styles.price}>{price}</Text>
+          <Text style={styles.price}>Total Price: {price}</Text>
           <Text style={styles.rating}>{rating}</Text>
         </View>
       </View>
