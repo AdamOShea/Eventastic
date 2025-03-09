@@ -2,6 +2,7 @@ require('dotenv').config();
 const axios = require('axios');
 const { pool } = require('../models/db');
 const {insertEvents} = require('../methods/insertEvent');
+const {ticketmasterMapper} = require('../mappers/eventsMappers');
 
 const apiKey = process.env.TICKETMASTER_API_KEY;
 
@@ -27,7 +28,7 @@ const Ticketmaster = async (keyword) => {
 
     console.log(`Found ${events.length} events. Saving to the database...`);
 
-    insertEvents(events);
+    insertEvents(events, ticketmasterMapper);
 
     console.log('All events saved successfully.');
     return { message: 'Events successfully fetched and saved to the database.' };
