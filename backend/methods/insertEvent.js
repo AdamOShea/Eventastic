@@ -1,10 +1,11 @@
 const { pool } = require('../models/db');
 
 const insertEvents = async (events, mapper) => {
-  if (mapper = null) {
-    const mappedEvents = events;
+  let mappedEvents;
+  if (mapper === undefined) {
+    mappedEvents = events;
   } else {
-    const mappedEvents = mapper(events);
+    mappedEvents = mapper(events);
   }
   
 
