@@ -14,3 +14,5 @@ const mapGoogleFlights = (result, arrivalAirport, departureAirport, dctn) => {
         best_option: flight.is_best, // Extract if it's marked as the best option
     }));
 };
+
+module.exports = {mapGoogleFlights};

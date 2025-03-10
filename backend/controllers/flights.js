@@ -61,7 +61,7 @@ const flightsApis = async (req, res) => {
       // Map response using appropriate function
       let mappedData = [];
       switch (api) {
-        case 'airbnb':
+        case 'googleFlights':
           mappedData = mapGoogleFlights(data, direction);
           break;
         default:

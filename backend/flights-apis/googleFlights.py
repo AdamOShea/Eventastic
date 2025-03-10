@@ -30,16 +30,13 @@ if len(sys.argv) < 5:
     sys.exit(1)
 
 departureDate = sys.argv[1] 
-departureAirports = search_airport(sys.argv[3])
-arrivalAirports = search_airport(sys.argv[4])
-out_results = []
-return_results = []
+departureAirports = search_airport(sys.argv[2])
+arrivalAirports = search_airport(sys.argv[3])
 
 
 for departureAirport in departureAirports:
     for arrivalAirport in arrivalAirports:
-        try:
-            
+        try:    
             result: Result = get_flights(
                 flight_data=[FlightData(date=departureDate, from_airport=departureAirport, to_airport=arrivalAirport)],
                 trip="one-way",
