@@ -29,6 +29,7 @@ const callPythonApi = (scriptPath, args = []) => {
         reject(`Python script exited with code ${code}: ${error}`);
       } else {
         try {
+          console.log(`✅ Raw Python Output from ${scriptPath}:`, output.trim()); 
           const jsonResponse = JSON.parse(output.trim());
           resolve(jsonResponse);
         } catch (parseError) {

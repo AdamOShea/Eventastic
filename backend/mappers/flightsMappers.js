@@ -1,6 +1,7 @@
 const mapGoogleFlights = (result, dctn) => {
+    console.log("🔍 Received in mapGoogleFlights:", JSON.stringify(result, null, 2));
     if (!result || !result.flights) return [];
-
+    
     return result.flights.map((flight) => ({
         direction: dctn,
         departure: flight.departure, // Use .name to get enum name

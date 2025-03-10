@@ -33,7 +33,7 @@ departureDate = sys.argv[1]
 departureAirports = search_airport(sys.argv[2])
 arrivalAirports = search_airport(sys.argv[3])
 
-
+print(f"🔍 Python received: Date={departureDate}, From={departureAirports}, To={arrivalAirports}", file=sys.stderr)
 for departureAirport in departureAirports:
     for arrivalAirport in arrivalAirports:
         try:    
@@ -45,7 +45,7 @@ for departureAirport in departureAirports:
                 fetch_mode="common",
                 max_stops=0
             )
-
+            print(f"✅ Flights Found: {len(result.flights) if hasattr(result, 'flights') else 'None'}", file=sys.stderr)
         except Exception as e:
             error_message = str(e)
             if "No flights found" in error_message:
