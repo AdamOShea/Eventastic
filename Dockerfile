@@ -10,6 +10,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # ✅ Install Python dependencies inside the virtual environment
 RUN pip install --no-cache-dir pyairbnb
+RUN pip install --no-cache-dir fast-flights
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app

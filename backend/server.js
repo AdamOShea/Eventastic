@@ -3,7 +3,7 @@ const userRouter = require('./routes/user');
 const eventsRouter = require('./routes/events');
 const mapsRouter = require('./routes/maps');
 const accommRouter = require('./routes/accommodation');
-const { pool } = require('./models/db');
+const flightsRouter = require('./routes/flights');
 
 
 const app = express();
@@ -19,6 +19,8 @@ app.use(userRouter);
 app.use(eventsRouter);
 app.use(mapsRouter);
 app.use(accommRouter);
+app.use(flightsRouter);
+
 
 
 app.listen(port, hostname, () => {
