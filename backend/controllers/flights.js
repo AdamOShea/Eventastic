@@ -48,6 +48,7 @@ const flightsApis = async (req, res) => {
 
     // Wait for all API calls to complete
     const results = await Promise.all(apiPromises);
+    console.log(results);
 
     // Apply Mappers to API responses
     const mappedResults = results.map(({ api, data, error }) => {

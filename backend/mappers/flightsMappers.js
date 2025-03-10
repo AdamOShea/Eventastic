@@ -1,10 +1,10 @@
-const mapGoogleFlights = (result, arrivalAirport, departureAirport, dctn) => {
+const mapGoogleFlights = (result, dctn) => {
     if (!result || !result.flights) return [];
 
     return result.flights.map((flight) => ({
         direction: dctn,
-        departure: arrivalAirport, // Use .name to get enum name
-        arrival: departureAirport,
+        departure: flight.departure, // Use .name to get enum name
+        arrival: flight.arrival,
         airline: flight.name, // Extract airline name
         departure_time: flight.departure, // Extract departure time
         arrival_time: flight.arrival, // Extract arrival time
