@@ -57,7 +57,7 @@ const flightsApis = async (req, res) => {
       }
 
       console.log(` ${api} succeeded:`, data);
-
+      
       // Map response using appropriate function
       let mappedData = [];
       switch (api) {
