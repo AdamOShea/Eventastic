@@ -18,11 +18,11 @@ fs.readdirSync(apiDirectory).forEach((file) => {
 console.log('Loaded Flights APIs:', Object.keys(apis));
 
 const flightsApis = async (req, res) => {
-  const { depatureDate, departureAirport, arrivalAirport, direction, apis: selectedAPIs } = req.body;
+  const { departureDate, departureAirport, arrivalAirport, direction, apis: selectedAPIs } = req.body;
 
   console.log('🔎 Received payload at /flights-apis:', req.body); // Log request body
 
-  if (!depatureDate || !departureAirport || !arrivalAirport) {
+  if (!departureDate || !departureAirport || !arrivalAirport) {
     return res.status(400).json({ error: 'Missing required parameters: depatureDate, departureAirport, arrivalAirport,' });
   }
 
@@ -37,7 +37,7 @@ const flightsApis = async (req, res) => {
 
       if (scriptPath) {
         console.log(`🚀 Calling API: ${apiName}`);
-        return callPythonApi(scriptPath, [depatureDate, departureAirport, arrivalAirport])
+        return callPythonApi(scriptPath, [departureDate, departureAirport, arrivalAirport])
           .then((data) => ({ api: apiName, data })) // Return successful result
           .catch((error) => ({ api: apiName, error: error.message })); // Handle failure
       } else {
