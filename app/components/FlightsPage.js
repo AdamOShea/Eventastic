@@ -54,6 +54,7 @@ export default function FlightsPage({ route, navigation }) {
       outboundFlights,
       departureAirport,
       arrivalAirport,
+      departureDate: format(departureDate, 'yyyy-MM-dd'),
       returnDate: format(returnDate, 'yyyy-MM-dd'), // Fix: Pass correct return date
     });
   } else {

@@ -4,15 +4,21 @@ import FlightCard from '../components/FlightCard';
 import { fetchFlightsAPI } from '../methods/fetchFlights';
 
 export default function OutboundFlights({ route, navigation }) {
-  const { outboundFlights, departureAirport, arrivalAirport, returnDate } = route.params;
-  const [returnFlights, setReturnFlights] = useState([]);
+  const { outboundFlights, departureAirport, arrivalAirport, departureDate, returnDate } = route.params;
   const [loading, setLoading] = useState(false);
+
+  // ✅ Create a local copy of `outboundFlights` to prevent modifying `route.params`
+  const sortedFlights = [...outboundFlights].sort((a, b) => {
+    const timeA = new Date(`1970-01-01 ${a.departure_time.split(" on ")[0]}`);
+    const timeB = new Date(`1970-01-01 ${b.departure_time.split(" on ")[0]}`);
+    return timeA - timeB;
+  });
 
   const fetchReturnFlights = async (selectedFlight) => {
     setLoading(true);
 
     const returnValues = {
-      departureAirport: arrivalAirport,
+      departureAirport: arrivalAirport, // Swapped for return trip
       arrivalAirport: departureAirport,
       departureDate: returnDate,
       direction: "Return",
@@ -22,61 +28,39 @@ export default function OutboundFlights({ route, navigation }) {
     console.log("🚀 Fetching return flights with values:", returnValues);
 
     const returnApiResults = await fetchFlightsAPI(returnValues);
-
     setLoading(false);
 
-    if (returnApiResults?.results?.length) {
-      setReturnFlights(returnApiResults.results);
-      navigation.navigate('ReturnFlights', { returnFlights: returnDate.toISOString() });
+    const returnFlights = [...(returnApiResults.results.find(result => result.api === "googleFlights")?.data || [])];
+
+    if (returnFlights.length > 0) {
+      navigation.navigate('ReturnFlights', {
+        returnFlights,
+        returnValues,
+        selectedOutboundFlight: { ...selectedFlight }, // ✅ Ensure new object
+      });
     } else {
       alert('No return flights found.');
     }
   };
 
-  const extractTime = (departureTime) => {
-    // Extract only the "4:45 PM" part
-    const timeString = departureTime.split(" on ")[0].trim();
-    
-    // Convert to 24-hour format
-    return convertTo24Hour(timeString);
-  };
-  
-  const convertTo24Hour = (timeString) => {
-    let [time, modifier] = timeString.split(" "); // Split "4:45 PM" -> ["4:45", "PM"]
-    let [hours, minutes] = time.split(":").map(Number); // Split "4:45" -> [4, 45]
-  
-    if (modifier === "PM" && hours !== 12) {
-      hours += 12; // Convert PM times (except 12 PM)
-    } else if (modifier === "AM" && hours === 12) {
-      hours = 0; // Convert 12 AM to 00:00
-    }
-  
-    return hours * 60 + minutes; // Return total minutes for correct sorting
-  };
-  
-
   return (
     <View style={styles.container}>
-    <Text style={styles.header}>Traveling from {departureAirport} to {arrivalAirport} </Text> 
+      <Text style={styles.header}>Traveling from {departureAirport} to {arrivalAirport}</Text>
+      <Text style={styles.header}>On {departureDate}</Text>
       <Text style={styles.header}>Select an Outbound Flight</Text>
       <FlatList
-        data={[...outboundFlights].sort((a, b) => {
-            const timeA = extractTime(a.departure_time);
-            const timeB = extractTime(b.departure_time);
-
-            return timeA - timeB; // Sort in ascending order (earliest first)
-        })}
+        data={sortedFlights} // ✅ Using a copy of the array
         keyExtractor={(item, index) => item.id || `flight_${index}`} // ✅ Ensure unique key
         renderItem={({ item }) => (
-            <FlightCard
+          <FlightCard
             {...item}
-            onPress={() => fetchReturnFlights(item)}
-            />
+            onPress={() => {
+                fetchReturnFlights(item);
+                console.log("🔵 Selected Flight:", item); // ✅ Debugging log
+            }}
+          />
         )}
-        />
-
-
-
+      />
       {loading && <Text style={styles.loadingText}>Loading return flights...</Text>}
     </View>
   );

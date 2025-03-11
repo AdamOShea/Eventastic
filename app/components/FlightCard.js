@@ -13,6 +13,7 @@ export default function FlightCard({
   duration,
   stops,
   url,
+  onPress
 }) {
 
 
@@ -21,7 +22,7 @@ export default function FlightCard({
   };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={() => Linking.openURL(url)}>
+    <TouchableOpacity style={styles.card} onPress={onPress}>
       {/* Airline & Price */}
       <View style={styles.header}>
         <Text style={styles.airline}>{airline}</Text>
