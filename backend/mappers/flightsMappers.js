@@ -1,19 +1,28 @@
 const mapGoogleFlights = (result, dctn) => {
-    console.log("🔍 Received in mapGoogleFlights:", JSON.stringify(result, null, 2));
-    if (!result || !result.flights) return [];
-    
-    return result.flights.map((flight) => ({
+    //console.log(`🔍 Mapping Google Flights Data:`, JSON.stringify(result, null, 2)); // ✅ Debug
+  
+    if (!result || !result.results || result.results.length === 0) {
+      console.warn("⚠️ No flights found in result");
+      return [];
+    }
+  
+    return result.results.flatMap((item) =>
+      item.flights.map((flight) => ({
         direction: dctn,
-        departure: flight.departure, // Use .name to get enum name
-        arrival: flight.arrival,
-        airline: flight.name, // Extract airline name
-        departure_time: flight.departure, // Extract departure time
-        arrival_time: flight.arrival, // Extract arrival time
-        duration: flight.duration, // Extract flight duration
-        stops: flight.stops, // Extract number of stops
-        price: flight.price, // Extract flight price
-        best_option: flight.is_best, // Extract if it's marked as the best option
-    }));
-};
-
-module.exports = {mapGoogleFlights};
+        departure: flight.depAirport,
+        departureCode: flight.depAirportCode,
+        arrival: flight.arrAirport,
+        arrivalCode: flight.arrAirportCode,
+        airline: flight.airline,
+        departure_time: flight.departure,
+        arrival_time: flight.arrival,
+        duration: flight.duration,
+        stops: flight.stops,
+        price: flight.price,
+        best_option: flight.best_option,
+      }))
+    );
+  };
+  
+  module.exports = { mapGoogleFlights };
+  

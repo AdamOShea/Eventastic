@@ -1,17 +1,11 @@
 const { spawn } = require('child_process');
 
-/**
- * Executes a Python file and returns JSON results.
- * @param {string} scriptPath - The path to the Python script.
- * @param {Array} args - Optional arguments to pass to the script.
- * @returns {Promise<Object>} - Parsed JSON response from Python.
- */
 const callPythonApi = (scriptPath, args = []) => {
   return new Promise((resolve, reject) => {
-    const process = spawn('python3', [scriptPath, ...args]);
+    const process = spawn('python', [scriptPath, ...args]);
 
     let output = '';
-    let error = '';
+    let errorOutput = '';
 
     // Capture stdout (Python script output)
     process.stdout.on('data', (data) => {
@@ -20,21 +14,30 @@ const callPythonApi = (scriptPath, args = []) => {
 
     // Capture stderr (Python script errors)
     process.stderr.on('data', (data) => {
-      error += data.toString();
+      errorOutput += data.toString();
+      //console.error(`🐍 Python stderr (${scriptPath}):`, data.toString()); 
     });
 
     // Handle process exit
     process.on('close', (code) => {
-      if (code !== 0) {
-        reject(`Python script exited with code ${code}: ${error}`);
-      } else {
-        try {
-          console.log(`✅ Raw Python Output from ${scriptPath}:`, output.trim()); 
-          const jsonResponse = JSON.parse(output.trim());
-          resolve(jsonResponse);
-        } catch (parseError) {
-          reject(`Error parsing JSON: ${parseError.message}\nPython Output: ${output}`);
-        }
+      //console.log(`✅ Raw Python Output from ${scriptPath}:`, output.trim()); // 🔍 Debug Output
+
+      if (errorOutput.trim()) {
+        //console.warn(`⚠️ Python stderr output (${scriptPath}):\n${errorOutput.trim()}`); 
+      }
+
+      if (!output.trim()) {
+        console.error(`❌ Python script returned empty response: ${scriptPath}`);
+        reject(new Error("No data returned from Python script"));
+        return;
+      }
+
+      try {
+        const jsonResponse = JSON.parse(output.trim());  // ✅ Ensure valid JSON
+        resolve(jsonResponse);
+      } catch (parseError) {
+        console.error(`❌ JSON Parse Error from ${scriptPath}:`, parseError);
+        reject(new Error("Failed to parse JSON output from Python"));
       }
     });
   });
