@@ -15,6 +15,7 @@ import AccommodationDetailsPage from "./components/AccommodationDetailsPage";
 import FlightsPage from "./components/FlightsPage";
 import OutboundFlights from "./components/OutboundFlights";
 import ReturnFlights from "./components/ReturnFlights";
+import ConfirmFlights from "./components/ConfirmFlights";
 
 
 enableScreens();
@@ -36,6 +37,7 @@ function App() {
             <Stack.Screen component={FlightsPage} name="Flights" />
             <Stack.Screen component={OutboundFlights} name="OutboundFlights"/>
             <Stack.Screen component={ReturnFlights} name="ReturnFlights"/>
+            <Stack.Screen component={ConfirmFlights} name="ConfirmFlights"/>
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

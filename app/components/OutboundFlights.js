@@ -4,7 +4,7 @@ import FlightCard from '../components/FlightCard';
 import { fetchFlightsAPI } from '../methods/fetchFlights';
 
 export default function OutboundFlights({ route, navigation }) {
-  const { outboundFlights, departureAirport, arrivalAirport, departureDate, returnDate } = route.params;
+  const { outboundFlights, departureAirport, arrivalAirport, departureDate, returnDate, event } = route.params;
   const [loading, setLoading] = useState(false);
 
   // ✅ Create a local copy of `outboundFlights` to prevent modifying `route.params`
@@ -22,7 +22,7 @@ export default function OutboundFlights({ route, navigation }) {
       arrivalAirport: departureAirport,
       departureDate: returnDate,
       direction: "Return",
-      apis: ["googleFlights"]
+      apis: ["googleFlights"],
     };
 
     console.log("🚀 Fetching return flights with values:", returnValues);
@@ -36,7 +36,8 @@ export default function OutboundFlights({ route, navigation }) {
       navigation.navigate('ReturnFlights', {
         returnFlights,
         returnValues,
-        selectedOutboundFlight: { ...selectedFlight }, // ✅ Ensure new object
+        selectedOutboundFlight: { ...selectedFlight }, 
+        event
       });
     } else {
       alert('No return flights found.');

@@ -56,6 +56,7 @@ export default function FlightsPage({ route, navigation }) {
       arrivalAirport,
       departureDate: format(departureDate, 'yyyy-MM-dd'),
       returnDate: format(returnDate, 'yyyy-MM-dd'), // Fix: Pass correct return date
+      event
     });
   } else {
     alert('No outbound flights found.');

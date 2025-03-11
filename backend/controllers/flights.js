@@ -91,4 +91,24 @@ const detectAPIs = async (req, res) => {
   res.json({ apis: Object.keys(apis) });
 };
 
-module.exports = { flightsApis, detectAPIs };
+const saveFlight = async (req, res) => {
+  const {airline, price, departureTime, departureAirport, duration, stops, arrivalTime, arrivalAirport, flighturl} = req.body;
+
+  try {
+    const query = `
+      INSERT INTO eventastic."Flights" (airline, price, departuretime, departureairport, duration, stops, arrivaltime, arrivalairport, flighturl)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      RETURNING flightid;
+    `;
+
+    const values = [airline, price, departureTime, departureAirport, duration, stops, arrivalTime, arrivalAirport, flighturl ];
+    const result = await pool.query(query, values);
+
+    res.status(201).send({ message: 'Flight stored successfully', flightid: result.rows[0].flightid })
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  }
+};
+
+module.exports = { flightsApis, detectAPIs, saveFlight };

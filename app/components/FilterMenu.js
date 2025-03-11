@@ -22,7 +22,7 @@ const FilterMenu = ({ apiOptions, selectedAPIs, onSelectionChange }) => {
   };
 
   return (
-    <View style={{ alignItems: 'flex-start', paddingLeft: 20, marginTop: 10 }}>
+    <View style={{ alignItems: 'flex-start', paddingLeft: 20, marginTop: 10, marginBottom: 10, }}>
       <Menu>
         <MenuTrigger customStyles={{ TriggerTouchableComponent: TouchableOpacity }}>
           <View style={{ backgroundColor: '#6785c7', paddingVertical: 12, paddingHorizontal: 20, borderRadius: 10 }}>
