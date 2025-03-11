@@ -12,7 +12,7 @@ export default function FlightCard({
   departureCode,
   duration,
   stops,
-  bookingUrl,
+  url,
 }) {
 
 
@@ -21,7 +21,7 @@ export default function FlightCard({
   };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={() => Linking.openURL(bookingUrl)}>
+    <TouchableOpacity style={styles.card} onPress={() => Linking.openURL(url)}>
       {/* Airline & Price */}
       <View style={styles.header}>
         <Text style={styles.airline}>{airline}</Text>

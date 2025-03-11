@@ -4,6 +4,7 @@ import fast_flights.core
 import sys
 from primp import Client  # Now it should resolve
 
+
 # Custom fetch function (your version)
 def custom_fetch(params: dict) -> Result:
     client = Client(impersonate="chrome_133", verify=False)
@@ -17,8 +18,24 @@ def custom_fetch(params: dict) -> Result:
 
     res = client.get("https://www.google.com/travel/flights", params=params, cookies=cookies)
     assert res.status_code == 200, f"{res.status_code} Result: {res.text_markdown}"
-
     return res  # Ensure this returns the correct response type for fast_flights
+
+from datetime import datetime
+
+def format_flight_date(date_string):
+    # Extract the date part (everything after "on ")
+    date_part = date_string.split(" on ")[-1]
+
+    # Convert to datetime object
+    dt = datetime.strptime(date_part, "%a, %b %d")  
+
+    # Set a default year (e.g., 2025) if the year is missing
+    dt = dt.replace(year=2025)
+
+    # Convert to YYYY-MM-DD format
+    return dt.strftime("%Y-%m-%d")
+
+
 
 def result_to_dict(result, dep_airport, arr_airport):
     """Convert Result object to a dictionary for JSON serialization."""
@@ -36,7 +53,8 @@ def result_to_dict(result, dep_airport, arr_airport):
                 "duration": flight.duration,
                 "stops": flight.stops,
                 "price": flight.price.encode("utf-8").decode("utf-8"),
-                "best_option": flight.is_best
+                "best_option": flight.is_best,
+                "url": "https://www.google.com/travel/flights?q=" + dep_airport.value + "-to-" + arr_airport.value + "-" + format_flight_date(flight.departure)
             }
             for flight in result.flights
         ] if hasattr(result, "flights") else []

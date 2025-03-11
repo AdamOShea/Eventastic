@@ -20,6 +20,7 @@ const mapGoogleFlights = (result, dctn) => {
         stops: flight.stops,
         price: flight.price,
         best_option: flight.best_option,
+        url: flight.url
       }))
     );
   };

@@ -83,7 +83,7 @@ export default function FlightsPage({ route, navigation }) {
         value={departureAirport}
         onChangeText={(value) => setDepartureAirport(value)}
         title="Departure Airport"
-        placeholder="Enter departure airport or location(eg. JFK/New York)"
+        placeholder="Enter airport or location (JFK/New York)"
       />
 
       {/* Arrival Airport Input (Autofilled but editable) */}
@@ -91,7 +91,7 @@ export default function FlightsPage({ route, navigation }) {
         value={arrivalAirport}
         onChangeText={(value) => setArrivalAirport(value)}
         title="Arrival Airport"
-        placeholder="Enter arrival airport or location (eg. Gatwick/London)"
+        placeholder="Enter airport or location (Gatwick/London)"
       />
 
       {/* Date Picker */}
