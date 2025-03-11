@@ -13,6 +13,8 @@ import EventDetailsPage from "./components/EventDetailsPage";
 import AccommodationPage from "./components/AcommodationPage";
 import AccommodationDetailsPage from "./components/AccommodationDetailsPage";
 import FlightsPage from "./components/FlightsPage";
+import OutboundFlights from "./components/OutboundFlights";
+import ReturnFlights from "./components/ReturnFlights";
 
 
 enableScreens();
@@ -32,6 +34,8 @@ function App() {
             <Stack.Screen component={AccommodationPage} name="Accommodation" />
             <Stack.Screen component={AccommodationDetailsPage} name="AccommodationDetails"  />
             <Stack.Screen component={FlightsPage} name="Flights" />
+            <Stack.Screen component={OutboundFlights} name="OutboundFlights"/>
+            <Stack.Screen component={ReturnFlights} name="ReturnFlights"/>
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

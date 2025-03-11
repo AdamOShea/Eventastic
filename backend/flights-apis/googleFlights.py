@@ -16,6 +16,7 @@ def custom_fetch(params: dict) -> Result:
     }
 
     res = client.get("https://www.google.com/travel/flights", params=params, cookies=cookies)
+    print(res)
     assert res.status_code == 200, f"{res.status_code} Result: {res.text_markdown}"
 
     return res  # Ensure this returns the correct response type for fast_flights
@@ -67,7 +68,7 @@ for departureAirport in departureAirports:
                 seat="economy",
                 passengers=Passengers(adults=1, children=0, infants_in_seat=0, infants_on_lap=0),
                 fetch_mode="common",
-                max_stops=0
+                max_stops=1
             )
 
             print(f"✅ Flights Found: {len(result.flights) if hasattr(result, 'flights') else 'None'}", file=sys.stderr)
