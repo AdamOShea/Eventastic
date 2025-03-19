@@ -7,7 +7,7 @@ const saveTrip = async (values) => {
       const apiResponse = await client.post('/save-trip', values);
       //console.log("Accomm API Response:", apiResponse.data);
 
-      if (apiResponse.status === 200) {
+      if (apiResponse.status === 201) {
         console.log("✅ saveTrip successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
