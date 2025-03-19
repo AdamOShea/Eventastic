@@ -117,7 +117,7 @@ const getEventId = async (req, res) => {
         WHERE eventlink ILIKE ($1);
         `;
     
-    const values = [`%${eventlink}%`];
+    const values = [`'%${eventlink}%'`];
     const result = await pool.query(query, values);
 
     res.json({

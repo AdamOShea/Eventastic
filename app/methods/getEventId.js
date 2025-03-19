@@ -1,10 +1,10 @@
 const client = require('../api/client');
 
-const getEventId = async (eventlink) => {
-    console.log("Payload sent to getEventId:", `"${eventlink}"`); 
+const getEventId = async (values) => {
+    console.log("Payload sent to getEventId:", values); 
 
     try {
-      const apiResponse = await client.post('/get-event-id', { eventlink: `"${eventlink}"` });
+      const apiResponse = await client.post('/get-event-id', values);
       //console.log("Accomm API Response:", apiResponse.data);
 
       if (apiResponse.status === 200) {
