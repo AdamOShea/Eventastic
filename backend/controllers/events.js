@@ -114,10 +114,10 @@ const getEventId = async (req, res) => {
   try {
     const query = `
         SELECT * FROM eventastic."Event"
-        WHERE eventlink ILIKE ($1);
+        WHERE eventlink ILIKE $1;
         `;
     
-    const values = [`'%${eventlink}%'`];
+    const values = [`%${eventlink}%`];
     const result = await pool.query(query, values);
 
     res.json({

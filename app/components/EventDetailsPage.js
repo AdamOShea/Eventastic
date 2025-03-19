@@ -28,7 +28,7 @@ export default function EventDetailsPage({ navigation }) {
       return;
     }
 
-    const eventResponse = await getEventId(selectedEvent.eventlink);
+    const eventResponse = await getEventId({eventlink: selectedEvent.eventlink});
     const event = eventResponse?.eventid || null; // ✅ Extracts only the event ID
 
     const accommResponse = selectedAccommodation ? await saveAccomm(selectedAccommodation) : null;
