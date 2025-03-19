@@ -122,7 +122,7 @@ const getEventId = async (req, res) => {
 
     res.json({
       success: true,
-      eventid: result.rows[0].eventid, // Ensure events is always an array
+      eventid: result.rows[0], // Ensure events is always an array
     });
   } catch (err) {
     console.error(err);
