@@ -96,7 +96,7 @@ const detectAPIs = async (req, res) => {
 };
 
 const saveAccomm = async (req, res) => {
-  const { name, imageurl, price, rating, roomurl } = req.body;
+  const { name, images, price, rating, roomurl } = req.body;
 
   try {
   const query = `
@@ -105,7 +105,7 @@ const saveAccomm = async (req, res) => {
     RETURNING accommid;
   `;
 
-  const values = [name, imageurl, price, rating, roomurl ];
+  const values = [name, images, price, rating, roomurl ];
   const result = await pool.query(query, values);
 
   res.status(201).send({ message: 'Accomm stored successfully', accommid: result.rows[0].accommid })

@@ -93,7 +93,7 @@ const detectAPIs = async (req, res) => {
 };
 
 const saveFlight = async (req, res) => {
-  const {airline, price, departureTime, departureAirport, duration, stops, arrivalTime, arrivalAirport, flighturl} = req.body;
+  const {airline, price, departure_time, departure, duration, stops, arrival_time, arrival, flighturl} = req.body;
 
   try {
     const query = `
@@ -102,7 +102,7 @@ const saveFlight = async (req, res) => {
       RETURNING flightid;
     `;
 
-    const values = [airline, price, departureTime, departureAirport, duration, stops, arrivalTime, arrivalAirport, flighturl ];
+    const values = [airline, price, departure_time, departure, duration, stops, arrival_time, arrival, flighturl ];
     const result = await pool.query(query, values);
 
     res.status(201).send({ message: 'Flight stored successfully', flightid: result.rows[0].flightid })
