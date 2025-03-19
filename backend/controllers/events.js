@@ -107,5 +107,27 @@ const eventsFromDb = async (req, res) => {
     }
 };
 
+const getEventId = async (req, res) => {
+  const {eventlink} = req.body;
+  console.log(eventlink);
 
-module.exports = { eventsFromDb, apiToDb, detectAPIs};
+  try {
+    const query = `
+        SELECT * FROM eventastic."Event"
+        WHERE eventlink = ($1);
+        `;
+    
+    const values = [`%${eventlink}%`];
+    const result = await pool.query(query, values);
+
+    res.json({
+      success: true,
+      eventid: result.rows[0].eventid, // Ensure events is always an array
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  }
+}
+
+module.exports = { eventsFromDb, apiToDb, detectAPIs, getEventId};

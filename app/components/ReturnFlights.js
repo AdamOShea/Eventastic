@@ -1,35 +1,31 @@
 import React from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import FlightCard from '../components/FlightCard';
+import { useEvent } from './EventContext'; // ✅ Import context
 
 export default function ReturnFlights({ route, navigation }) {
-  const { returnFlights, returnValues, selectedOutboundFlight, event } = route.params;
+  const { returnFlights, returnDate } = route.params;
+  const { selectedOutboundFlight, setSelectedReturnFlight } = useEvent(); // ✅ Store selected return flight
 
-  const handleFlightSelection = (selectedReturnFlight) => {
-    navigation.navigate('ConfirmFlights', {
-      selectedOutboundFlight,
-      selectedReturnFlight,
-      event
-    });
+  const handleReturnFlightSelection = (selectedReturnFlight) => {
+    setSelectedReturnFlight(selectedReturnFlight); // ✅ Save selected return flight
+    navigation.navigate('ConfirmFlights'); // ✅ Navigate to confirmation screen
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Your Selected Outbound Flight</Text>
-      <FlightCard {...selectedOutboundFlight} /> 
+      <FlightCard {...selectedOutboundFlight} />
 
       <Text style={styles.header}>Select a Return Flight</Text>
-
-      <Text style={styles.header}>
-        {returnValues.departureDate ? String(returnValues.departureDate) : "No Date Available"}
-      </Text>
+      <Text style={styles.header}>Return Date: {returnDate}</Text>
 
       {returnFlights.length > 0 ? (
         <FlatList
-          data={[...returnFlights]} 
-          keyExtractor={(item, index) => item.id || `flight_${index}`} 
+          data={[...returnFlights]} // ✅ Ensure it's a new array
+          keyExtractor={(item, index) => item.id || `flight_${index}`}
           renderItem={({ item }) => (
-            <FlightCard {...item} onPress={() => handleFlightSelection(item)} />
+            <FlightCard {...item} onPress={() => handleReturnFlightSelection(item)} />
           )}
         />
       ) : (

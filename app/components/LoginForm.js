@@ -8,8 +8,8 @@ import { StackActions } from '@react-navigation/native';
 
 const LoginForm = ({ navigation }) => {
   const [userInfo, setUserInfo] = useState({
-    email: '',
-    password: '',
+    email: 'test@gmail.com',
+    password: 'password',
   });
 
   const { email, password } = userInfo;

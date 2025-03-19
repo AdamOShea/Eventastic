@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { format } from 'date-fns';
+import { useEvent } from './EventContext'; 
 
 
-export default function SearchResultCard({ item, navigation }) {
+export default function SearchResultCard({ item, navigation, onPress }) {
   let imageSource;
 
   if (item.image?.startsWith('http')) {
@@ -14,8 +15,17 @@ export default function SearchResultCard({ item, navigation }) {
     imageSource = require('../assets/eventastic.png');
   }
 
+  const { setSelectedEvent } = useEvent();
+
+  const handlePress = (item) => {
+    setSelectedEvent(item);
+    navigation.navigate('EventDetails');
+  }
+
+
+
   return (
-    <TouchableOpacity onPress={() => navigation.navigate('EventDetails', { event: item })}>
+    <TouchableOpacity onPress={() => handlePress(item)}>
       <View style={styles.card}>
         <Image source={imageSource} style={styles.image} />
         <View style={styles.details}>

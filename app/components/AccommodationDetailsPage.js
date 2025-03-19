@@ -1,31 +1,43 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Linking } from 'react-native';
+import { useEvent } from './EventContext'; // ✅ Import context
 
-export default function AccommodationDetailsPage({ route }) {
-  const { name, price, rating, details, images, roomUrl } = route.params;
+export default function AccommodationDetailsPage({ navigation }) {
+  const { selectedAccommodation } = useEvent(); // ✅ Retrieve accommodation from context
+
+  if (!selectedAccommodation) {
+    console.warn("⚠️ No accommodation selected. Redirecting...");
+    navigation.navigate('AccommodationPage'); // ✅ Redirect if accommodation is missing
+    return null;
+  }
+
+  const handleSaveButton = () => {
+    console.log("saved accomm to trip, ", selectedAccommodation.name);
+    navigation.navigate('EventDetails');
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{name}</Text>
+      <Text style={styles.title}>{selectedAccommodation.name}</Text>
       
       {/* 🖼️ Display All Images */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageScroll}>
-        {images.map((imgUrl, index) => (
+        {selectedAccommodation.images?.map((imgUrl, index) => (
           <Image key={index} source={{ uri: imgUrl }} style={styles.image} />
         ))}
       </ScrollView>
 
       {/* ℹ️ Accommodation Details */}
-      <Text style={styles.detail}><Text style={styles.bold}>Price:</Text> {price}</Text>
-      <Text style={styles.detail}><Text style={styles.bold}>Rating:</Text> {rating}</Text>
-      <Text style={styles.detail}><Text style={styles.bold}>Details:</Text> {details || 'No additional details provided.'}</Text>
+      <Text style={styles.detail}><Text style={styles.bold}>Price:</Text> {selectedAccommodation.price}</Text>
+      <Text style={styles.detail}><Text style={styles.bold}>Rating:</Text> {selectedAccommodation.rating}</Text>
+      <Text style={styles.detail}><Text style={styles.bold}>Details:</Text> {selectedAccommodation.details || 'No additional details provided.'}</Text>
 
       {/* 🔗 Open Room URL */}
-      <TouchableOpacity onPress={() => Linking.openURL(roomUrl)} style={styles.button}>
+      <TouchableOpacity onPress={() => Linking.openURL(selectedAccommodation.roomUrl)} style={styles.button}>
         <Text style={styles.buttonText}>View on Airbnb</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity onPress={() => handleSaveButton()} style={styles.button}>
         <Text style={styles.buttonText}>Save Accommodation to Trip</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -48,7 +60,7 @@ const styles = StyleSheet.create({
   },
   imageScroll: {
     height: 220,
-    paddingTop:50,
+    paddingTop: 50,
     marginBottom: 15,
   },
   image: {

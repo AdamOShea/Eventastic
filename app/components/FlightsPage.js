@@ -6,77 +6,79 @@ import NoImageInfoContainer from './NoImageInfoContainer';
 import SearchButton from '../components/SearchButton';
 import FormInput from '../components/FormInput';
 import { fetchFlightsAPI } from '../methods/fetchFlights';
+import { useEvent, selectedAccommodation } from './EventContext'; 
 
-export default function FlightsPage({ route, navigation }) {
-  const { event, savedAccommodation } = route.params;
 
-  const eventDate = new Date(event.date);
+export default function FlightsPage({ navigation }) {
+  const { selectedEvent } = useEvent(); 
+
+  // Ensure the event exists before using its data
+  if (!selectedEvent) {
+    console.warn("No event selected. Redirecting to search page...");
+    navigation.navigate("SearchPage");
+    return null; // Prevent rendering if event is missing
+  }
+
+  const eventDate = new Date(selectedEvent.date);
   const today = new Date();
   const tomorrow = new Date(today.getTime() + 86400000);
 
   const [departureAirport, setDepartureAirport] = useState('');
-  const [arrivalAirport, setArrivalAirport] = useState(event.eventlocation); // Autofill from event
+  const [arrivalAirport, setArrivalAirport] = useState(selectedEvent.eventlocation); // Autofill from event
   const [departureDate, setDepartureDate] = useState(eventDate);
   const [returnDate, setReturnDate] = useState(new Date(eventDate.getTime() + 86400000));
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const searchOutboundFlights = async () => {
-  if (!departureAirport || !arrivalAirport) {
-    alert('Please enter both departure and arrival airports.');
-    return;
-  }
+    if (!departureAirport || !arrivalAirport) {
+      alert('Please enter both departure and arrival airports.');
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
 
-  const outboundValues = {
-    departureAirport,
-    arrivalAirport,
-    departureDate: format(departureDate, 'yyyy-MM-dd'),
-    direction: "Outbound",
-    apis: ["googleFlights"]
-  };
-
-  console.log("🚀 Fetching outbound flights with values:", outboundValues);
-
-  const outboundApiResults = await fetchFlightsAPI(outboundValues);
-  //console.log("🔍 API Raw Response:", outboundApiResults.results.find(result => result.api === "googleFlights")?.data);
-
-  setLoading(false);
-
-  // ✅ Extract flights correctly
-  let outboundFlights = outboundApiResults.results.find(result => result.api === "googleFlights")?.data || [];
-
-  
-
-  if (outboundFlights.length > 0) {
-    navigation.navigate('OutboundFlights', {
-      outboundFlights,
+    const outboundValues = {
       departureAirport,
       arrivalAirport,
       departureDate: format(departureDate, 'yyyy-MM-dd'),
-      returnDate: format(returnDate, 'yyyy-MM-dd'), // Fix: Pass correct return date
-      event
-    });
-  } else {
-    alert('No outbound flights found.');
-  }
-};
+      direction: "Outbound",
+      apis: ["googleFlights"]
+    };
 
+    console.log("🚀 Fetching outbound flights with values:", outboundValues);
+
+    const outboundApiResults = await fetchFlightsAPI(outboundValues);
+    setLoading(false);
+
+    let outboundFlights = outboundApiResults.results.find(result => result.api === "googleFlights")?.data || [];
+
+    if (outboundFlights.length > 0) {
+      navigation.navigate('OutboundFlights', {
+        outboundFlights,
+        departureAirport,
+        arrivalAirport,
+        departureDate: format(departureDate, 'yyyy-MM-dd'),
+        returnDate: format(returnDate, 'yyyy-MM-dd'), // Fix: Pass correct return date
+      });
+    } else {
+      alert('No outbound flights found.');
+    }
+  };
 
   return (
     <View style={styles.container}>
       {/* Event Information */}
-      <NoImageInfoContainer event={event} />
+      <NoImageInfoContainer event={selectedEvent} />
 
       {/* ✅ Saved Accommodation Information */}
-      {savedAccommodation && (
+      {selectedAccommodation && (
         <View style={styles.accommodationContainer}>
           <Text style={styles.accomTitle}>📍 Your Saved Accommodation</Text>
-          <Text style={styles.accomText}><Text style={styles.bold}>Name:</Text> {savedAccommodation.name}</Text>
-          <Text style={styles.accomText}><Text style={styles.bold}>Location:</Text> {savedAccommodation.location}</Text>
-          <Text style={styles.accomText}><Text style={styles.bold}>Check-In:</Text> {format(new Date(savedAccommodation.checkIn), 'dd-MMM-yyyy')}</Text>
-          <Text style={styles.accomText}><Text style={styles.bold}>Check-Out:</Text> {format(new Date(savedAccommodation.checkOut), 'dd-MMM-yyyy')}</Text>
+          <Text style={styles.accomText}><Text style={styles.bold}>Name:</Text> {selectedAccommodation.name}</Text>
+          <Text style={styles.accomText}><Text style={styles.bold}>Location:</Text> {selectedAccommodation.location}</Text>
+          <Text style={styles.accomText}><Text style={styles.bold}>Check-In:</Text> {format(new Date(selectedAccommodation.checkIn), 'dd-MMM-yyyy')}</Text>
+          <Text style={styles.accomText}><Text style={styles.bold}>Check-Out:</Text> {format(new Date(selectedAccommodation.checkOut), 'dd-MMM-yyyy')}</Text>
         </View>
       )}
 

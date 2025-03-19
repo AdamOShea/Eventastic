@@ -2,13 +2,18 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import FlightCard from '../components/FlightCard';
 import SearchButton from '../components/SearchButton';
+import { useEvent } from './EventContext';
 
-export default function ConfirmFlights({ route, navigation }) {
-  const { selectedOutboundFlight, selectedReturnFlight, event } = route.params;
+export default function ConfirmFlights({ navigation }) {
+  const {
+    selectedOutboundFlight,
+    selectedReturnFlight,
+    
+  } = useEvent();
 
   const handleSaveFlights = () => {
     console.log("Flights saved:", selectedOutboundFlight, selectedReturnFlight);
-    navigation.navigate('EventDetails', {event}); // ✅ Navigate back to Event Details
+    navigation.navigate('EventDetails'); // ✅ Navigate back to Event Details
   };
 
 

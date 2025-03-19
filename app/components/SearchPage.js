@@ -16,7 +16,9 @@ import SearchResultCard from './SearchResultCard';
 import SearchPageHeader from './SearchPageHeader';
 import { detectAPIs } from '../methods/detectAPIs';
 
+
 export default function SearchPage({ navigation }) {
+  
   const [searchQuery, setSearchQuery] = useState({ keyword: '', apis: [] });
   const [events, setEvents] = useState([]);
   const [selectedAPIs, setSelectedAPIs] = useState([]);
@@ -135,10 +137,10 @@ export default function SearchPage({ navigation }) {
 
       {/* 📜 Scrollable Events List */}
       <Animated.FlatList
-        contentContainerStyle={{ paddingTop: 200, paddingBottom: 30 }} // Leaves space for hidden header
+        contentContainerStyle={{ paddingTop: 300, paddingBottom: 30 }} // Leaves space for hidden header
         data={events}
         keyExtractor={(item) => item.eventid.toString()}
-        renderItem={({ item }) => <SearchResultCard item={item} navigation={navigation} />}
+        renderItem={({ item }) => <SearchResultCard item={item} navigation={navigation}/>}
         onScroll={handleScroll}
         scrollEventThrottle={16}
         ListEmptyComponent={

@@ -4,7 +4,7 @@ const eventsRouter = require('./routes/events');
 const mapsRouter = require('./routes/maps');
 const accommRouter = require('./routes/accommodation');
 const flightsRouter = require('./routes/flights');
-
+const tripsRouter = require('./routes/trips');
 
 const app = express();
 const port = 3000;
@@ -20,6 +20,7 @@ app.use(eventsRouter);
 app.use(mapsRouter);
 app.use(accommRouter);
 app.use(flightsRouter);
+app.use(tripsRouter);
 
 
 

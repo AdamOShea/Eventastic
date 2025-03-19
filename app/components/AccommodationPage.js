@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,21 +7,26 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import MapComponent from '../components/MapComponent';
-import SearchButton from '../components/SearchButton';
-import AccommodationCard from '../components/AccommodationCard';
+import MapComponent from './MapComponent';
+import SearchButton from './SearchButton';
+import AccommodationCard from './AccommodationCard';
 import DatePicker from 'react-native-neat-date-picker';
 import { format } from 'date-fns';
 import NoImageInfoContainer from './NoImageInfoContainer';
 import { fetchAccom } from '../methods/fetchAccom';
 import { getGeolocation } from '../methods/getGeolocation';
-import Constants from 'expo-constants';
+import { useEvent } from './EventContext'; 
 
-export default function AccommodationPage({ route, navigation }) {
-  const { event } = route.params;
-  const GOOGLE_MAPS_API_KEY = Constants.expoConfig.extra.googleMapsApiKey;
+export default function AccommodationPage({ navigation }) {
+  const { selectedEvent } = useEvent(); 
 
-  const eventDate = new Date(event.date);
+  if (!selectedEvent) {
+    console.warn("No event selected. Redirecting to search page...");
+    navigation.navigate("SearchPage");
+    return null; // Prevents rendering if event is missing
+  }
+
+  const eventDate = new Date(selectedEvent.date);
   const today = new Date();
   const tomorrow = new Date(today.getTime() + 86400000);
 
@@ -45,23 +50,23 @@ export default function AccommodationPage({ route, navigation }) {
     setLoading(true);
     setAccommodations([]);
 
-    let geoData = await getGeolocation(`${event.venue}, ${event.eventlocation}`);
+    let geoData = await getGeolocation(`${selectedEvent.venue}, ${selectedEvent.eventlocation}`);
     if (!geoData) {
-        console.warn(`❌ Geolocation failed for "${event.venue}, ${event.eventlocation}". Trying "${event.eventlocation}"...`);
-        geoData = await getGeolocation(event.eventlocation);
+      console.warn(`❌ Geolocation failed for "${selectedEvent.venue}, ${selectedEvent.eventlocation}". Trying "${selectedEvent.eventlocation}"...`);
+      geoData = await getGeolocation(selectedEvent.eventlocation);
     }
     if (!geoData) {
-        console.error("❌ Geolocation failed. Cannot proceed with accommodation search.");
-        setLoading(false);
-        return;
+      console.error("❌ Geolocation failed. Cannot proceed with accommodation search.");
+      setLoading(false);
+      return;
     }
 
     const values = {
-        latitude: geoData.latitude,
-        longitude: geoData.longitude,
-        checkIn: format(checkInDate, 'yyyy-MM-dd'),
-        checkOut: format(checkOutDate, 'yyyy-MM-dd'),
-        apis: ["airbnb", "booking", "expedia"], 
+      latitude: geoData.latitude,
+      longitude: geoData.longitude,
+      checkIn: format(checkInDate, 'yyyy-MM-dd'),
+      checkOut: format(checkOutDate, 'yyyy-MM-dd'),
+      apis: ["airbnb"],
     };
 
     console.log("🚀 Fetching accommodations with values:", values);
@@ -69,28 +74,19 @@ export default function AccommodationPage({ route, navigation }) {
     const apiResults = await fetchAccom(values);
 
     if (apiResults?.results) {
-       
-        const allAccommodations = apiResults.results
-            .filter(api => api.status === 'fulfilled' && Array.isArray(api.data)) 
-            .flatMap(api => api.data); 
+      const allAccommodations = apiResults.results
+        .filter(api => api.status === 'fulfilled' && Array.isArray(api.data))
+        .flatMap(api => api.data);
 
-        const uniqueAccommodations = Array.from(
-          new Map(allAccommodations.map(accom => [accom.room_id, accom])).values()
-        
-        );
-
-
-        setAccommodations(allAccommodations);
-        setDisplayedAccommodations(allAccommodations.slice(0, ITEMS_PER_LOAD));
-        setHasMore(allAccommodations.length > ITEMS_PER_LOAD);
+      setAccommodations(allAccommodations);
+      setDisplayedAccommodations(allAccommodations.slice(0, ITEMS_PER_LOAD));
+      setHasMore(allAccommodations.length > ITEMS_PER_LOAD);
     } else {
-        console.log("❌ No accommodations found.");
+      console.log("❌ No accommodations found.");
     }
 
     setLoading(false);
   };
-
-
 
   const loadMoreAccommodations = () => {
     if (!hasMore) return;
@@ -113,15 +109,15 @@ export default function AccommodationPage({ route, navigation }) {
       ListHeaderComponent={
         <>
           {/* Event Information */}
-          <NoImageInfoContainer event={event} />
+          <NoImageInfoContainer event={selectedEvent} />
 
-          
+          {/* Date Picker Button */}
           <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
             <Text style={styles.buttonText}>
               {format(checkInDate, 'dd-MMM-yyyy')} → {format(checkOutDate, 'dd-MMM-yyyy')}
             </Text>
           </TouchableOpacity>
-          
+
           {/* Date Picker */}
           <DatePicker
             isVisible={showDatePicker}
@@ -138,7 +134,7 @@ export default function AccommodationPage({ route, navigation }) {
           />
 
           {/* Interactive Map */}
-          <MapComponent eventVenue={event.venue} eventLocation={event.eventlocation} eventTitle={event.title} />
+          <MapComponent eventVenue={selectedEvent.venue} eventLocation={selectedEvent.eventlocation} eventTitle={selectedEvent.title} />
 
           {/* Search Button */}
           <SearchButton text='Search Accommodation' onPress={fetchAccommodations} />
@@ -163,7 +159,6 @@ export default function AccommodationPage({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    
     paddingTop: 50,
     paddingHorizontal: 15,
   },
