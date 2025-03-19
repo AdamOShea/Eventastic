@@ -2,6 +2,7 @@ const { callPythonApi } = require("../methods/callPythonApi");
 const fs = require("fs");
 const path = require("path");
 const { mapGoogleFlights } = require("../mappers/flightsMappers");
+const { pool } = require('../models/db');
 
 const apiDirectory = path.join(__dirname, "../flights-apis");
 

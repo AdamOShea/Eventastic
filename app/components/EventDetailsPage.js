@@ -7,6 +7,9 @@ import { useEvent } from './EventContext'; // ✅ Import Context
 import AccommodationCard from './AccommodationCard'; // ✅ Import AccommodationCard
 import FlightCard from './FlightCard'; // ✅ Import FlightCard component
 import { saveTrip } from '../methods/saveTrip';
+import { getEventId } from '../methods/getEventId';
+import { saveAccomm } from '../methods/saveAccomm';
+import {saveFlights} from '../methods/saveFlights';
 
 
 export default function EventDetailsPage({ navigation }) {
@@ -24,14 +27,26 @@ export default function EventDetailsPage({ navigation }) {
       console.warn("❌ No event selected.");
       return;
     }
+
+    const eventResponse = await getEventId(selectedEvent.eventlink);
+    const event = eventResponse?.eventid || null; // ✅ Extracts only the event ID
+
+    const accommResponse = selectedAccommodation ? await saveAccomm(selectedAccommodation) : null;
+    const accomm = accommResponse?.accommid || null; // ✅ Extract accommodation ID safely
+
+    const outboundFlightResponse = selectedOutboundFlight ? await saveFlights(selectedOutboundFlight) : null;
+    const outboundflight = outboundFlightResponse?.flightid || null; // ✅ Extract outbound flight ID safely
+
+    const returnFlightResponse = selectedReturnFlight ? await saveFlights(selectedReturnFlight) : null;
+    const returnflight = returnFlightResponse?.flightid || null; // ✅ Extract return flight ID safely
   
     // Create the payload
     const tripData = {
       userid: '4100febd-1cb8-45ed-91e8-ca242ac97e6f',
-      eventid: selectedEvent,
-      accommid: selectedAccommodation || null, // Allow saving without accommodation
-      outflightid: selectedOutboundFlight || null,
-      returnflightid: selectedReturnFlight || null,
+      eventid: event,
+      accommid: accomm || null, // Allow saving without accommodation
+      outflightid: outboundflight || null,
+      returnflightid: returnflight || null,
     };
   
     console.log("🚀 Saving Trip:", tripData);

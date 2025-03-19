@@ -2,6 +2,7 @@ const { callPythonApi } = require('../methods/callPythonApi'); // Function to ru
 const fs = require('fs');
 const path = require('path');
 const { mapAirbnb, mapBooking, mapExpedia } = require('../mappers/accommodationMappers'); // ✅ Import API mappers
+const { pool } = require('../models/db');
 
 const apiDirectory = path.join(__dirname, '../accommodation-apis');
 
