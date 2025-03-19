@@ -114,7 +114,7 @@ const getEventId = async (req, res) => {
   try {
     const query = `
         SELECT * FROM eventastic."Event"
-        WHERE eventlink = ($1);
+        WHERE eventlink ILIKE ($1);
         `;
     
     const values = [`%${eventlink}%`];
@@ -122,7 +122,7 @@ const getEventId = async (req, res) => {
 
     res.json({
       success: true,
-      eventid: result.rows[0], // Ensure events is always an array
+      eventid: result.rows[0].eventid, 
     });
   } catch (err) {
     console.error(err);
