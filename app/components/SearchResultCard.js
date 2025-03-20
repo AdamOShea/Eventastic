@@ -7,9 +7,9 @@ import { useEvent } from './EventContext';
 export default function SearchResultCard({ item, navigation, onPress }) {
   let imageSource;
 
-  if (item.image?.startsWith('http')) {
+  if (item.eventImage?.startsWith('http')) {
     // If the image is a URL, use { uri: event.image }
-    imageSource = { uri: item.eventImages[0] };
+    imageSource = { uri: item.eventImages };
   } else {
     // Default image if none is provided
     imageSource = require('../assets/eventastic.png');
