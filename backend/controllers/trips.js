@@ -29,7 +29,7 @@ const fetchSavedTrips = async (req, res) => {
         WHERE userid = $1;
         `;
 
-        const values = userid;
+        const values = [`%${userid}%`];
         const result = await pool.query(query, values);
 
         res.json({
