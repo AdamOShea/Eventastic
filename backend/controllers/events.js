@@ -87,10 +87,10 @@ const eventsFromDb = async (req, res) => {
     try {
         const query = `
             SELECT * FROM eventastic."Event"
-            WHERE title ILIKE ($1)
-            or artist ILIKE ($1)
-            or eventtype ILIKE ($1)
-            or genre ILIKE ($1);
+            WHERE eventTitle ILIKE ($1)
+            or eventArtist ILIKE ($1)
+            or eventType ILIKE ($1)
+            or eventGenre ILIKE ($1);
             `;
         
         const values = [`%${keyword}%`];
@@ -108,21 +108,21 @@ const eventsFromDb = async (req, res) => {
 };
 
 const getEventId = async (req, res) => {
-  const {eventlink} = req.body;
-  console.log(eventlink);
+  const {eventLink} = req.body;
+  console.log(eventLink);
 
   try {
     const query = `
         SELECT * FROM eventastic."Event"
-        WHERE eventlink ILIKE $1;
+        WHERE eventLink ILIKE $1;
         `;
     
-    const values = [`%${eventlink}%`];
+    const values = [`%${eventLink}%`];
     const result = await pool.query(query, values);
 
     res.json({
       success: true,
-      eventid: result.rows[0].eventid, 
+      eventId: result.rows[0].eventId, 
     });
   } catch (err) {
     console.error(err);

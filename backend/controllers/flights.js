@@ -93,19 +93,19 @@ const detectAPIs = async (req, res) => {
 };
 
 const saveFlight = async (req, res) => {
-  const {airline, price, departure_time, departure, duration, stops, arrival_time, arrival, url} = req.body;
+  const {flightAirline, flightPrice, flightDepartureTime, flightDepartureAirport, flightDuration, flightStops, flightArrivalTime, flightArrivalAirport, flightUrl, flightDepartureCode, flightArrivalCode} = req.body;
 
   try {
     const query = `
-      INSERT INTO eventastic."Flights" (airline, price, departuretime, departureairport, duration, stops, arrivaltime, arrivalairport, flighturl)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      INSERT INTO eventastic."Flights" (flightAirline, flightPrice, flightDepartureTime, flightDepartureAirport, flightDuration, flightStops, flightArrivalTime, flightArrivalAirport, flightUrl, flightDepartureCode, flightArrivalCode)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING flightid;
     `;
 
-    const values = [airline, price, departure_time, departure, duration, stops, arrival_time, arrival, url ];
+    const values = [flightAirline, flightPrice, flightDepartureTime, flightDepartureAirport, flightDuration, flightStops, flightArrivalTime, flightArrivalAirport, flightUrl, flightDepartureCode, flightArrivalCode ];
     const result = await pool.query(query, values);
 
-    res.status(201).send({ message: 'Flight stored successfully', flightid: result.rows[0].flightid })
+    res.status(201).send({ message: 'Flight stored successfully', flightId: result.rows[0].flightId })
   } catch (err) {
     console.error(err);
     res.status(500).send('An error occurred');

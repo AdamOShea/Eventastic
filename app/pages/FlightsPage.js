@@ -24,7 +24,7 @@ export default function FlightsPage({ navigation }) {
   const tomorrow = new Date(today.getTime() + 86400000);
 
   const [departureAirport, setDepartureAirport] = useState('');
-  const [arrivalAirport, setArrivalAirport] = useState(selectedEvent.eventlocation); // Autofill from event
+  const [arrivalAirport, setArrivalAirport] = useState(selectedEvent.eventLocation); // Autofill from event
   const [departureDate, setDepartureDate] = useState(eventDate);
   const [returnDate, setReturnDate] = useState(new Date(eventDate.getTime() + 86400000));
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -75,8 +75,8 @@ export default function FlightsPage({ navigation }) {
       {selectedAccommodation && (
         <View style={styles.accommodationContainer}>
           <Text style={styles.accomTitle}>📍 Your Saved Accommodation</Text>
-          <Text style={styles.accomText}><Text style={styles.bold}>Name:</Text> {selectedAccommodation.name}</Text>
-          <Text style={styles.accomText}><Text style={styles.bold}>Location:</Text> {selectedAccommodation.location}</Text>
+          <Text style={styles.accomText}><Text style={styles.bold}>Name:</Text> {selectedAccommodation.accommName}</Text>
+          <Text style={styles.accomText}><Text style={styles.bold}>Location:</Text> {selectedAccommodation.accommLocation}</Text>
           <Text style={styles.accomText}><Text style={styles.bold}>Check-In:</Text> {format(new Date(selectedAccommodation.checkIn), 'dd-MMM-yyyy')}</Text>
           <Text style={styles.accomText}><Text style={styles.bold}>Check-Out:</Text> {format(new Date(selectedAccommodation.checkOut), 'dd-MMM-yyyy')}</Text>
         </View>

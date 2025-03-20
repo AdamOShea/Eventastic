@@ -7,12 +7,12 @@ export default function NoImageInfoContainer({ event }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{event.title}</Text>
+      <Text style={styles.title}>{event.eventTitle}</Text>
       <Text style={styles.detail}>
-        <Text style={styles.label}>Date:</Text> {format(new Date(event.date), 'dd-LLL-yyyy')}
+        <Text style={styles.label}>Date:</Text> {format(new Date(event.eventDate), 'dd-LLL-yyyy')}
       </Text>
       <Text style={styles.detail}>
-        <Text style={styles.label}>Location:</Text> {event.eventlocation.trim()}, {event.venue}
+        <Text style={styles.label}>Location:</Text> {event.eventLocation.trim()}, {event.eventVenue}
       </Text>
     </View>
   );

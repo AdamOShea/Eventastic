@@ -139,7 +139,7 @@ export default function SearchPage({ navigation }) {
       <Animated.FlatList
         contentContainerStyle={{ paddingTop: 300, paddingBottom: 30 }} // Leaves space for hidden header
         data={events}
-        keyExtractor={(item) => item.eventid.toString()}
+        keyExtractor={(item) => item.eventId.toString()}
         renderItem={({ item }) => <SearchResultCard item={item} navigation={navigation}/>}
         onScroll={handleScroll}
         scrollEventThrottle={16}

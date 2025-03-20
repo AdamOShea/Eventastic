@@ -7,13 +7,13 @@ export default function ExpandableDescription({ event }) {
   return (
     <View style={styles.container}>
       <Text style={styles.detail}>
-        <Text style={styles.label}>Event Type:</Text> {event.eventtype || 'N/A'}
+        <Text style={styles.label}>Event Type:</Text> {event.eventType || 'N/A'}
       </Text>
 
       {showDescription ? (
         <>
           <Text style={styles.detail}>
-            <Text style={styles.label}>Description:</Text> {event.description || 'No description available'}
+            <Text style={styles.label}>Description:</Text> {event.eventDescription || 'No description available'}
           </Text>
           <TouchableOpacity onPress={() => setShowDescription(false)} style={styles.readMoreButton}>
             <Text style={styles.readMoreText}>Read Less ▲</Text>

@@ -25,32 +25,32 @@ export default function FlightCard({
     <TouchableOpacity style={styles.card} onPress={onPress}>
       {/* Airline & Price */}
       <View style={styles.header}>
-        <Text style={styles.airline}>{airline}</Text>
-        <Text style={styles.price}>{price}</Text>
+        <Text style={styles.airline}>{flightAirline}</Text>
+        <Text style={styles.price}>{flightPrice}</Text>
       </View>
 
       {/* Flight Details */}
       <View style={styles.flightDetails}>
         {/* Departure Info */}
         <View style={styles.flightInfo}>
-          <Text style={styles.time}>{formatTime(departure_time)}</Text>
+          <Text style={styles.time}>{formatTime(flightDepartureTime)}</Text>
           <Text style={styles.airport}>
-            {departureCode}
+            {flightDepartureCode}
           </Text>
         </View>
 
         {/* Flight Duration */}
         <View style={styles.flightPath}>
-          <Text style={styles.duration}>{duration}</Text>
+          <Text style={styles.duration}>{flightDuration}</Text>
           <View style={styles.line} />
-          <Text style={styles.stops}>{stops > 0 ? `${stops} stop(s)` : 'Direct'}</Text>
+          <Text style={styles.stops}>{flightStops > 0 ? `${flightStops} stop(s)` : 'Direct'}</Text>
         </View>
 
         {/* Arrival Info */}
         <View style={styles.flightInfo}>
-          <Text style={styles.time}>{formatTime(arrival_time)}</Text>
+          <Text style={styles.time}>{formatTime(flightArrivalTime)}</Text>
           <Text style={styles.airport}>
-            {arrivalCode}
+            {flightArrivalCode}
           </Text>
         </View>
       </View>

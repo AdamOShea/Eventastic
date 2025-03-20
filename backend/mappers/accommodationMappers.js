@@ -2,14 +2,14 @@
 
 const mapAirbnb = (data) =>
     data.map((accom) => ({
-      id: accom.room_id.toString(),
-      name: accom.title,
-      price: `${accom.price.total.currency_symbol}${accom.price.total.amount}`,
-      rating: `⭐ ${accom.rating.value} (${accom.rating.reviewCount} reviews)`,
-      details: accom.category,
-      imageUrl: accom.images?.[0]?.url || null,
-      images: accom.images?.map((img) => img.url) || [],
-      roomUrl: `https://www.airbnb.ie/rooms/${accom.room_id}`,
+      accommId: accom.room_id.toString(),
+      accommName: accom.title,
+      accommPrice: `${accom.price.total.currency_symbol}${accom.price.total.amount}`,
+      accommRating: `⭐ ${accom.rating.value} (${accom.rating.reviewCount} reviews)`,
+      accommDetails: accom.category,
+      accommFirstImage: accom.images?.[0]?.url || null,
+      accommImages: accom.images?.map((img) => img.url) || [],
+      accommUrl: `https://www.airbnb.ie/rooms/${accom.room_id}`,
     }));
   
   const mapBooking = (data) =>

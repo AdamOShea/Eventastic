@@ -29,16 +29,16 @@ export default function EventDetailsPage({ navigation }) {
     }
 
     const eventResponse = await getEventId({eventlink: selectedEvent.eventlink});
-    const event = eventResponse?.eventid || null; // ✅ Extracts only the event ID
+    const event = eventResponse?.eventId || null; // ✅ Extracts only the event ID
 
     const accommResponse = selectedAccommodation ? await saveAccomm(selectedAccommodation) : null;
-    const accomm = accommResponse?.accommid || null; // ✅ Extract accommodation ID safely
+    const accomm = accommResponse?.accommId || null; // ✅ Extract accommodation ID safely
 
     const outboundFlightResponse = selectedOutboundFlight ? await saveFlights(selectedOutboundFlight) : null;
-    const outboundflight = outboundFlightResponse?.flightid || null; // ✅ Extract outbound flight ID safely
+    const outboundflight = outboundFlightResponse?.flightId || null; // ✅ Extract outbound flight ID safely
 
     const returnFlightResponse = selectedReturnFlight ? await saveFlights(selectedReturnFlight) : null;
-    const returnflight = returnFlightResponse?.flightid || null; // ✅ Extract return flight ID safely
+    const returnflight = returnFlightResponse?.flightId || null; // ✅ Extract return flight ID safely
   
     // Create the payload
     const tripData = {
@@ -71,7 +71,7 @@ export default function EventDetailsPage({ navigation }) {
         <>
           <InfoContainer event={selectedEvent} />
           <ExpandableDescription event={selectedEvent} />
-          <MapComponent eventLocation={`${selectedEvent.venue} ${selectedEvent.eventlocation}`} eventTitle={selectedEvent.title} />
+          <MapComponent eventLocation={`${selectedEvent.eventVenue} ${selectedEvent.eventLocation}`} eventTitle={selectedEvent.eventTitle} />
 
           {/* ✅ Display Saved Accommodation if Exists */}
           {selectedAccommodation && (

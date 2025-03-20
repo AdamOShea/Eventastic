@@ -12,28 +12,28 @@ export default function AccommodationDetailsPage({ navigation }) {
   }
 
   const handleSaveButton = () => {
-    console.log("saved accomm to trip, ", selectedAccommodation.name);
+    console.log("saved accomm to trip, ", selectedAccommodation.accommName);
     navigation.navigate('EventDetails');
   }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{selectedAccommodation.name}</Text>
+      <Text style={styles.title}>{selectedAccommodation.accommName}</Text>
       
       {/* 🖼️ Display All Images */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageScroll}>
-        {selectedAccommodation.images?.map((imgUrl, index) => (
+        {selectedAccommodation.acommImages?.map((imgUrl, index) => (
           <Image key={index} source={{ uri: imgUrl }} style={styles.image} />
         ))}
       </ScrollView>
 
       {/* ℹ️ Accommodation Details */}
-      <Text style={styles.detail}><Text style={styles.bold}>Price:</Text> {selectedAccommodation.price}</Text>
-      <Text style={styles.detail}><Text style={styles.bold}>Rating:</Text> {selectedAccommodation.rating}</Text>
-      <Text style={styles.detail}><Text style={styles.bold}>Details:</Text> {selectedAccommodation.details || 'No additional details provided.'}</Text>
+      <Text style={styles.detail}><Text style={styles.bold}>Price:</Text> {selectedAccommodation.accommPrice}</Text>
+      <Text style={styles.detail}><Text style={styles.bold}>Rating:</Text> {selectedAccommodation.accommRating}</Text>
+      <Text style={styles.detail}><Text style={styles.bold}>Details:</Text> {selectedAccommodation.accommDetails || 'No additional details provided.'}</Text>
 
       {/* 🔗 Open Room URL */}
-      <TouchableOpacity onPress={() => Linking.openURL(selectedAccommodation.roomUrl)} style={styles.button}>
+      <TouchableOpacity onPress={() => Linking.openURL(selectedAccommodation.accommUrl)} style={styles.button}>
         <Text style={styles.buttonText}>View on Airbnb</Text>
       </TouchableOpacity>
 

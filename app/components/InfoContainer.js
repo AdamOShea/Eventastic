@@ -7,7 +7,7 @@ export default function InfoContainer({ event }) {
 
   if (event.image?.startsWith('http')) {
     // If the image is a URL, use { uri: event.image }
-    imageSource = { uri: event.image };
+    imageSource = { uri: event.eventImages[0] };
   } else {
     // Default image if none is provided
     imageSource = require('../assets/eventastic.png');
@@ -16,12 +16,12 @@ export default function InfoContainer({ event }) {
   return (
     <View style={styles.container}>
       <Image source={imageSource} style={styles.image} />
-      <Text style={styles.title}>{event.title}</Text>
+      <Text style={styles.title}>{event.eventTitle}</Text>
       <Text style={styles.detail}>
-        <Text style={styles.label}>Date:</Text> {format(new Date(event.date), 'dd-LLL-yyyy')}
+        <Text style={styles.label}>Date:</Text> {format(new Date(event.eventDate), 'dd-LLL-yyyy')}
       </Text>
       <Text style={styles.detail}>
-        <Text style={styles.label}>Location:</Text> {event.eventlocation.trim()}, {event.venue}
+        <Text style={styles.label}>Location:</Text> {event.eventLocation.trim()}, {event.eventVenue}
       </Text>
     </View>
   );

@@ -50,10 +50,10 @@ export default function AccommodationPage({ navigation }) {
     setLoading(true);
     setAccommodations([]);
 
-    let geoData = await getGeolocation(`${selectedEvent.venue}, ${selectedEvent.eventlocation}`);
+    let geoData = await getGeolocation(`${selectedEvent.eventVenue}, ${selectedEvent.eventLocation}`);
     if (!geoData) {
-      console.warn(`❌ Geolocation failed for "${selectedEvent.venue}, ${selectedEvent.eventlocation}". Trying "${selectedEvent.eventlocation}"...`);
-      geoData = await getGeolocation(selectedEvent.eventlocation);
+      console.warn(`❌ Geolocation failed for "${selectedEvent.eventVenue}, ${selectedEvent.eventLocation}". Trying "${selectedEvent.eventLocation}"...`);
+      geoData = await getGeolocation(selectedEvent.eventLocation);
     }
     if (!geoData) {
       console.error("❌ Geolocation failed. Cannot proceed with accommodation search.");
@@ -134,7 +134,7 @@ export default function AccommodationPage({ navigation }) {
           />
 
           {/* Interactive Map */}
-          <MapComponent eventVenue={selectedEvent.venue} eventLocation={selectedEvent.eventlocation} eventTitle={selectedEvent.title} />
+          <MapComponent eventVenue={selectedEvent.venue} eventLocation={selectedEvent.eventLocation} eventTitle={selectedEvent.eventTitle} />
 
           {/* Search Button */}
           <SearchButton text='Search Accommodation' onPress={fetchAccommodations} />

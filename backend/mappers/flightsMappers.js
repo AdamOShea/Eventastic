@@ -9,18 +9,18 @@ const mapGoogleFlights = (result, dctn) => {
     return result.results.flatMap((item) =>
       item.flights.map((flight) => ({
         direction: dctn,
-        departure: flight.depAirport,
-        departureCode: flight.depAirportCode,
-        arrival: flight.arrAirport,
-        arrivalCode: flight.arrAirportCode,
-        airline: flight.airline,
-        departure_time: flight.departure,
-        arrival_time: flight.arrival,
-        duration: flight.duration,
-        stops: flight.stops,
-        price: flight.price,
-        best_option: flight.best_option,
-        url: flight.url
+        flightDepartureAirport: flight.depAirport,
+        flightDepartureCode: flight.depAirportCode,
+        flightArrivalAirport: flight.arrAirport,
+        flightArrivalCode: flight.arrAirportCode,
+        flightAirline: flight.airline,
+        flightDepartureTime: flight.departure,
+        flightArrivalTime: flight.arrival,
+        flightDuration: flight.duration,
+        flightStops: flight.stops,
+        flightPrice: flight.price,
+        flightBestOption: flight.best_option,
+        flightUrl: flight.url
       }))
     );
   };

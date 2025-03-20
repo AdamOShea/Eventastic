@@ -43,8 +43,8 @@ export default function OutboundFlights({ route, navigation }) {
       <Text style={styles.header}>Select an Outbound Flight</Text>
       <FlatList
         data={[...outboundFlights].sort((a, b) => {
-          return new Date(`1970-01-01 ${a.departure_time.split(" on ")[0]}`) - 
-                 new Date(`1970-01-01 ${b.departure_time.split(" on ")[0]}`);
+          return new Date(`1970-01-01 ${a.flightDepartureTime.split(" on ")[0]}`) - 
+                 new Date(`1970-01-01 ${b.flightDepartureTime.split(" on ")[0]}`);
         })}
         keyExtractor={(item, index) => item.id || `flight_${index}`}
         renderItem={({ item }) => (

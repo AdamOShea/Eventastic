@@ -2,11 +2,13 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 export default function TripCard({ trip, onPress }) {
+  if (!trip || !trip.title) return null; // ✅ Prevents crash
+
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      <Text style={styles.title}>{trip.event.title}</Text>
-      <Text style={styles.date}>{trip.event.date}</Text>
-      <Text style={styles.location}>{trip.event.venue}, {trip.event.eventlocation}</Text>
+      <Text style={styles.title}>{trip.eventTitle}</Text>
+      <Text style={styles.date}>{trip.eventDate}</Text>
+      <Text style={styles.location}>{trip.eventVenue}, {trip.eventLocation}</Text>
     </TouchableOpacity>
   );
 }

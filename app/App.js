@@ -19,6 +19,7 @@ import ConfirmFlights from "./pages/ConfirmFlights";
 import { PermissionsAndroid, Platform } from 'react-native';
 import { EventProvider } from "./components/EventContext";
 import BottomTabNavigator from "./components/BottomTabNavigator";
+import TripDetailsPage from "./pages/TripDetailsPage";
 
 enableScreens();
 
@@ -70,6 +71,7 @@ useEffect(() => {
                 <Stack.Screen component={OutboundFlights} name="OutboundFlights"/>
                 <Stack.Screen component={ReturnFlights} name="ReturnFlights"/>
                 <Stack.Screen component={ConfirmFlights} name="ConfirmFlights"/>
+                <Stack.Screen component={TripDetailsPage} name="TripDetails"/>
               </Stack.Navigator>
             </BottomTabNavigator>
           </NavigationContainer>

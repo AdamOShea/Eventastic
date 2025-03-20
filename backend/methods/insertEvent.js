@@ -11,7 +11,7 @@ const insertEvents = async (events, mapper) => {
 
   const insertQuery = `
     INSERT INTO eventastic."Event" (
-      venue, eventlocation, seller, date, time, artist, eventtype, genre, price, eventlink, title, description, image
+      eventVenue, eventLocation, eventSeller, eventDate, eventTime, eventArtist, eventType, eventGenre, eventPrice, eventLink, eventTitle, eventDescription, eventImages
     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
     ON CONFLICT (eventlink) DO NOTHING;
   `;
@@ -19,12 +19,12 @@ const insertEvents = async (events, mapper) => {
   for (const event of mappedEvents) {
     try {
       await pool.query(insertQuery, [
-        event.venue, event.eventLocation, event.seller, event.date, event.time, 
-        event.artist, event.eventType, event.genre, event.price, event.eventLink, 
-        event.title, event.description, event.image
+        event.eventVenue, event.eventLocation, event.eventSeller, event.eventDate, event.eventTime, 
+        event.eventArtist, event.eventType, event.eventGenre, event.eventPrice, event.eventLink, 
+        event.eventTitle, event.eventDescription, event.eventImage
       ]);
     } catch (dbError) {
-      console.error(`Failed to insert event "${event.title}":`, dbError.message);
+      console.error(`Failed to insert event "${event.eventTitle}":`, dbError.message);
     }
   }
 };

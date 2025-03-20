@@ -9,7 +9,7 @@ export default function SearchResultCard({ item, navigation, onPress }) {
 
   if (item.image?.startsWith('http')) {
     // If the image is a URL, use { uri: event.image }
-    imageSource = { uri: item.image };
+    imageSource = { uri: item.eventImages[0] };
   } else {
     // Default image if none is provided
     imageSource = require('../assets/eventastic.png');
@@ -29,9 +29,9 @@ export default function SearchResultCard({ item, navigation, onPress }) {
       <View style={styles.card}>
         <Image source={imageSource} style={styles.image} />
         <View style={styles.details}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.date}>{format(new Date(item.date), 'dd-LLL-yyyy')}</Text>
-          <Text style={styles.location}>{item.eventlocation.trim()}, {item.venue}</Text>
+          <Text style={styles.title}>{item.eventTitle}</Text>
+          <Text style={styles.date}>{format(new Date(item.eventDate), 'dd-LLL-yyyy')}</Text>
+          <Text style={styles.location}>{item.eventLocation.trim()}, {item.eventVenue}</Text>
         </View>
       </View>
     </TouchableOpacity>
