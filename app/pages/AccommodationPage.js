@@ -134,7 +134,7 @@ export default function AccommodationPage({ navigation }) {
           />
 
           {/* Interactive Map */}
-          <MapComponent eventVenue={selectedEvent.venue} eventLocation={selectedEvent.eventLocation} eventTitle={selectedEvent.eventTitle} />
+          <MapComponent eventVenue={selectedEvent.eventVenue} eventLocation={selectedEvent.eventLocation} eventTitle={selectedEvent.eventTitle} />
 
           {/* Search Button */}
           <SearchButton text='Search Accommodation' onPress={fetchAccommodations} />
