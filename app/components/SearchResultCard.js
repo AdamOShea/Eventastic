@@ -6,7 +6,7 @@ import { useEvent } from './EventContext';
 
 export default function SearchResultCard({ item, navigation, onPress }) {
   let imageSource;
-  console.log(`"${item.eventImages.trim()}"`)
+  //console.log(`"${item.eventImages.trim()}"`)
 
   if (item.eventImages && item.eventImages.startsWith('http')) {
     imageSource = { uri: `"${item.eventImages.trim()}"` }; 

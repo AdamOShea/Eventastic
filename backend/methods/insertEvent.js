@@ -8,6 +8,7 @@ const insertEvents = async (events, mapper) => {
     mappedEvents = mapper(events);
   }
   
+  
 
   const insertQuery = `
     INSERT INTO eventastic."Event" (
@@ -21,7 +22,7 @@ const insertEvents = async (events, mapper) => {
       await pool.query(insertQuery, [
         event.eventVenue, event.eventLocation, event.eventSeller, event.eventDate, event.eventTime, 
         event.eventArtist, event.eventType, event.eventGenre, event.eventPrice, event.eventLink, 
-        event.eventTitle, event.eventDescription, event.eventImage
+        event.eventTitle, event.eventDescription, event.eventImages
       ]);
     } catch (dbError) {
       console.error(`Failed to insert event "${event.eventTitle}":`, dbError.message);
