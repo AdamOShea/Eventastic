@@ -97,9 +97,9 @@ const saveFlight = async (req, res) => {
 
   try {
     const query = `
-      INSERT INTO eventastic."Flights" (flightAirline, flightPrice, flightDepartureTime, flightDepartureAirport, flightDuration, flightStops, flightArrivalTime, flightArrivalAirport, flightUrl, flightDepartureCode, flightArrivalCode)
+      INSERT INTO eventastic."Flights" ("flightAirline", "flightPrice", "flightDepartureTime", "flightDepartureAirport", "flightDuration", "flightStops", "flightArrivalTime", "flightArrivalAirport", "flightUrl", "flightDepartureCode", "flightArrivalCode")
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-      RETURNING flightid;
+      RETURNING "flightId";
     `;
 
     const values = [flightAirline, flightPrice, flightDepartureTime, flightDepartureAirport, flightDuration, flightStops, flightArrivalTime, flightArrivalAirport, flightUrl, flightDepartureCode, flightArrivalCode ];

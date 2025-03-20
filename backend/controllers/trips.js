@@ -25,30 +25,33 @@ const fetchSavedTrips = async (req, res) => {
 
     try {
         const query = `
-        SELECT 
-    trip.tripid,
-    trip.userid,
-    
-    -- Event Details
-    e.eventId, e.eventTitle, e.eventDate, e.eventVenue, e.eventLocation, e.eventLink,
+    SELECT 
+        trip."tripid",
+        trip."userid",
+        
+        -- Event Details
+        e."eventId", e."eventTitle", e."eventDate", e."eventVenue", e."eventLocation", e."eventLink",
 
-    -- Accommodation Details
-    a.accommId, a.accommName AS accommName, a.accommPrice AS accommPrice, a.accommRating AS accommRating, a.accommImages AS accommImages,
+        -- Accommodation Details
+        a."accommId", a."accommName" AS "accommName", a."accommPrice" AS "accommPrice", a."accommRating" AS "accommRating", a."accommImages" AS "accommImages",
 
-    -- Outbound Flight Details
-    f1.flightId AS outflightId, f1.flightAirline AS outFlightAirline, f1.flightDepartureAirport AS outFlightDeparture, f1.flightArrivalAirport AS outFlightArrival, f1.flightDuration AS outFlightDuration, f1.flightPrice AS outFlightPrice,
+        -- Outbound Flight Details
+        f1."flightId" AS "outflightId", f1."flightAirline" AS "outFlightAirline", f1."flightDepartureAirport" AS "outFlightDeparture", 
+        f1."flightArrivalAirport" AS "outFlightArrival", f1."flightDuration" AS "outFlightDuration", f1."flightPrice" AS "outFlightPrice",
 
-    -- Return Flight Details
-    f2.flightId AS returnflightId, f2.flightAirline AS returnFlightAirline, f2.flightDepartureAirport AS returnFlightDeparture, f2.flightArrivalAirport AS returnFlightArrival, f2.flightDuration AS returnFlightDuration, f2.flightPrice AS returnFlightPrice
+        -- Return Flight Details
+        f2."flightId" AS "returnflightId", f2."flightAirline" AS "returnFlightAirline", f2."flightDepartureAirport" AS "returnFlightDeparture", 
+        f2."flightArrivalAirport" AS "returnFlightArrival", f2."flightDuration" AS "returnFlightDuration", f2."flightPrice" AS "returnFlightPrice"
 
-    FROM eventastic."SavedTrip" trip
-    LEFT JOIN eventastic."Event" e ON trip.eventid = e.eventId
-    LEFT JOIN eventastic."Accommodation" a ON trip.accommid = a.accommId
-    LEFT JOIN eventastic."Flights" f1 ON trip.outflightid = f1.flightId
-    LEFT JOIN eventastic."Flights" f2 ON trip.returnflightid = f2.flightId
+        FROM eventastic."SavedTrip" trip
+        LEFT JOIN eventastic."Event" e ON trip."eventid" = e."eventId"
+        LEFT JOIN eventastic."Accommodation" a ON trip."accommid" = a."accommId"
+        LEFT JOIN eventastic."Flights" f1 ON trip."outflightid" = f1."flightId"
+        LEFT JOIN eventastic."Flights" f2 ON trip."returnflightid" = f2."flightId"
 
-    WHERE trip.userid = $1;  
+        WHERE trip."userid" = $1;  
     `;
+
 
         const values = [userId];
         const result = await pool.query(query, values);

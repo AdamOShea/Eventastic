@@ -100,9 +100,9 @@ const saveAccomm = async (req, res) => {
 
   try {
   const query = `
-    INSERT INTO eventastic."Accommodation" (accommName, accommImages, accommPrice, accommRating, accommUrl)
+    INSERT INTO eventastic."Accommodation" ("accommName", "accommImages", "accommPrice", "accommRating", "accommUrl")
     VALUES ($1, $2, $3, $4, $5)
-    RETURNING accommId;
+    RETURNING "accommId";
   `;
 
   const values = [accommName, accommImages, accommPrice, accommRating, accommUrl ];

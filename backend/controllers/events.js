@@ -87,10 +87,10 @@ const eventsFromDb = async (req, res) => {
     try {
         const query = `
             SELECT * FROM eventastic."Event"
-            WHERE eventTitle ILIKE ($1)
-            or eventArtist ILIKE ($1)
-            or eventType ILIKE ($1)
-            or eventGenre ILIKE ($1);
+            WHERE "eventTitle" ILIKE ($1)
+            or "eventArtist" ILIKE ($1)
+            or "eventType" ILIKE ($1)
+            or "eventGenre" ILIKE ($1);
             `;
         
         const values = [`%${keyword}%`];
@@ -114,7 +114,7 @@ const getEventId = async (req, res) => {
   try {
     const query = `
         SELECT * FROM eventastic."Event"
-        WHERE eventLink ILIKE $1;
+        WHERE "eventLink" ILIKE $1;
         `;
     
     const values = [`%${eventLink}%`];
