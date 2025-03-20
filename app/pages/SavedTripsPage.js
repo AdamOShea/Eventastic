@@ -9,7 +9,7 @@ export default function SavedTripsPage({ navigation }) {
 
   useEffect(() => {
     const loadTrips = async () => {
-      const savedTrips = await fetchSavedTrips();
+      const savedTrips = await fetchSavedTrips({userid: '4100febd-1cb8-45ed-91e8-ca242ac97e6f'});
       setTrips(savedTrips || []);
       setLoading(false);
     };
