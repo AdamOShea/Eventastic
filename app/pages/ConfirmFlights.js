@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import FlightCard from '../components/FlightCard';
 import SearchButton from '../components/SearchButton';
-import { useEvent } from './EventContext';
+import { useEvent } from '../components/EventContext';
 
 export default function ConfirmFlights({ navigation }) {
   const {

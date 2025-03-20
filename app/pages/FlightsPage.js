@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import DatePicker from 'react-native-neat-date-picker';
 import { format } from 'date-fns';
-import NoImageInfoContainer from './NoImageInfoContainer';
+import NoImageInfoContainer from '../components/NoImageInfoContainer';
 import SearchButton from '../components/SearchButton';
 import FormInput from '../components/FormInput';
 import { fetchFlightsAPI } from '../methods/fetchFlights';
-import { useEvent, selectedAccommodation } from './EventContext'; 
+import { useEvent, selectedAccommodation } from '../components/EventContext'; 
 
 
 export default function FlightsPage({ navigation }) {

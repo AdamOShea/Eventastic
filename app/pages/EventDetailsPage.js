@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import InfoContainer from './InfoContainer';
-import ExpandableDescription from './ExpandableDescription';
-import MapComponent from './MapComponent';
-import { useEvent } from './EventContext'; // ✅ Import Context
-import AccommodationCard from './AccommodationCard'; // ✅ Import AccommodationCard
-import FlightCard from './FlightCard'; // ✅ Import FlightCard component
+import InfoContainer from '../components/InfoContainer';
+import ExpandableDescription from '../components/ExpandableDescription';
+import MapComponent from '../components/MapComponent';
+import { useEvent } from '../components/EventContext'; // ✅ Import Context
+import AccommodationCard from '../components/AccommodationCard'; // ✅ Import AccommodationCard
+import FlightCard from '../components/FlightCard'; // ✅ Import FlightCard component
 import { saveTrip } from '../methods/saveTrip';
 import { getEventId } from '../methods/getEventId';
 import { saveAccomm } from '../methods/saveAccomm';

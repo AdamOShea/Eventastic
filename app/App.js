@@ -2,22 +2,23 @@ import "react-native-url-polyfill/auto";
 import React, { useEffect, useRef } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer} from '@react-navigation/native';
-import LoginRegisterPage from './components/LoginRegisterPage';
-import SearchPage from './components/SearchPage';
+import LoginRegisterPage from './pages/LoginRegisterPage';
+import SearchPage from './pages/SearchPage';
 import { registerRootComponent } from 'expo';
 import 'react-native-gesture-handler';
 import {enableScreens} from 'react-native-screens';
 import { MenuProvider } from 'react-native-popup-menu';
 import { Provider as PaperProvider } from 'react-native-paper';
-import EventDetailsPage from "./components/EventDetailsPage";
-import AccommodationPage from "./components/AccommodationPage";
-import AccommodationDetailsPage from "./components/AccommodationDetailsPage";
-import FlightsPage from "./components/FlightsPage";
-import OutboundFlights from "./components/OutboundFlights";
-import ReturnFlights from "./components/ReturnFlights";
-import ConfirmFlights from "./components/ConfirmFlights";
+import EventDetailsPage from "./pages/EventDetailsPage";
+import AccommodationPage from "./pages/AccommodationPage";
+import AccommodationDetailsPage from "./pages/AccommodationDetailsPage";
+import FlightsPage from "./pages/FlightsPage";
+import OutboundFlights from "./pages/OutboundFlights";
+import ReturnFlights from "./pages/ReturnFlights";
+import ConfirmFlights from "./pages/ConfirmFlights";
 import { PermissionsAndroid, Platform } from 'react-native';
 import { EventProvider } from "./components/EventContext";
+import BottomTabNavigator from "./components/BottomTabNavigator";
 
 enableScreens();
 
@@ -58,17 +59,19 @@ useEffect(() => {
       <MenuProvider>
         <PaperProvider>
           <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-              <Stack.Screen component={LoginRegisterPage} name='LoginRegisterPage'/> 
-              <Stack.Screen component={SearchPage} name="SearchPage" />
-              <Stack.Screen component={EventDetailsPage} name="EventDetails" />
-              <Stack.Screen component={AccommodationPage} name="Accommodation" />
-              <Stack.Screen component={AccommodationDetailsPage} name="AccommodationDetails"  />
-              <Stack.Screen component={FlightsPage} name="Flights" />
-              <Stack.Screen component={OutboundFlights} name="OutboundFlights"/>
-              <Stack.Screen component={ReturnFlights} name="ReturnFlights"/>
-              <Stack.Screen component={ConfirmFlights} name="ConfirmFlights"/>
-            </Stack.Navigator>
+            <BottomTabNavigator>
+              <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Screen component={LoginRegisterPage} name='LoginRegisterPage'/> 
+                <Stack.Screen component={SearchPage} name="SearchPage" />
+                <Stack.Screen component={EventDetailsPage} name="EventDetails" />
+                <Stack.Screen component={AccommodationPage} name="Accommodation" />
+                <Stack.Screen component={AccommodationDetailsPage} name="AccommodationDetails"  />
+                <Stack.Screen component={FlightsPage} name="Flights" />
+                <Stack.Screen component={OutboundFlights} name="OutboundFlights"/>
+                <Stack.Screen component={ReturnFlights} name="ReturnFlights"/>
+                <Stack.Screen component={ConfirmFlights} name="ConfirmFlights"/>
+              </Stack.Navigator>
+            </BottomTabNavigator>
           </NavigationContainer>
         </PaperProvider>
       </MenuProvider>

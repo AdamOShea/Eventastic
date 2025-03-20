@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import FlightCard from '../components/FlightCard';
-import { useEvent } from './EventContext'; // ✅ Import context
+import { useEvent } from '../components/EventContext'; // ✅ Import context
 
 export default function ReturnFlights({ route, navigation }) {
   const { returnFlights, returnDate } = route.params;

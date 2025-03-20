@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import FlightCard from '../components/FlightCard';
 import { fetchFlightsAPI } from '../methods/fetchFlights';
-import { useEvent } from './EventContext'; // ✅ Import context
+import { useEvent } from '../components/EventContext'; // ✅ Import context
 
 export default function OutboundFlights({ route, navigation }) {
   const { outboundFlights, departureAirport, arrivalAirport, returnDate } = route.params;

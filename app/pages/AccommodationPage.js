@@ -7,15 +7,15 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import MapComponent from './MapComponent';
-import SearchButton from './SearchButton';
-import AccommodationCard from './AccommodationCard';
+import MapComponent from '../components/MapComponent';
+import SearchButton from '../components/SearchButton';
+import AccommodationCard from '../components/AccommodationCard';
 import DatePicker from 'react-native-neat-date-picker';
 import { format } from 'date-fns';
-import NoImageInfoContainer from './NoImageInfoContainer';
+import NoImageInfoContainer from '../components/NoImageInfoContainer';
 import { fetchAccom } from '../methods/fetchAccom';
 import { getGeolocation } from '../methods/getGeolocation';
-import { useEvent } from './EventContext'; 
+import { useEvent } from '../components/EventContext'; 
 
 export default function AccommodationPage({ navigation }) {
   const { selectedEvent } = useEvent(); 

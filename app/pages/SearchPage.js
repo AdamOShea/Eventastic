@@ -7,13 +7,13 @@ import {
   FlatList,
   TextInput,
 } from 'react-native';
-import FormContainer from './FormContainer';
-import FormInput from './FormInput';
-import FilterMenu from './FilterMenu';
-import FormSubmitButton from './FormSubmitButton';
+import FormContainer from '../components/FormContainer';
+import FormInput from '../components/FormInput';
+import FilterMenu from '../components/FilterMenu';
+import FormSubmitButton from '../components/FormSubmitButton';
 import { fetchEvents } from '../methods/fetchEvents';
-import SearchResultCard from './SearchResultCard';
-import SearchPageHeader from './SearchPageHeader';
+import SearchResultCard from '../components/SearchResultCard';
+import SearchPageHeader from '../components/SearchPageHeader';
 import { detectAPIs } from '../methods/detectAPIs';
 
 

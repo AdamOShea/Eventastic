@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Linking } from 'react-native';
-import { useEvent } from './EventContext'; // ✅ Import context
+import { useEvent } from '../components/EventContext'; // ✅ Import context
 
 export default function AccommodationDetailsPage({ navigation }) {
   const { selectedAccommodation } = useEvent(); // ✅ Retrieve accommodation from context
