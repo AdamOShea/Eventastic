@@ -2,17 +2,17 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 
 export default function FlightCard({
-  airline,
-  price,
-  departure_time,
-  arrival_time,
-  arrival,
-  arrivalCode,
-  departure,
-  departureCode,
-  duration,
-  stops,
-  url,
+  flightAirline,
+  flightPrice,
+  flightDepartureTime,
+  flightArrivalTime,
+  flightArrivalAirport,
+  flightArrivalCode,
+  flightDepartureAirport,
+  flightDepartureCode,
+  flightDuration,
+  flightStops,
+  flightUrl,
   onPress
 }) {
 

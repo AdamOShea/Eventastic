@@ -1,6 +1,6 @@
-const { pool } = require('../models/db');
-const { insertEvents } = require('../methods/insertEvent');
-const {generateFakeEvent} = require('../methods/generateFakeEvent');
+const { pool } = require('./models/db');
+const { insertEvents } = require('./methods/insertEvent');
+const {generateFakeEvent} = require('./methods/generateFakeEvent');
 
 
 const FakeEvents = async (keyword) => {

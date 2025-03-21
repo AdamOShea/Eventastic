@@ -28,7 +28,7 @@ export default function EventDetailsPage({ navigation }) {
       return;
     }
 
-    const eventResponse = await getEventId({eventlink: selectedEvent.eventlink});
+    const eventResponse = await getEventId({eventLink: selectedEvent.eventLink});
     const event = eventResponse?.eventId || null; // ✅ Extracts only the event ID
 
     const accommResponse = selectedAccommodation ? await saveAccomm(selectedAccommodation) : null;
@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
   },
   flightContainer: {
     width: '100%',
+    marginTop:15,
     padding: 15,
     backgroundColor: '#fff',
     borderRadius: 10,

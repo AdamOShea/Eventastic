@@ -15,7 +15,7 @@ export default function SavedTripsPage({ navigation }) {
     console.log("🔍 Processed trips for FlatList:", savedTrips);
 
     if (!Array.isArray(savedTrips) || savedTrips.length === 0) {
-      console.error("❌ API returned an invalid trip format or empty array.");
+      //console.error("❌ API returned an invalid trip format or empty array.");
       setTrips([]);
     } else {
       setTrips(savedTrips);
@@ -65,8 +65,10 @@ export default function SavedTripsPage({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1, // ✅ Use flex to prevent nesting issues
+    paddingTop: 50,
     padding: 20,
     backgroundColor: "#f5f5f5",
+    
   },
   centeredContainer: {
     flexGrow: 1,

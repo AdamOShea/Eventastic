@@ -19,7 +19,7 @@ export default function FlightsPage({ navigation }) {
     return null; // Prevent rendering if event is missing
   }
 
-  const eventDate = new Date(selectedEvent.date);
+  const eventDate = new Date(selectedEvent.eventDate);
   const today = new Date();
   const tomorrow = new Date(today.getTime() + 86400000);
 

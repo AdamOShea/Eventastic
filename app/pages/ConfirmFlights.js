@@ -22,10 +22,10 @@ export default function ConfirmFlights({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.header}>Your Selected Flights</Text>
 
-      <Text style={styles.subHeader}>Outbound Flight on {selectedOutboundFlight.departure_time.split(" on ")[1]}</Text>
+      <Text style={styles.subHeader}>Outbound Flight on {selectedOutboundFlight.flightDepartureTime.split(" on ")[1]}</Text>
       <FlightCard {...selectedOutboundFlight} />
 
-      <Text style={styles.subHeader}>Return Flight on {selectedReturnFlight.departure_time.split(" on ")[1]}</Text>
+      <Text style={styles.subHeader}>Return Flight on {selectedReturnFlight.flightDepartureTime.split(" on ")[1]}</Text>
       <FlightCard {...selectedReturnFlight} />
 
       <SearchButton text="Save Flights & Return" onPress={handleSaveFlights}></SearchButton>

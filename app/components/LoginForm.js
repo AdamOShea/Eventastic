@@ -26,10 +26,9 @@ const LoginForm = ({ navigation }) => {
         Alert.alert('Success', "Signed in");
         setUserInfo({ email: '', password: '' }); // Reset form fields
         navigation.dispatch(
-          StackActions.replace('SearchPage', {
-            user: response.user
-          })
+          StackActions.replace('Tabs') // 👈 Redirects to the bottom tab navigation
         );
+        
       } else { 
         Alert.alert('Error', response.message);
       }

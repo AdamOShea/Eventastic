@@ -55,10 +55,11 @@ const fetchSavedTrips = async (req, res) => {
 
         const values = [userId];
         const result = await pool.query(query, values);
+        console.log(result);
 
         res.json({
             success: true,
-            trips: Array.isArray(result.rows) ? result.rows : [], // Ensure events is always an array
+            trips: Array.isArray(result.rows) ? result.rows : [],
           });
     } catch (err) {
         console.error(err);

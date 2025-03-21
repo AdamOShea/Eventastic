@@ -5,17 +5,17 @@ import { useEvent } from './EventContext';
 
 
 export default function SearchResultCard({ item, navigation, onPress }) {
-  let imageSource;
-  //console.log(item.eventImages[0]);
-  
+  let imageSource = require('../assets/eventastic.png'); // fallback
 
-  if (item.eventImages && item.eventImages.startsWith('http')) {
-    
-    imageSource = { uri: item.eventImages[0] }; 
- 
-  } else {
-    imageSource = require("../assets/eventastic.png");
+try {
+  const images = JSON.parse(item.eventImages || '[]'); // safely parse
+  if (images.length > 0) {
+    imageSource = { uri: images[0] }; // ✅ access first image
   }
+} catch (err) {
+  //console.warn('❌ Failed to parse eventImages:', err);
+}
+
 
   const { setSelectedEvent } = useEvent();
 
