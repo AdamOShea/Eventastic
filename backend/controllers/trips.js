@@ -21,7 +21,7 @@ const saveTrip = async (req, res) => {
 };
 
 const fetchSavedTrips = async (req, res) => {
-    const { userId } = req.body;
+    const { userid } = req.body;
 
     try {
         const query = `
@@ -53,7 +53,7 @@ const fetchSavedTrips = async (req, res) => {
     `;
 
 
-        const values = [userId];
+        const values = [userid];
         const result = await pool.query(query, values);
         console.log(result);
 
