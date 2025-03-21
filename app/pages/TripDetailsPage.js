@@ -17,6 +17,20 @@ export default function TripDetailsPage({ route }) {
       } catch (err) {
         //console.warn('❌ Failed to parse eventImages:', err);
       }
+
+
+
+  let accommImages;
+  let accommFirstImage;
+
+  try {
+      accommImages = JSON.parse(trip.accommImages || '[]'); // safely parse
+    if (images.length > 0) {
+      accommFirstImage = accommImages[0] // ✅ access first image
+    }
+  } catch (err) {
+    //console.warn('❌ Failed to parse eventImages:', err);
+  }
   // Build event object
   const event = {
     eventTitle: trip.eventTitle,
@@ -31,15 +45,10 @@ export default function TripDetailsPage({ route }) {
   // Build accommodation object
   const accommodation = trip.accommName && {
     accommName: trip.accommName,
-    acommPrice: trip.accommPrice,
+    accommPrice: trip.accommPrice,
     accommRating: trip.accommRating,
-    accommImages: (() => {
-      try {
-        return JSON.parse(trip.accommImages);
-      } catch {
-        return [];
-      }
-    })(),
+    accommImages: accommImages,
+    accommFirstImage: accommFirstImage
   };
 
   // Build outbound flight object
@@ -49,6 +58,8 @@ export default function TripDetailsPage({ route }) {
     flightArrivalAirport: trip.outFlightArrival,
     flightDuration: trip.outFlightDuration,
     flightPrice: trip.outFlightPrice,
+    flightDepartureTime: trip.outFlightDepartureTime,
+    flightArrivalTime: trip.outFlightArrivalTime
   };
 
   // Build return flight object
@@ -58,6 +69,8 @@ export default function TripDetailsPage({ route }) {
     flightArrivalAirport: trip.returnFlightArrival,
     flightDuration: trip.returnFlightDuration,
     flightPrice: trip.returnFlightPrice,
+    flightDepartureTime: trip.returnFlightDepartureTime,
+    flightArrivalTime: trip.returnFlightArrivalTime
   };
 
   return (
