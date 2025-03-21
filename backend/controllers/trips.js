@@ -35,7 +35,7 @@ const fetchSavedTrips = async (req, res) => {
 
         -- Accommodation Details
         a."accommId", a."accommName" AS "accommName", a."accommPrice" AS "accommPrice", a."accommRating" AS "accommRating", a."accommImages" AS "accommImages",
-        a."accommUrl" AS accommUrl, 
+        a."accommUrl" AS "accommUrl", 
 
         -- Outbound Flight Details
         f1."flightId" AS "outflightId", f1."flightAirline" AS "outFlightAirline", f1."flightDepartureAirport" AS "outFlightDeparture", 
