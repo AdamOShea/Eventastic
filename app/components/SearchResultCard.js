@@ -7,14 +7,14 @@ import { useEvent } from './EventContext';
 export default function SearchResultCard({ item, navigation, onPress }) {
   let imageSource = require('../assets/eventastic.png'); // fallback
 
-try {
-  const images = JSON.parse(item.eventImages || '[]'); // safely parse
-  if (images.length > 0) {
-    imageSource = { uri: images[0] }; // ✅ access first image
+  try {
+    const images = JSON.parse(item.eventImages || '[]'); // safely parse
+    if (images.length > 0) {
+      imageSource = { uri: images[0] }; // ✅ access first image
+    }
+  } catch (err) {
+    //console.warn('❌ Failed to parse eventImages:', err);
   }
-} catch (err) {
-  //console.warn('❌ Failed to parse eventImages:', err);
-}
 
 
   const { setSelectedEvent } = useEvent();

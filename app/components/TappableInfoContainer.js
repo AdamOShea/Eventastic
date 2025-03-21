@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { format } from 'date-fns';
+import { Linking } from 'react-native';
 
 export default function InfoContainer({ event }) {
   let imageSource = require('../assets/eventastic.png');
@@ -14,17 +15,29 @@ export default function InfoContainer({ event }) {
     //console.warn('❌ Failed to parse eventImages:', err);
   }
 
+  const handlePress = (event) => {
+    if (event?.eventLink && typeof event.eventLink === 'string') {
+      Linking.openURL(event.eventLink).catch(err => {
+        console.warn("Failed to open URL:", err);
+      });
+    } else {
+      console.warn("Invalid or missing event link.");
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Image source={imageSource} style={styles.image} />
-      <Text style={styles.title}>{event.eventTitle}</Text>
-      <Text style={styles.detail}>
-        <Text style={styles.label}>Date:</Text> {format(new Date(event.eventDate), 'dd-LLL-yyyy')}
-      </Text>
-      <Text style={styles.detail}>
-        <Text style={styles.label}>Location:</Text> {event.eventLocation.trim()}, {event.eventVenue}
-      </Text>
-    </View>
+    <TouchableOpacity onPress={() => handlePress(event)}>
+        <View style={styles.container}>
+        <Image source={imageSource} style={styles.image} />
+        <Text style={styles.title}>{event.eventTitle}</Text>
+        <Text style={styles.detail}>
+            <Text style={styles.label}>Date:</Text> {format(new Date(event.eventDate), 'dd-LLL-yyyy')}
+        </Text>
+        <Text style={styles.detail}>
+            <Text style={styles.label}>Location:</Text> {event.eventLocation.trim()}, {event.eventVenue}
+        </Text>
+        </View>
+    </TouchableOpacity>
   );
 }
 

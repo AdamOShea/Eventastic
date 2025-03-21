@@ -1,34 +1,35 @@
 import React from "react";
 import { View, ScrollView, Text, StyleSheet } from "react-native";
-import InfoContainer from "../components/InfoContainer";
-import AccommodationCard from "../components/AccommodationCard";
-import FlightCard from "../components/FlightCard";
+import TappableInfoContainer from "../components/TappableInfoContainer";
+import TripAccommodationCard from "../components/TripAccommodationCard";
+import TripFlightCard from "../components/TripFlightCard";
 
 export default function TripDetailsPage({ route }) {
   const { trip } = route.params;
 
-  let imageSource;
+  // let imageSource;
 
+  // try {
+  //       const images = JSON.parse(trip.eventImages || '[]'); // safely parse
+  //       if (images.length > 0) {
+  //         imageSource = { uri: images[0] }; // ✅ access first image
+  //       }
+  // } catch (err) {
+  //       //console.warn('❌ Failed to parse eventImages:', err);
+  // }
+
+  let accommImages = [];
+  let accommFirstImage;
+  
   try {
-        const images = JSON.parse(trip.eventImages || '[]'); // safely parse
-        if (images.length > 0) {
-          imageSource = { uri: images[0] }; // ✅ access first image
-        }
-  } catch (err) {
-        //console.warn('❌ Failed to parse eventImages:', err);
-  }
-
-  let accommImages;
-
-  try {
-    const images = JSON.parse(trip.accommImages || '[]'); // safely parse
-    console.log(images);
-    if (images.length > 0) {
-      accommImages = { uri: images[0] }; // ✅ access first image
+    accommImages = JSON.parse(trip.accommImages || '[]'); // properly set as array
+    if (accommImages.length > 0) {
+      accommFirstImage = accommImages[0]; // ✅ string URL
     }
   } catch (err) {
-    //console.warn('❌ Failed to parse eventImages:', err);
+    console.warn('❌ Failed to parse accommImages:', err);
   }
+  
 
   
 
@@ -40,7 +41,7 @@ export default function TripDetailsPage({ route }) {
     eventVenue: trip.eventVenue,
     eventLocation: trip.eventLocation,
     eventLink: trip.eventLink,
-    eventImages: imageSource
+    eventImages: trip.eventImages
     
   };
 
@@ -49,9 +50,11 @@ export default function TripDetailsPage({ route }) {
     accommName: trip.accommName,
     accommPrice: trip.accommPrice,
     accommRating: trip.accommRating,
-    accommImages: accommImages,
-    accommFirstImage: accommImages[0]
+    accommImages,            // full array
+    accommFirstImage,        // string
+    accommUrl: trip.accommUrl,
   };
+  
 
   // Build outbound flight object
   const outboundFlight = trip.outFlightAirline && {
@@ -61,7 +64,8 @@ export default function TripDetailsPage({ route }) {
     flightDuration: trip.outFlightDuration,
     flightPrice: trip.outFlightPrice,
     flightDepartureTime: trip.outFlightDepartureTime,
-    flightArrivalTime: trip.outFlightArrivalTime
+    flightArrivalTime: trip.outFlightArrivalTime,
+    flightUrl: trip.outFlightUrl
   };
 
   // Build return flight object
@@ -72,33 +76,34 @@ export default function TripDetailsPage({ route }) {
     flightDuration: trip.returnFlightDuration,
     flightPrice: trip.returnFlightPrice,
     flightDepartureTime: trip.returnFlightDepartureTime,
-    flightArrivalTime: trip.returnFlightArrivalTime
+    flightArrivalTime: trip.returnFlightArrivalTime,
+    flightUrl: trip.returnFlightUrl
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Trip Details</Text>
 
-      <InfoContainer event={event} />
+      <TappableInfoContainer event={event} />
 
       {accommodation && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Accommodation</Text>
-          <AccommodationCard {...accommodation} />
+          <TripAccommodationCard {...accommodation} />
         </View>
       )}
 
       {outboundFlight && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>✈️ Outbound Flight</Text>
-          <FlightCard {...outboundFlight} />
+          <TripFlightCard {...outboundFlight} />
         </View>
       )}
 
       {returnFlight && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>✈️ Return Flight</Text>
-          <FlightCard {...returnFlight} />
+          <TripFlightCard {...returnFlight} />
         </View>
       )}
     </ScrollView>

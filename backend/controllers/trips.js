@@ -40,12 +40,12 @@ const fetchSavedTrips = async (req, res) => {
         -- Outbound Flight Details
         f1."flightId" AS "outflightId", f1."flightAirline" AS "outFlightAirline", f1."flightDepartureAirport" AS "outFlightDeparture", 
         f1."flightArrivalAirport" AS "outFlightArrival", f1."flightDuration" AS "outFlightDuration", f1."flightPrice" AS "outFlightPrice",
-        f1."flightDepartureTime" AS "outFlightDepartureTime", f1."flightArrivalTime" AS "outFlightArrivalTime",
+        f1."flightDepartureTime" AS "outFlightDepartureTime", f1."flightArrivalTime" AS "outFlightArrivalTime", f1."flightUrl" AS "outFlightUrl",
 
         -- Return Flight Details
         f2."flightId" AS "returnflightId", f2."flightAirline" AS "returnFlightAirline", f2."flightDepartureAirport" AS "returnFlightDeparture", 
         f2."flightArrivalAirport" AS "returnFlightArrival", f2."flightDuration" AS "returnFlightDuration", f2."flightPrice" AS "returnFlightPrice",
-        f2."flightDepartureTime" AS "returnFlightDepartureTime", f2."flightArrivalTime" AS "returnFlightArrivalTime"
+        f2."flightDepartureTime" AS "returnFlightDepartureTime", f2."flightArrivalTime" AS "returnFlightArrivalTime", f2."flightUrl" as "returnFlightUrl"
 
         FROM eventastic."SavedTrip" trip
         LEFT JOIN eventastic."Event" e ON trip."eventid" = e."eventId"
