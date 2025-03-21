@@ -30,10 +30,12 @@ const fetchSavedTrips = async (req, res) => {
         trip."userid",
         
         -- Event Details
-        e."eventId", e."eventTitle", e."eventDate", e."eventVenue", e."eventLocation", e."eventLink", e."eventImages",
+        e."eventId", e."eventTitle", e."eventDate", e."eventVenue", e."eventLocation", e."eventLink", e."eventImages", e."eventSeller", 
+        e."eventArtist", e."eventGenre", e."eventPrice", e."eventDescription", e."eventImages",
 
         -- Accommodation Details
         a."accommId", a."accommName" AS "accommName", a."accommPrice" AS "accommPrice", a."accommRating" AS "accommRating", a."accommImages" AS "accommImages",
+        a."accommURL" AS accommUrl, 
 
         -- Outbound Flight Details
         f1."flightId" AS "outflightId", f1."flightAirline" AS "outFlightAirline", f1."flightDepartureAirport" AS "outFlightDeparture", 

@@ -14,23 +14,25 @@ export default function TripDetailsPage({ route }) {
         if (images.length > 0) {
           imageSource = { uri: images[0] }; // ✅ access first image
         }
-      } catch (err) {
+  } catch (err) {
         //console.warn('❌ Failed to parse eventImages:', err);
-      }
-
-
+  }
 
   let accommImages;
-  let accommFirstImage;
 
   try {
-      accommImages = JSON.parse(trip.accommImages || '[]'); // safely parse
+    const images = JSON.parse(trip.accommImages || '[]'); // safely parse
+    console.log(images);
     if (images.length > 0) {
-      accommFirstImage = accommImages[0] // ✅ access first image
+      accommImages = { uri: images[0] }; // ✅ access first image
     }
   } catch (err) {
     //console.warn('❌ Failed to parse eventImages:', err);
   }
+
+  
+
+
   // Build event object
   const event = {
     eventTitle: trip.eventTitle,
@@ -48,7 +50,7 @@ export default function TripDetailsPage({ route }) {
     accommPrice: trip.accommPrice,
     accommRating: trip.accommRating,
     accommImages: accommImages,
-    accommFirstImage: accommFirstImage
+    accommFirstImage: accommImages[0]
   };
 
   // Build outbound flight object
@@ -81,7 +83,7 @@ export default function TripDetailsPage({ route }) {
 
       {accommodation && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🏨 Accommodation</Text>
+          <Text style={styles.sectionTitle}>Accommodation</Text>
           <AccommodationCard {...accommodation} />
         </View>
       )}
@@ -105,8 +107,9 @@ export default function TripDetailsPage({ route }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 20,
+    paddingTop: 50,
     backgroundColor: "#f5f5f5",
   },
   header: {

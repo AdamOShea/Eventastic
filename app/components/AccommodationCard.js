@@ -2,12 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useEvent } from './EventContext'; // ✅ Import context
 
-export default function AccommodationCard({ navigation, accommName, accommPrice, accommRating, accommDetails, accommFirstImage, accommImages, accommUrl }) {
+export default function AccommodationCard({ navigation, accommName, accommPrice, accommRating, accommFirstImage, accommImages, accommUrl }) {
   const { setSelectedAccommodation } = useEvent(); // ✅ Get setter from context
 
   const handleSelectAccommodation = () => {
-    console.log("🏨 Storing Selected Accommodation:", { accommName, accommPrice, accommRating, accommDetails, accommImages, accommUrl });
-    setSelectedAccommodation({ accommName, accommPrice, accommRating, accommDetails, accommFirstImage, accommImages, accommUrl }); // ✅ Store in context
+    console.log("🏨 Storing Selected Accommodation:", { accommName, accommPrice, accommRating, accommImages, accommUrl });
+    setSelectedAccommodation({ accommName, accommPrice, accommRating, accommFirstImage, accommImages, accommUrl }); // ✅ Store in context
     navigation.navigate('AccommodationDetails'); // ✅ Navigate to details page
   };
 

@@ -8,7 +8,7 @@ const mapAirbnb = (data) =>
       accommRating: `⭐ ${accom.rating.value} (${accom.rating.reviewCount} reviews)`,
       accommDetails: accom.category,
       accommFirstImage: accom.images?.[0]?.url || null,
-      accommImages: accom.images?.map((img) => img.url) || [],
+      accommImages: JSON.stringify(accom.images?.map((img) => img.url)) || [],
       accommUrl: `https://www.airbnb.ie/rooms/${accom.room_id}`,
     }));
   

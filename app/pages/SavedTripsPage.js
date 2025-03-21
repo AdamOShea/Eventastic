@@ -45,7 +45,7 @@ export default function SavedTripsPage({ navigation }) {
           data={trips}
           keyExtractor={(item, index) => item.tripid ? item.tripid.toString() : `trip_${index}`} // ✅ Prevents crashing
           renderItem={({ item }) => {
-            console.log("🔍 Rendering TripCard:", item);
+            //console.log("🔍 Rendering TripCard:", item);
             return (
               <TripCard
                 trip={item}
