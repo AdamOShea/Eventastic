@@ -1,8 +1,10 @@
 const ticketmasterMapper = (events) => {
-    // Ensure `data` is an array, extract events from `_embedded.events`
-    
-
-    return events.map((event) => ({
+    return events.map((event) => {
+      const imageUrls = Array.isArray(event.images)
+        ? event.images.map((img) => img.url).filter(Boolean)
+        : [];
+  
+      return {
         eventVenue: event._embedded?.venues?.[0]?.name || 'Unknown Venue',
         eventLocation: event._embedded?.venues?.[0]?.city?.name || 'Unknown City',
         eventSeller: 'Ticketmaster',
@@ -15,8 +17,10 @@ const ticketmasterMapper = (events) => {
         eventLink: event.url || 'No Link',
         eventTitle: event.name || 'Untitled Event',
         eventDescription: event.info || event.description || 'No event description found :/',
-        eventImages: event.images?.[0]?.url || null,
-    }));
-};
-
-module.exports = { ticketmasterMapper };
+        eventImages: imageUrls, // ✅ all image URLs as array
+      };
+    });
+  };
+  
+  module.exports = { ticketmasterMapper };
+  
