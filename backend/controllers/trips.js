@@ -30,7 +30,7 @@ const fetchSavedTrips = async (req, res) => {
         trip."userid",
         
         -- Event Details
-        e."eventId", e."eventTitle", e."eventDate", e."eventVenue", e."eventLocation", e."eventLink", e."eventImages"
+        e."eventId", e."eventTitle", e."eventDate", e."eventVenue", e."eventLocation", e."eventLink", e."eventImages",
 
         -- Accommodation Details
         a."accommId", a."accommName" AS "accommName", a."accommPrice" AS "accommPrice", a."accommRating" AS "accommRating", a."accommImages" AS "accommImages",
