@@ -12,7 +12,7 @@ export default function SavedTripsPage({ navigation }) {
     setLoading(true);
     const savedTrips = await fetchSavedTrips({ userid: "4100febd-1cb8-45ed-91e8-ca242ac97e6f" });
 
-    console.log("🔍 Processed trips for FlatList:", savedTrips);
+    //console.log("🔍 Processed trips for FlatList:", savedTrips);
 
     if (!Array.isArray(savedTrips) || savedTrips.length === 0) {
       //console.error("❌ API returned an invalid trip format or empty array.");

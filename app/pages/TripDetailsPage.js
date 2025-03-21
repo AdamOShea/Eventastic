@@ -7,34 +7,83 @@ import FlightCard from "../components/FlightCard";
 export default function TripDetailsPage({ route }) {
   const { trip } = route.params;
 
+  let imageSource;
+
+  try {
+        const images = JSON.parse(trip.eventImages || '[]'); // safely parse
+        if (images.length > 0) {
+          imageSource = { uri: images[0] }; // ✅ access first image
+        }
+      } catch (err) {
+        //console.warn('❌ Failed to parse eventImages:', err);
+      }
+  // Build event object
+  const event = {
+    eventTitle: trip.eventTitle,
+    eventDate: trip.eventDate,
+    eventVenue: trip.eventVenue,
+    eventLocation: trip.eventLocation,
+    eventLink: trip.eventLink,
+    eventImages: imageSource
+    
+  };
+
+  // Build accommodation object
+  const accommodation = trip.accommName && {
+    accommName: trip.accommName,
+    acommPrice: trip.accommPrice,
+    accommRating: trip.accommRating,
+    accommImages: (() => {
+      try {
+        return JSON.parse(trip.accommImages);
+      } catch {
+        return [];
+      }
+    })(),
+  };
+
+  // Build outbound flight object
+  const outboundFlight = trip.outFlightAirline && {
+    flightAirline: trip.outFlightAirline,
+    flightDepartureAirport: trip.outFlightDeparture,
+    flightArrivalAirport: trip.outFlightArrival,
+    flightDuration: trip.outFlightDuration,
+    flightPrice: trip.outFlightPrice,
+  };
+
+  // Build return flight object
+  const returnFlight = trip.returnFlightAirline && {
+    flightAirline: trip.returnFlightAirline,
+    flightDepartureAirport: trip.returnFlightDeparture,
+    flightArrivalAirport: trip.returnFlightArrival,
+    flightDuration: trip.returnFlightDuration,
+    flightPrice: trip.returnFlightPrice,
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Trip Details</Text>
 
-      {/* Event Details */}
-      <InfoContainer event={trip.event} />
+      <InfoContainer event={event} />
 
-      {/* Accommodation (if available) */}
-      {trip.accommodation && (
+      {accommodation && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>🏨 Accommodation</Text>
-          <AccommodationCard {...trip.accommodation} />
+          <AccommodationCard {...accommodation} />
         </View>
       )}
 
-      {/* Outbound Flight (if available) */}
-      {trip.outboundFlight && (
+      {outboundFlight && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>✈️ Outbound Flight</Text>
-          <FlightCard {...trip.outboundFlight} />
+          <FlightCard {...outboundFlight} />
         </View>
       )}
 
-      {/* Return Flight (if available) */}
-      {trip.returnFlight && (
+      {returnFlight && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>✈️ Return Flight</Text>
-          <FlightCard {...trip.returnFlight} />
+          <FlightCard {...returnFlight} />
         </View>
       )}
     </ScrollView>

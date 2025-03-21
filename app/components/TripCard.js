@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 export default function TripCard({ trip, onPress }) {
-  if (!trip || !trip.title) return null; // ✅ Prevents crash
+  if (!trip || !trip.eventTitle) return null; // ✅ Prevents crash
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
