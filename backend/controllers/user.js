@@ -68,7 +68,11 @@ const searchUsers = async (req, res) => {
       return res.status(404).send({ message: 'Users not Found' });
     }
 
-    res.status(200).send({ message: 'Users Found', username: Array.isArray(result.rows.username) ? result.rows : [] });
+    res.status(200).send({ 
+      message: 'Users Found', 
+      users: Array.isArray(result.rows) ? result.rows : [] 
+    });
+    
   } catch (err) {
     console.error(err);
     res.status(500).send('An error occurred');
