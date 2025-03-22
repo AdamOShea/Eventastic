@@ -11,6 +11,11 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import TripCard from "../components/TripCard";
+import {searchUsers} from "../methods/searchUsers";
+import {addFriend} from "../methods/addFriend";
+import { useUser } from "../components/UserContext";
+
+
 
 // Dummy friend data
 const friends = [
@@ -36,12 +41,25 @@ const dummyUserSearch = (query) => {
   return users.filter((u) => u.toLowerCase().includes(query.toLowerCase()));
 };
 
+const userSearch = async (query) => {
+  try {
+    const response = await searchUsers({ username: query }); // Wrap query in object
+    console.log(response.users);
+    return Array.isArray(response.users) ? response.users : [];
+  } catch (err) {
+    console.log("userSearch failed:", err);
+    return [];
+  }
+};
+
+
+
 export default function FriendsPage({ navigation }) {
   const [addFriendModal, setAddFriendModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-
+  const { currentUser } = useUser();
   const openAddFriendModal = () => {
     setAddFriendModal(true);
     setSearchQuery("");
@@ -49,15 +67,22 @@ export default function FriendsPage({ navigation }) {
     setSelectedUser(null);
   };
 
-  const handleSearch = (text) => {
-    setSearchQuery(text);
-    const results = dummyUserSearch(text);
+  const handleSearch = async () => {
+    const results = await userSearch(searchQuery);
     setSearchResults(results);
   };
+  
 
-  const handleAddFriend = () => {
+  const handleAddFriend = async () => {
     if (selectedUser) {
-      console.log("✅ Adding friend:", selectedUser);
+      console.log("✅ Adding friend:", selectedUser.username, selectedUser.userid);
+      try {
+        const response = await addFriend(currentUser.userid, selectedUser.userid);
+        return response;
+      } catch (err) {
+        console.log("handleaddfriend: ", err);
+      }
+
       // Add actual friend logic here (e.g. API call)
       setAddFriendModal(false);
     }
@@ -110,27 +135,27 @@ export default function FriendsPage({ navigation }) {
             <TouchableOpacity
               style={styles.searchButton}
               onPress={() => {
-                const results = dummyUserSearch(searchQuery);
-                setSearchResults(results);
-                setSelectedUser(null);
+                handleSearch()
               }}
             >
               <Text style={styles.searchButtonText}>Search</Text>
             </TouchableOpacity>
 
             <ScrollView style={{ maxHeight: 200 }}>
-              {searchResults.map((username, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.resultItem,
-                    selectedUser === username && styles.selectedItem,
-                  ]}
-                  onPress={() => setSelectedUser(username)}
-                >
-                  <Text style={styles.resultText}>{username}</Text>
-                </TouchableOpacity>
-              ))}
+            {searchResults.map((user, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.resultItem,
+                  selectedUser?.userid === user.userid && styles.selectedItem,
+                ]}
+                onPress={() => setSelectedUser(user)} // Save whole user object
+              >
+                <Text style={styles.resultText}>{user.username}</Text>
+              </TouchableOpacity>
+            ))}
+
+
             </ScrollView>
 
             <View style={styles.modalButtons}>

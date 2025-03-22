@@ -47,7 +47,7 @@ const SavedStack = () => (
 
 const FriendsStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="Friends" component={FriendsPage} />
+    <Stack.Screen name="FriendsPage" component={FriendsPage} />
   </Stack.Navigator>
 );
 
@@ -89,7 +89,7 @@ const BottomTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Hosting"
+        name="Friends"
         component={FriendsStack}
         options={{
           tabBarIcon: ({ color, size }) => (

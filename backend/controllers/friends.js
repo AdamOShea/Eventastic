@@ -6,7 +6,7 @@ const addFriend = async (req, res) => {
 
     try {
         const query = `
-        INSERT INTO eventastic."Friends" (userId_1, userId_2)
+        INSERT INTO eventastic."Friends" ("userId_1", "userId_2")
         VALUES ($1, $2);
         `;
         const values = [userId_1, userId_2];
@@ -25,7 +25,7 @@ const fetchFriends = async (req, res) => {
     try {
         const query = `
         SELECT * FROM eventastic."Friends"
-        WHERE userId_1 = $1;
+        WHERE "userId_1" = $1;
         `;
 
         const values = [userId_1];

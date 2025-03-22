@@ -8,7 +8,7 @@ import { enableScreens } from 'react-native-screens';
 import { MenuProvider } from 'react-native-popup-menu';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { PermissionsAndroid, Platform } from 'react-native';
-
+import { UserProvider } from "./components/UserContext";
 import { EventProvider } from "./components/EventContext";
 
 import LoginRegisterPage from './pages/LoginRegisterPage';
@@ -47,18 +47,20 @@ function App() {
   }, []);
 
   return (
-    <EventProvider>
-      <MenuProvider>
-        <PaperProvider>
-          <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="LoginRegisterPage" component={LoginRegisterPage} />
-              <Stack.Screen name="Tabs" component={BottomTabNavigator} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </PaperProvider>
-      </MenuProvider>
-    </EventProvider>
+    <UserProvider>
+      <EventProvider>
+        <MenuProvider>
+          <PaperProvider>
+            <NavigationContainer>
+              <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="LoginRegisterPage" component={LoginRegisterPage} />
+                <Stack.Screen name="Tabs" component={BottomTabNavigator} />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </PaperProvider>
+        </MenuProvider>
+      </EventProvider>
+    </UserProvider>
   );
 }
 

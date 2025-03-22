@@ -5,6 +5,8 @@ import FormInput from './FormInput';
 import FormSubmitButton from './FormSubmitButton';
 import { login } from '../methods/login';
 import { StackActions } from '@react-navigation/native';
+import { useUser } from "./UserContext";
+
 
 const LoginForm = ({ navigation }) => {
   const [userInfo, setUserInfo] = useState({
@@ -13,27 +15,30 @@ const LoginForm = ({ navigation }) => {
   });
 
   const { email, password } = userInfo;
+  const { setCurrentUser } = useUser();
 
   // Refs for inputs
   const passwordRef = useRef(null);
 
   const submitForm = async () => {
-    console.log(userInfo);
-    login(userInfo).then((response) => {
-      console.log(response);
-
+    try {
+      const response = await login(userInfo);
+      console.log("Login response:", response);
+  
       if (response.message === "Signed in") {
         Alert.alert('Success', "Signed in");
-        setUserInfo({ email: '', password: '' }); // Reset form fields
-        navigation.dispatch(
-          StackActions.replace('Tabs') // 👈 Redirects to the bottom tab navigation
-        );
-        
-      } else { 
+        setUserInfo({ email: '', password: '' });
+        setCurrentUser(response.user);
+        navigation.dispatch(StackActions.replace('Tabs'));
+      } else {
         Alert.alert('Error', response.message);
       }
-    });
+    } catch (err) {
+      console.error("❌ Login error:", err);
+      Alert.alert('Error', 'Something went wrong while logging in.');
+    }
   };
+  
 
   const handleOnChangeText = (value, fieldName) => {
     setUserInfo({ ...userInfo, [fieldName]: value });
