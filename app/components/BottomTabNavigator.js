@@ -17,7 +17,7 @@ import SavedTrips from "../pages/SavedTripsPage";
 import TripDetailsPage from "../pages/TripDetailsPage";
 
 import SettingsPage from "../pages/SettingsPage";
-import HostingPage from "../pages/HostingPage";
+import FriendsPage from "../pages/FriendsPage";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -41,6 +41,12 @@ const SavedStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="SavedTripsPage" component={SavedTrips} />
     <Stack.Screen name="TripDetails" component={TripDetailsPage} />
+  </Stack.Navigator>
+);
+
+const FriendsStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Friends" component={FriendsPage} />
   </Stack.Navigator>
 );
 
@@ -83,7 +89,7 @@ const BottomTabNavigator = () => {
       />
       <Tab.Screen
         name="Hosting"
-        component={HostingPage}
+        component={FriendsStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon name="people" color={color} size={size} />
