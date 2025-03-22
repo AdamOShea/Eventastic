@@ -75,15 +75,15 @@ export default function FriendsPage({ navigation }) {
 
   const handleAddFriend = async () => {
     if (selectedUser) {
+      console.log(currentUser.userid);
       console.log("✅ Adding friend:", selectedUser.username, selectedUser.userid);
       try {
-        const response = await addFriend(currentUser.userid, selectedUser.userid);
+        const response = await addFriend({userId_1: currentUser.userid, userId_2: selectedUser.userid});
         return response;
       } catch (err) {
         console.log("handleaddfriend: ", err);
       }
 
-      // Add actual friend logic here (e.g. API call)
       setAddFriendModal(false);
     }
   };

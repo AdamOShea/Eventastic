@@ -22,6 +22,7 @@ app.use(mapsRouter);
 app.use(accommRouter);
 app.use(flightsRouter);
 app.use(tripsRouter);
+app.use(friendsRouter);
 
 
 
