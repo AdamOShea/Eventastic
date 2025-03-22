@@ -77,7 +77,7 @@ export default function SearchPage({ navigation }) {
         if (currentScrollY > lastScrollY.current + 50 && isSearchVisible.current) {
           isSearchVisible.current = false;
           Animated.timing(translateY, {
-            toValue: -300, // Move the search bar up
+            toValue: -325, // Move the search bar up
             duration: 300,
             useNativeDriver: false,
           }).start();
@@ -110,6 +110,7 @@ export default function SearchPage({ navigation }) {
           right: 0,
           backgroundColor: 'white',
           zIndex: 10,
+          paddingTop: 25
         }}
       >
         <SearchPageHeader heading="Find an Event" />
@@ -137,7 +138,7 @@ export default function SearchPage({ navigation }) {
 
       {/* 📜 Scrollable Events List */}
       <Animated.FlatList
-        contentContainerStyle={{ paddingTop: 300, paddingBottom: 30 }} // Leaves space for hidden header
+        contentContainerStyle={{ paddingTop: 325, paddingBottom: 30 }} // Leaves space for hidden header
         data={events}
         keyExtractor={(item) => item.eventId.toString()}
         renderItem={({ item }) => <SearchResultCard item={item} navigation={navigation}/>}

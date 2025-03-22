@@ -1,16 +1,20 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from "react-native";
 import TripCard from "../components/TripCard";
-import { fetchSavedTrips } from "../methods/fetchSavedTrips"; // ✅ API call to get trips
+import { fetchSharedTrips } from "../methods/fetchSharedTrips"; // ✅ API call to get trips
+import { useUser } from "../components/UserContext"; // ✅ Import UserContext
 
 export default function FriendTripsPage({ navigation }) {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const { currentUser } = useUser(); // ✅ Get current user
 
+  
   const loadTrips = async () => {
+    if (!currentUser?.userid) return;
     setLoading(true);
-    const savedTrips = await fetchSavedTrips({ userid: "4100febd-1cb8-45ed-91e8-ca242ac97e6f" });
+    const savedTrips = await fetchSharedTrips({  });
 
     //console.log("🔍 Processed trips for FlatList:", savedTrips);
 

@@ -6,6 +6,7 @@ import FormSubmitButton from './FormSubmitButton';
 import { register } from '../methods/register';
 import { login } from '../methods/login';
 import { StackActions } from '@react-navigation/native';
+import { useUser } from "./UserContext";
 
 const RegisterForm = ({ navigation }) => {
   const [userInfo, setUserInfo] = useState({
@@ -16,6 +17,8 @@ const RegisterForm = ({ navigation }) => {
   });
 
   const { username, email, password, confirmPassword } = userInfo;
+
+  const { setCurrentUser } = useUser();
 
   // Refs for inputs to navigate between fields
   const emailRef = useRef(null);
@@ -32,13 +35,9 @@ const RegisterForm = ({ navigation }) => {
       console.log(response);
 
       if (response.message === "User created successfully") {
-        Alert.alert('Success', "Registered: " + username);
         const loginResponse = await login(email, password);
-        navigation.dispatch(
-          StackActions.replace('SearchPage', {
-            user: loginResponse.user
-          })
-        );
+        setCurrentUser(loginResponse.user);
+        navigation.dispatch(StackActions.replace('Tabs'));
       } else {
         Alert.alert('Error', response);
       }
