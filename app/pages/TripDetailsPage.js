@@ -1,62 +1,70 @@
-import React from "react";
-import { View, ScrollView, Text, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  ScrollView,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import TappableInfoContainer from "../components/TappableInfoContainer";
 import TripAccommodationCard from "../components/TripAccommodationCard";
 import TripFlightCard from "../components/TripFlightCard";
+import { updateTripSharing } from "../methods/updateTripSharing";
 
-export default function TripDetailsPage({ route }) {
+export default function TripDetailsPage({ route, navigation }) {
   const { trip } = route.params;
-
-  // let imageSource;
-
-  // try {
-  //       const images = JSON.parse(trip.eventImages || '[]'); // safely parse
-  //       if (images.length > 0) {
-  //         imageSource = { uri: images[0] }; // ✅ access first image
-  //       }
-  // } catch (err) {
-  //       //console.warn('❌ Failed to parse eventImages:', err);
-  // }
 
   let accommImages = [];
   let accommFirstImage;
-  
+
   try {
-    accommImages = JSON.parse(trip.accommImages || '[]'); // properly set as array
+    accommImages = JSON.parse(trip.accommImages || "[]");
     if (accommImages.length > 0) {
-      accommFirstImage = accommImages[0]; // ✅ string URL
+      accommFirstImage = accommImages[0];
     }
   } catch (err) {
-    console.warn('❌ Failed to parse accommImages:', err);
+    console.warn("❌ Failed to parse accommImages:", err);
   }
-  
 
-  
+  const [sharedStatus, setSharedStatus] = useState(trip.shared);
 
+  const toggleSharing = async () => {
+    try {
+      const updated = await updateTripSharing({
+        tripid: trip.tripid,
+        shared: !sharedStatus,
+      });
 
-  // Build event object
+      if (updated?.message === "Trip updated successfully") {
+        setSharedStatus((prev) => !prev);
+      } else {
+        Alert.alert("Update failed", "Could not update sharing status.");
+      }
+    } catch (err) {
+      console.error("Error toggling share:", err);
+      Alert.alert("Error", "An error occurred while sharing the trip.");
+    }
+  };
+
   const event = {
     eventTitle: trip.eventTitle,
     eventDate: trip.eventDate,
     eventVenue: trip.eventVenue,
     eventLocation: trip.eventLocation,
     eventLink: trip.eventLink,
-    eventImages: trip.eventImages
-    
+    eventImages: trip.eventImages,
   };
 
-  // Build accommodation object
   const accommodation = trip.accommName && {
     accommName: trip.accommName,
     accommPrice: trip.accommPrice,
     accommRating: trip.accommRating,
-    accommImages,            // full array
-    accommFirstImage,        // string
+    accommImages,
+    accommFirstImage,
     accommUrl: trip.accommUrl,
   };
-  
 
-  // Build outbound flight object
   const outboundFlight = trip.outFlightAirline && {
     flightAirline: trip.outFlightAirline,
     flightDepartureAirport: trip.outFlightDeparture,
@@ -65,10 +73,9 @@ export default function TripDetailsPage({ route }) {
     flightPrice: trip.outFlightPrice,
     flightDepartureTime: trip.outFlightDepartureTime,
     flightArrivalTime: trip.outFlightArrivalTime,
-    flightUrl: trip.outFlightUrl
+    flightUrl: trip.outFlightUrl,
   };
 
-  // Build return flight object
   const returnFlight = trip.returnFlightAirline && {
     flightAirline: trip.returnFlightAirline,
     flightDepartureAirport: trip.returnFlightDeparture,
@@ -77,12 +84,19 @@ export default function TripDetailsPage({ route }) {
     flightPrice: trip.returnFlightPrice,
     flightDepartureTime: trip.returnFlightDepartureTime,
     flightArrivalTime: trip.returnFlightArrivalTime,
-    flightUrl: trip.returnFlightUrl
+    flightUrl: trip.returnFlightUrl,
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Trip Details</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.header}>Trip Details</Text>
+        <TouchableOpacity onPress={toggleSharing} style={styles.shareButton}>
+          <Text style={styles.shareButtonText}>
+            {sharedStatus ? "Unshare" : "Share"}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <TappableInfoContainer event={event} />
 
@@ -117,11 +131,25 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     backgroundColor: "#f5f5f5",
   },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
   header: {
     fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 15,
-    textAlign: "center",
+  },
+  shareButton: {
+    backgroundColor: "#6785c7",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  shareButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
   section: {
     backgroundColor: "#fff",

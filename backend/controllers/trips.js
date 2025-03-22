@@ -28,6 +28,7 @@ const fetchSavedTrips = async (req, res) => {
     SELECT 
         trip."tripid",
         trip."userid",
+        trip."shared",
         
         -- Event Details
         e."eventId", e."eventTitle", e."eventDate", e."eventVenue", e."eventLocation", e."eventLink", e."eventImages", e."eventSeller", 
