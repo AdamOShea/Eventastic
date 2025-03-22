@@ -36,7 +36,7 @@ export default function TripDetailsPage({ route, navigation }) {
         shared: !sharedStatus,
       });
 
-      if (updated?.message === "Trip updated successfully") {
+      if (updated?.message === "Trip sharing status updated") {
         setSharedStatus((prev) => !prev);
       } else {
         Alert.alert("Update failed", "Could not update sharing status.");
@@ -150,16 +150,17 @@ const styles = StyleSheet.create({
   },
   shareButton: {
     backgroundColor: "#6785c7",
-    paddingHorizontal: 15,
-    paddingVertical: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
     borderRadius: 8,
   },
   sharedButton: {
-    backgroundColor: "green",
+    backgroundColor: "#4CAF50",
   },
   shareButtonText: {
     color: "#fff",
     fontWeight: "bold",
+    fontSize: 16
   },
   
   section: {

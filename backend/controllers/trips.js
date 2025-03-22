@@ -54,7 +54,7 @@ const fetchSavedTrips = async (req, res) => {
         LEFT JOIN eventastic."Flights" f1 ON trip."outflightid" = f1."flightId"
         LEFT JOIN eventastic."Flights" f2 ON trip."returnflightid" = f2."flightId"
 
-        WHERE trip."userid" = $1;  
+        WHERE trip."userid" = $1 AND trip."shared" = true;  
     `;
 
 
