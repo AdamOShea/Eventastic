@@ -91,11 +91,18 @@ export default function TripDetailsPage({ route, navigation }) {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.header}>Trip Details</Text>
-        <TouchableOpacity onPress={toggleSharing} style={styles.shareButton}>
+        <TouchableOpacity
+          onPress={toggleSharing}
+          style={[
+            styles.shareButton,
+            sharedStatus && styles.sharedButton, // Apply green styling if shared
+          ]}
+        >
           <Text style={styles.shareButtonText}>
-            {sharedStatus ? "Unshare" : "Share"}
+            {sharedStatus ? "Shared" : "Share"}
           </Text>
         </TouchableOpacity>
+
       </View>
 
       <TappableInfoContainer event={event} />
@@ -147,10 +154,14 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
   },
+  sharedButton: {
+    backgroundColor: "green",
+  },
   shareButtonText: {
     color: "#fff",
     fontWeight: "bold",
   },
+  
   section: {
     backgroundColor: "#fff",
     padding: 15,

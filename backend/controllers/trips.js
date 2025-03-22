@@ -72,4 +72,33 @@ const fetchSavedTrips = async (req, res) => {
     }
 };
 
-module.exports = { saveTrip, fetchSavedTrips };
+const updateShareStatus = async (req, res) => {
+    const { tripid, shared } = req.body;
+  
+    if (!tripid || typeof shared !== 'boolean') {
+      return res.status(400).json({ message: 'Missing or invalid parameters' });
+    }
+  
+    try {
+      const query = `
+        UPDATE eventastic."SavedTrip"
+        SET shared = $1
+        WHERE tripid = $2
+        RETURNING *;
+      `;
+      const values = [shared, tripid];
+      const result = await pool.query(query, values);
+  
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: 'Trip not found' });
+      }
+  
+      res.status(200).json({ message: 'Trip sharing status updated', trip: result.rows[0] });
+    } catch (err) {
+      console.error('Error updating share status:', err);
+      res.status(500).send('Server error');
+    }
+  };
+
+
+module.exports = { saveTrip, fetchSavedTrips, updateShareStatus };
