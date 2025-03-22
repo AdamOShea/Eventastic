@@ -1,19 +1,29 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions, TextInput } from 'react-native';
-import FormContainer from './FormContainer';
+import { View, Text, StyleSheet, TextInput } from 'react-native';
 
-const FormInput = props => {
-  const { placeholder, title } = props;
+const FormInput = React.forwardRef(({ placeholder, title, ...props }, ref) => {
   return (
-    <>
-        <Text style={{ fontWeight: 'bold' }}>{title}</Text>
-        <TextInput {...props} placeholder={placeholder} style={styles.input}></TextInput>
-    </>
+    <View style={styles.container}>
+      {title && <Text style={styles.label}>{title}</Text>}
+      <TextInput
+        {...props}
+        ref={ref}
+        placeholder={placeholder}
+        style={styles.input}
+      />
+    </View>
   );
-}
+});
 
 export default FormInput;
 
 const styles = StyleSheet.create({
-    input: { borderWidth: 1, borderColor: 'black', height: 45, borderRadius: 8, fontSize: 16, paddingLeft:10, marginBottom: 20}
-})
+  container: {
+    marginBottom: 20,
+  },
+  label: {
+    fontWeight: 'bold',
+    marginBottom: 6,
+  },
+  input: { borderWidth: 1, borderColor: 'black', height: 45, borderRadius: 8, fontSize: 16, paddingLeft:10, marginBottom: 20}
+});

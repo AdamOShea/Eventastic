@@ -6,7 +6,7 @@ const saveTrip = async (req, res) => {
     try {
         const query = `
         INSERT INTO eventastic."SavedTrip" (userid, eventid, accommid, outflightid, returnflightid, shared)
-        VALUES ($1, $2, $3, $4, $5)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING tripid;
     `;
         const values = [userid, eventid, accommid, outflightid, returnflightid, shared];

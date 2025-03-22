@@ -1,43 +1,66 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Linking } from 'react-native';
-import { useEvent } from '../components/EventContext'; // ✅ Import context
+import React, { useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
+import { useEvent } from '../components/EventContext';
 
-export default function AccommodationDetailsPage({ navigation }) {
-  const { selectedAccommodation } = useEvent(); // ✅ Retrieve accommodation from context
+export default function AccommodationDetailsPage({ navigation, route }) {
+  const { setSelectedAccommodation } = useEvent();
+  const accommodation = route.params?.accommDetails;
 
-  if (!selectedAccommodation) {
-    console.warn("⚠️ No accommodation selected. Redirecting...");
-    navigation.navigate('AccommodationPage'); // ✅ Redirect if accommodation is missing
+  if (!accommodation) {
+    console.warn("⚠️ No accommodation passed. Redirecting...");
+    navigation.navigate('AccommodationPage');
     return null;
   }
 
-  const handleSaveButton = () => {
-    console.log("saved accomm to trip, ", selectedAccommodation.accommName);
-    navigation.navigate('EventDetails');
+  let parsedImages = [];
+  try {
+    parsedImages = Array.isArray(accommodation.accommImages)
+      ? accommodation.accommImages
+      : JSON.parse(accommodation.accommImages || '[]');
+  } catch (err) {
+    console.warn("Failed to parse accommodation images:", err);
   }
+
+  const handleSaveButton = () => {
+    setSelectedAccommodation(accommodation);
+    console.log("✅ Saved to context:", accommodation.accommName);
+    navigation.navigate('EventDetails');
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{selectedAccommodation.accommName}</Text>
-      
-      {/* 🖼️ Display All Images */}
+      <Text style={styles.title}>{accommodation.accommName}</Text>
+
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageScroll}>
-        {selectedAccommodation.acommImages?.map((imgUrl, index) => (
+        {parsedImages.map((imgUrl, index) => (
           <Image key={index} source={{ uri: imgUrl }} style={styles.image} />
         ))}
       </ScrollView>
 
-      {/* ℹ️ Accommodation Details */}
-      <Text style={styles.detail}><Text style={styles.bold}>Price:</Text> {selectedAccommodation.accommPrice}</Text>
-      <Text style={styles.detail}><Text style={styles.bold}>Rating:</Text> {selectedAccommodation.accommRating}</Text>
-      <Text style={styles.detail}><Text style={styles.bold}>Details:</Text> {selectedAccommodation.accommDetails || 'No additional details provided.'}</Text>
+      <Text style={styles.detail}>
+        <Text style={styles.bold}>Price:</Text> {accommodation.accommPrice}
+      </Text>
+      <Text style={styles.detail}>
+        <Text style={styles.bold}>Rating:</Text> {accommodation.accommRating}
+      </Text>
+      <Text style={styles.detail}>
+        <Text style={styles.bold}>Details:</Text>{' '}
+        {accommodation.accommDetails || 'No additional details provided.'}
+      </Text>
 
-      {/* 🔗 Open Room URL */}
-      <TouchableOpacity onPress={() => Linking.openURL(selectedAccommodation.accommUrl)} style={styles.button}>
+      <TouchableOpacity onPress={() => Linking.openURL(accommodation.accommUrl)} style={styles.button}>
         <Text style={styles.buttonText}>View on Airbnb</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => handleSaveButton()} style={styles.button}>
+      <TouchableOpacity onPress={handleSaveButton} style={styles.button}>
         <Text style={styles.buttonText}>Save Accommodation to Trip</Text>
       </TouchableOpacity>
     </ScrollView>

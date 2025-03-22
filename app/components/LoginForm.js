@@ -26,7 +26,6 @@ const LoginForm = ({ navigation }) => {
       console.log("Login response:", response);
   
       if (response.message === "Signed in") {
-        Alert.alert('Success', "Signed in");
         setUserInfo({ email: '', password: '' });
         setCurrentUser(response.user);
         navigation.dispatch(StackActions.replace('Tabs'));

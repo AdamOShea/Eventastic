@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import InfoContainer from '../components/InfoContainer';
 import ExpandableDescription from '../components/ExpandableDescription';
 import MapComponent from '../components/MapComponent';
@@ -71,6 +71,14 @@ export default function EventDetailsPage({ navigation }) {
         <>
           <InfoContainer event={selectedEvent} />
           <ExpandableDescription event={selectedEvent} />
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => Linking.openURL(selectedEvent.eventLink)}
+          >
+            <Text style={styles.buttonText}>Event Website</Text>
+          </TouchableOpacity>
+
           <MapComponent eventLocation={`${selectedEvent.eventVenue} ${selectedEvent.eventLocation}`} eventTitle={selectedEvent.eventTitle} />
 
           {/* ✅ Display Saved Accommodation if Exists */}
@@ -99,9 +107,6 @@ export default function EventDetailsPage({ navigation }) {
 
 
           {/* 🚀 Action Buttons */}
-          <TouchableOpacity onPress={saveEvent} style={styles.button}>
-            <Text style={styles.buttonText}>Save Event</Text>
-          </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
@@ -115,6 +120,10 @@ export default function EventDetailsPage({ navigation }) {
             onPress={() => navigation.navigate('Flights')}
           >
             <Text style={styles.buttonText}>Search Flights</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={saveEvent} style={styles.saveButton}>
+            <Text style={styles.buttonText}>Save Trip</Text>
           </TouchableOpacity>
         </>
       ) : (
@@ -164,6 +173,15 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#6785c7',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 15,
+    width: '100%',
+    alignItems: 'center',
+  },
+  saveButton: {
+    backgroundColor: '#4CAF50',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 10,

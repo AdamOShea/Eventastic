@@ -1,57 +1,12 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Modal,
-  TextInput,
-  ScrollView,
-} from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import {  View,  Text,  StyleSheet,  FlatList,  TouchableOpacity,  Modal, TextInput,  ScrollView,} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import TripCard from "../components/TripCard";
 import {searchUsers} from "../methods/searchUsers";
 import {addFriend} from "../methods/addFriend";
 import { useUser } from "../components/UserContext";
-
-
-
-// Dummy friend data
-const friends = [
-  {
-    id: "1",
-    name: "Alice",
-    sharedTrips: [
-      { tripid: "a1", eventTitle: "Coldplay Live", eventDate: "2025-07-21", eventVenue: "Wembley", eventLocation: "London" },
-    ],
-  },
-  {
-    id: "2",
-    name: "Bob",
-    sharedTrips: [
-      { tripid: "b1", eventTitle: "Taylor Swift Tour", eventDate: "2025-08-05", eventVenue: "Aviva", eventLocation: "Dublin" },
-    ],
-  },
-];
-
-// Simulate backend username search
-const dummyUserSearch = (query) => {
-  const users = ["adam23", "alicemusic", "bobster", "charliex", "dublindude", "MartaTheLoser"];
-  return users.filter((u) => u.toLowerCase().includes(query.toLowerCase()));
-};
-
-const userSearch = async (query) => {
-  try {
-    const response = await searchUsers({ username: query }); // Wrap query in object
-    console.log(response.users);
-    return Array.isArray(response.users) ? response.users : [];
-  } catch (err) {
-    console.log("userSearch failed:", err);
-    return [];
-  }
-};
-
+import { fetchFriends } from "../methods/fetchFriends";
+import { fetchSavedTrips } from "../methods/fetchSavedTrips";
 
 
 export default function FriendsPage({ navigation }) {
@@ -60,6 +15,58 @@ export default function FriendsPage({ navigation }) {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const { currentUser } = useUser();
+  const [friends, setFriends] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+
+  useEffect(() => {
+    if (currentUser?.userid) {
+      loadFriendsAndTrips(currentUser.userid);
+    }
+  }, [currentUser, loadFriendsAndTrips]);
+  
+
+// Shared async function
+  const loadFriendsAndTrips = useCallback(async (userId) => {
+    try {
+      const friendList = await fetchFriends({ userId_1: userId });
+      if (Array.isArray(friendList)) {
+        const enrichedFriends = await Promise.all(
+          friendList.map(async (friend) => {
+            const trips = await fetchSavedTrips({ userid: friend.userId_2 });
+            return {
+              id: friend.userId_2,
+              name: friend.username || "Friend",
+              sharedTrips: Array.isArray(trips) ? trips : [],
+            };
+          })
+        );
+        setFriends(enrichedFriends);
+      }
+    } catch (err) {
+      console.error("Error loading friends/trips:", err);
+    }
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadFriendsAndTrips(currentUser.userid);
+    setRefreshing(false);
+  }, [currentUser, loadFriendsAndTrips]);
+  
+    
+  const userSearch = async (query) => {
+    try {
+      const response = await searchUsers({ username: query }); // Wrap query in object
+      console.log(response.users);
+      return Array.isArray(response.users) ? response.users : [];
+    } catch (err) {
+      console.log("userSearch failed:", err);
+      return [];
+    }
+  };
+
+
   const openAddFriendModal = () => {
     setAddFriendModal(true);
     setSearchQuery("");
@@ -69,14 +76,15 @@ export default function FriendsPage({ navigation }) {
 
   const handleSearch = async () => {
     const results = await userSearch(searchQuery);
-    setSearchResults(results);
+    const filtered = results.filter((u) => u.userid !== currentUser.userid);
+    setSearchResults(filtered);
   };
   
 
   const handleAddFriend = async () => {
     if (selectedUser) {
       console.log(currentUser.userid);
-      console.log("✅ Adding friend:", selectedUser.username, selectedUser.userid);
+      console.log("Adding friend:", selectedUser.username, selectedUser.userid);
       try {
         const response = await addFriend({userId_1: currentUser.userid, userId_2: selectedUser.userid});
         return response;
@@ -116,8 +124,16 @@ export default function FriendsPage({ navigation }) {
         data={friends}
         keyExtractor={(item) => item.id}
         renderItem={renderFriend}
-        contentContainerStyle={{ paddingBottom: 30 }}
+        contentContainerStyle={{ paddingBottom: 30, flexGrow: 1 }}
+        ListEmptyComponent={
+          <Text style={{ textAlign: 'center', color: '#888', marginTop: 20, fontSize: 16 }}>
+            No shared trips available. Add more friends or wait for your friends to share a trip!
+          </Text>
+        }
+        refreshing={refreshing}
+        onRefresh={onRefresh}
       />
+
 
       {/* Modal */}
       <Modal visible={addFriendModal} animationType="slide" transparent>

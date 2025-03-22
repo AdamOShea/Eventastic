@@ -1,14 +1,14 @@
 const client = require('../api/client');
 
-const fetchFriend = async (values) => {
-    console.log("Payload sent to fetchFriend:", values); 
+const fetchFriends = async (values) => {
+    console.log("Payload sent to fetchFriends:", values); 
 
     try {
       const apiResponse = await client.post('/fetch-friends', values);
       //console.log("Accomm API Response:", apiResponse.data);
 
-      if (apiResponse.status === 201) {
-        console.log("✅ fetchFriend successful");
+      if (apiResponse.status === 200) {
+        console.log("✅ fetchFriends successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
         console.log("❌ fetchFriend failed with status:", apiResponse.status);
@@ -20,4 +20,4 @@ const fetchFriend = async (values) => {
     }
 };
 
-module.exports = { fetchFriend };
+module.exports = { fetchFriends };

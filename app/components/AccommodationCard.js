@@ -1,23 +1,37 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useEvent } from './EventContext'; // ✅ Import context
 
-export default function AccommodationCard({ navigation, accommName, accommPrice, accommRating, accommFirstImage, accommImages, accommUrl }) {
-  const { setSelectedAccommodation } = useEvent(); // ✅ Get setter from context
-
+export default function AccommodationCard({
+  navigation,
+  accommName,
+  accommPrice,
+  accommRating,
+  accommFirstImage,
+  accommImages,
+  accommUrl,
+  accommDetails
+}) {
   const handleSelectAccommodation = () => {
-    console.log("🏨 Storing Selected Accommodation:", { accommName, accommPrice, accommRating, accommImages, accommUrl });
-    setSelectedAccommodation({ accommName, accommPrice, accommRating, accommFirstImage, accommImages, accommUrl }); // ✅ Store in context
-    navigation.navigate('AccommodationDetails'); // ✅ Navigate to details page
+    navigation.navigate('AccommodationDetails', {
+      accommDetails: {
+        accommName,
+        accommPrice,
+        accommRating,
+        accommFirstImage,
+        accommImages,
+        accommUrl,
+        accommDetails
+      }
+    });
   };
 
   return (
     <TouchableOpacity onPress={handleSelectAccommodation} activeOpacity={0.8}>
       <View style={styles.card}>
-        {/* 🏨 Display Image */}
-        <Image source={typeof accommFirstImage === 'string' ? { uri: accommFirstImage } : accommFirstImage} style={styles.image} />
-
-        {/* 📌 Display Accommodation Info */}
+        <Image
+          source={typeof accommFirstImage === 'string' ? { uri: accommFirstImage } : accommFirstImage}
+          style={styles.image}
+        />
         <View style={styles.textContainer}>
           <Text style={styles.title}>{accommName}</Text>
           <Text style={styles.price}>Total Price: {accommPrice}</Text>

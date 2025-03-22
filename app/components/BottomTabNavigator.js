@@ -20,6 +20,7 @@ import SettingsPage from "../pages/SettingsPage";
 import FriendsPage from "../pages/FriendsPage";
 import FriendsTripsPage from "../pages/FriendTripsPage";
 
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -48,8 +49,15 @@ const SavedStack = () => (
 const FriendsStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="FriendsPage" component={FriendsPage} />
+    <Stack.Screen name="FriendsTripsPage" component={FriendsTripsPage} />
   </Stack.Navigator>
 );
+
+const SettingsStack = () => {
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="SettingsPage" component={SettingsPage} />
+  </Stack.Navigator>
+}
 
 // ✅ Main Bottom Tab Navigator
 const BottomTabNavigator = () => {

@@ -35,7 +35,10 @@ const fetchFriends = async (req, res) => {
             return res.status(404).json({ message: 'No friends found' });
         }
 
-        res.status(200).json(result);
+        res.status(200).send({ 
+            message: 'Friends Found', 
+            friends: Array.isArray(result.rows) ? result.rows : [] 
+          });
 
     } catch (err) {
         console.error(err);
