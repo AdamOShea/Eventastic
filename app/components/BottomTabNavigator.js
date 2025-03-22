@@ -18,6 +18,7 @@ import TripDetailsPage from "../pages/TripDetailsPage";
 
 import SettingsPage from "../pages/SettingsPage";
 import FriendsPage from "../pages/FriendsPage";
+import FriendsTripsPage from "../pages/FriendTripsPage";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();

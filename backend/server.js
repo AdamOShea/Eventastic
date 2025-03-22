@@ -5,6 +5,7 @@ const mapsRouter = require('./routes/maps');
 const accommRouter = require('./routes/accommodation');
 const flightsRouter = require('./routes/flights');
 const tripsRouter = require('./routes/trips');
+const friendsRouter = require('./routes/friends');
 
 const app = express();
 const port = 3000;

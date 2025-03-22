@@ -2,14 +2,14 @@ const { pool } = require('../models/db');
 
 const saveTrip = async (req, res) => {
     const { userid, eventid, accommid, outflightid, returnflightid } = req.body;
-
+    const shared = false;
     try {
         const query = `
-        INSERT INTO eventastic."SavedTrip" (userid, eventid, accommid, outflightid, returnflightid)
+        INSERT INTO eventastic."SavedTrip" (userid, eventid, accommid, outflightid, returnflightid, shared)
         VALUES ($1, $2, $3, $4, $5)
         RETURNING tripid;
     `;
-        const values = [userid, eventid, accommid, outflightid, returnflightid];
+        const values = [userid, eventid, accommid, outflightid, returnflightid, shared];
         const result = await pool.query(query, values);
 
         res.status(201).send({ message: 'Trip stored successfully', tripid: result.rows[0].tripid })
