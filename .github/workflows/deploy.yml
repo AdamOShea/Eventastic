@@ -39,7 +39,7 @@ jobs:
           git reset --hard origin/dev 
           git pull origin dev
 
-          # ✅ Restart the backend with new environment variables
+
           docker volume prune -f
           docker-compose down
           docker-compose up -d --build
