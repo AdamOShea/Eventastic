@@ -1,9 +1,9 @@
 import { ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View, Dimensions, Animated } from 'react-native';
 import React, { useEffect, useRef } from 'react';
-import LoginHeader from './LoginHeader';
-import LoginSelector from './LoginSelector';
-import LoginForm from './LoginForm';
-import RegisterForm from './RegisterForm';
+import LoginHeader from '../components/LoginHeader';
+import LoginSelector from '../components/LoginSelector';
+import LoginForm from '../components/LoginForm';
+import RegisterForm from '../components/RegisterForm';
 
 
 const {width} = Dimensions.get('window')

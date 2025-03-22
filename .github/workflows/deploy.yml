@@ -21,11 +21,13 @@ jobs:
         password: ${{ secrets.DROPLET_PW }}  # Use password instead of SSH key
         command_timeout: 600s
         script: |
-          cd EireLive/backend  # Adjust to your project directory
+          cd Eventastic/backend  # Adjust to your backend directory
 
-          # Create .env file with GitHub Secrets
-          # echo "API_URL=${{ secrets.API_URL }}" > .env
-          echo "TICKETMASTER_API_KEY=${{ secrets.TICKETMASTER_API_KEY }}" >> .env
+        
+
+          # ✅ Create .env file with GitHub Secrets
+          echo "TICKETMASTER_API_KEY=${{ secrets.TICKETMASTER_API_KEY }}" > .env
+          echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env
           echo "EVENTBRITE_API_KEY=${{ secrets.EVENTBRITE_API_KEY_URL }}" >> .env
           echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
           echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
@@ -33,13 +35,11 @@ jobs:
           echo "DB_PW=${{ secrets.DB_PW }}" >> .env
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
 
-          cd ..
-
-          # Pull latest code
+          # ✅ Pull latest code
+          git reset --hard origin/dev 
           git pull origin dev
 
-          # Restart the backend with new environment variables
+
           docker volume prune -f
           docker-compose down
           docker-compose up -d --build
-

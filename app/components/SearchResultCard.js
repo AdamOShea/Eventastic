@@ -1,22 +1,39 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { format } from 'date-fns';
+import { useEvent } from './EventContext'; 
 
 
-export default function SearchResultCard({ item, navigation }) {
-  const imageSource =
-    item.seller?.toLowerCase() === 'ticketmaster'
-      ? require('../assets/ticketmaster.png')
-      : require('../assets/eventastic.png');
+export default function SearchResultCard({ item, navigation, onPress }) {
+  let imageSource = require('../assets/eventastic.png'); // fallback
+
+  try {
+    const images = JSON.parse(item.eventImages || '[]'); // safely parse
+    if (images.length > 0) {
+      imageSource = { uri: images[0] }; // ✅ access first image
+    }
+  } catch (err) {
+    //console.warn('❌ Failed to parse eventImages:', err);
+  }
+
+
+  const { setSelectedEvent } = useEvent();
+
+  const handlePress = (item) => {
+    setSelectedEvent(item);
+    navigation.navigate('EventDetails');
+  }
+
+
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate('EventDetails', { event: item })}>
+    <TouchableOpacity onPress={() => handlePress(item)}>
       <View style={styles.card}>
         <Image source={imageSource} style={styles.image} />
         <View style={styles.details}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.date}>{format(new Date(item.date), 'dd-LLL-yyyy')}</Text>
-          <Text style={styles.location}>{item.eventlocation.trim()}, {item.venue}</Text>
+          <Text style={styles.title}>{item.eventTitle}</Text>
+          <Text style={styles.date}>{format(new Date(item.eventDate), 'dd-LLL-yyyy')}</Text>
+          <Text style={styles.location}>{item.eventLocation.trim()}, {item.eventVenue}</Text>
         </View>
       </View>
     </TouchableOpacity>

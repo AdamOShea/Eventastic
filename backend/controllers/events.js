@@ -2,7 +2,7 @@ const { pool } = require('../models/db');
 const fs = require('fs');
 const path = require('path');
 
-const apiDirectory = path.join(__dirname, '../scrapersAndApis')
+const apiDirectory = path.join(__dirname, '../events-apis')
 
 const apis = {};
 
@@ -87,10 +87,10 @@ const eventsFromDb = async (req, res) => {
     try {
         const query = `
             SELECT * FROM eventastic."Event"
-            WHERE title ILIKE ($1)
-            or artist ILIKE ($1)
-            or eventtype ILIKE ($1)
-            or genre ILIKE ($1);
+            WHERE "eventTitle" ILIKE ($1)
+            or "eventArtist" ILIKE ($1)
+            or "eventType" ILIKE ($1)
+            or "eventGenre" ILIKE ($1);
             `;
         
         const values = [`%${keyword}%`];
@@ -107,5 +107,27 @@ const eventsFromDb = async (req, res) => {
     }
 };
 
+const getEventId = async (req, res) => {
+  const {eventLink} = req.body;
+  console.log(eventLink);
 
-module.exports = { eventsFromDb, apiToDb, detectAPIs};
+  try {
+    const query = `
+        SELECT * FROM eventastic."Event"
+        WHERE "eventLink" ILIKE $1;
+        `;
+    
+    const values = [`%${eventLink}%`];
+    const result = await pool.query(query, values);
+
+    res.json({
+      success: true,
+      eventId: result.rows[0].eventId, 
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  }
+}
+
+module.exports = { eventsFromDb, apiToDb, detectAPIs, getEventId};
