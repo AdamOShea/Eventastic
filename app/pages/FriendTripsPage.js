@@ -10,11 +10,11 @@ export default function FriendTripsPage({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const { currentUser } = useUser(); // ✅ Get current user
 
-  
+
   const loadTrips = async () => {
     if (!currentUser?.userid) return;
     setLoading(true);
-    const savedTrips = await fetchSharedTrips({  });
+    const savedTrips = await fetchSharedTrips({ userid: currentUser.userid  });
 
     //console.log("🔍 Processed trips for FlatList:", savedTrips);
 

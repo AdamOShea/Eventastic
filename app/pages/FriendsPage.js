@@ -6,7 +6,7 @@ import {searchUsers} from "../methods/searchUsers";
 import {addFriend} from "../methods/addFriend";
 import { useUser } from "../components/UserContext";
 import { fetchFriends } from "../methods/fetchFriends";
-import { fetchSavedTrips } from "../methods/fetchSavedTrips";
+import { fetchSharedTrips } from "../methods/fetchSharedTrips";
 
 
 export default function FriendsPage({ navigation }) {
@@ -29,11 +29,16 @@ export default function FriendsPage({ navigation }) {
 // Shared async function
   const loadFriendsAndTrips = useCallback(async (userId) => {
     try {
-      const friendList = await fetchFriends({ userId_1: userId });
+      const response = await fetchFriends({ userId_1: userId });
+      const friendList = response.friends;
+
+      //console.log(friendList);
       if (Array.isArray(friendList)) {
         const enrichedFriends = await Promise.all(
           friendList.map(async (friend) => {
-            const trips = await fetchSavedTrips({ userid: friend.userId_2 });
+            const trips = await fetchSharedTrips({ userid: friend.userId_2 });
+            const friendName = await fet
+            //console.log("Friend:", friend.userId_2, "Shared trips:", trips);
             return {
               id: friend.userId_2,
               name: friend.username || "Friend",
