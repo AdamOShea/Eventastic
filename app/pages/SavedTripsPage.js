@@ -11,18 +11,29 @@ export default function SavedTripsPage({ navigation }) {
   const { currentUser } = useUser(); // ✅ Get current user
 
   const loadTrips = async () => {
-    if (!currentUser?.userid) return;
-    setLoading(true);
-    const savedTrips = await fetchSavedTrips({ userid: currentUser.userid });
-
-    if (!Array.isArray(savedTrips) || savedTrips.length === 0) {
-      setTrips([]);
-    } else {
-      setTrips(savedTrips);
+    if (!currentUser?.userid) {
+      setLoading(false); // prevent indefinite spinner if no user
+      return;
     }
-
-    setLoading(false);
+  
+    setLoading(true);
+  
+    try {
+      const savedTrips = await fetchSavedTrips({ userid: currentUser.userid });
+  
+      if (Array.isArray(savedTrips)) {
+        setTrips(savedTrips);
+      } else {
+        setTrips([]);
+      }
+    } catch (err) {
+      console.error("Error loading saved trips:", err);
+      setTrips([]); // fallback
+    } finally {
+      setLoading(false); // always stop loading
+    }
   };
+  
 
   useEffect(() => {
     loadTrips();

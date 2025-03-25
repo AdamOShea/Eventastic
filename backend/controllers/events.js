@@ -19,14 +19,9 @@ fs.readdirSync(apiDirectory).forEach((file) => {
 console.log('loaded APIs: ', apis);
 
 const apiToDb = async (req, res) => {
-  const { keyword } = req.body;
   const { apis: selectedAPIs } = req.body;
 
   console.log('🔎 Received payload at /api-to-db:', req.body); // ✅ Check entire body
-  console.log('👉 keyword:', keyword);
-  console.log('👉 selectedAPIs:', selectedAPIs);
-
-  console.log('selectedAPIs:', selectedAPIs);
 
   if (Array.isArray(selectedAPIs) && selectedAPIs.length > 0) {
     try {
@@ -34,7 +29,7 @@ const apiToDb = async (req, res) => {
       const apiPromises = selectedAPIs.map((api) => {
         if (apis[api]) {
           console.log(`Calling API: ${api}`);
-          return apis[api](keyword);  // Return the promise from each API call
+          return apis[api](req.body);  // Return the promise from each API call
         } else {
           console.log(`API "${api}" not found.`);
           return Promise.resolve({message: `API "${api}" failed in its duties`}); // Resolve with null if the API is not found
@@ -81,22 +76,46 @@ const detectAPIs = async (req, res) => {
 
 
 const eventsFromDb = async (req, res) => {
-    const {keyword} = req.body;
-    console.log(keyword);
+  const { keyword, location, date, apis } = req.body;
 
-    try {
-        const query = `
-            SELECT * FROM eventastic."Event"
-            WHERE "eventTitle" ILIKE ($1)
-            or "eventArtist" ILIKE ($1)
-            or "eventType" ILIKE ($1)
-            or "eventGenre" ILIKE ($1);
-            `;
-        
-        const values = [`%${keyword}%`];
-        const result = await pool.query(query, values);
+  try {
+    let query = `SELECT * FROM eventastic."Event"`;
+    let conditions = [];
+    let values = [];
 
-        console.log("returning from db: " +keyword);
+    if (keyword) {
+      conditions.push(`(
+        "eventTitle" ILIKE $${values.length + 1} OR
+        "eventArtist" ILIKE $${values.length + 1} OR
+        "eventType" ILIKE $${values.length + 1} OR
+        "eventGenre" ILIKE $${values.length + 1}
+      )`);
+      values.push(`%${keyword}%`);
+    }
+
+    if (location) {
+      conditions.push(`"eventLocation" ILIKE $${values.length + 1} OR "eventVenue" ILIKE $${values.length + 1}`);
+      values.push(`%${location}%`);
+    }
+
+    if (date) {
+      conditions.push(`DATE("eventDate") = $${values.length + 1}`);
+      values.push(date);
+    }
+
+    if (Array.isArray(apis) && apis.length > 0) {
+      const apiPlaceholders = apis.map((_, i) => `$${values.length + i + 1}`);
+      conditions.push(`"eventSeller" IN (${apiPlaceholders.join(', ')})`);
+      values.push(...apis);
+    }
+
+    if (conditions.length > 0) {
+      query += ` WHERE ` + conditions.join(' AND ');
+    }
+
+    query += ` ORDER BY "eventDate" ASC;`;
+
+    const result = await pool.query(query, values);
         
         res.json({
           success: true,

@@ -5,6 +5,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 // Pages
 import SearchPage from "../pages/SearchPage";
+import EventsFilters from "../pages/EventsFilters"
 import EventDetailsPage from "../pages/EventDetailsPage";
 import AccommodationPage from "../pages/AccommodationPage";
 import AccommodationDetailsPage from "../pages/AccommodationDetailsPage";
@@ -18,7 +19,8 @@ import TripDetailsPage from "../pages/TripDetailsPage";
 
 import SettingsPage from "../pages/SettingsPage";
 import FriendsPage from "../pages/FriendsPage";
-import FriendsTripsPage from "../pages/FriendTripsPage";
+import FriendTripsPage from "../pages/FriendTripsPage";
+import FriendTripDetails from "../pages/FriendTripDetails";
 
 
 const Tab = createBottomTabNavigator();
@@ -28,6 +30,7 @@ const Stack = createStackNavigator();
 const SearchStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="SearchPage" component={SearchPage} />
+    <Stack.Screen name="EventsFilters" component={EventsFilters} />
     <Stack.Screen name="EventDetails" component={EventDetailsPage} />
     <Stack.Screen name="Accommodation" component={AccommodationPage} />
     <Stack.Screen name="AccommodationDetails" component={AccommodationDetailsPage} />
@@ -43,13 +46,15 @@ const SavedStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="SavedTripsPage" component={SavedTrips} />
     <Stack.Screen name="TripDetails" component={TripDetailsPage} />
+    
   </Stack.Navigator>
 );
 
 const FriendsStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="FriendsPage" component={FriendsPage} />
-    <Stack.Screen name="FriendsTripsPage" component={FriendsTripsPage} />
+    <Stack.Screen name="FriendTripsPage" component={FriendTripsPage} />
+    <Stack.Screen name="FriendTripDetails" component={FriendTripDetails} />
   </Stack.Navigator>
 );
 

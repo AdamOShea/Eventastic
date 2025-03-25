@@ -6,43 +6,59 @@ import {
   Animated,
   FlatList,
   TextInput,
+  TouchableOpacity
 } from 'react-native';
+import * as Location from 'expo-location';
 import FormContainer from '../components/FormContainer';
-import FormInput from '../components/FormInput';
-import FilterMenu from '../components/FilterMenu';
+import SearchPageInput from '../components/SearchPageInput';
 import FormSubmitButton from '../components/FormSubmitButton';
 import { fetchEvents } from '../methods/fetchEvents';
 import SearchResultCard from '../components/SearchResultCard';
 import SearchPageHeader from '../components/SearchPageHeader';
 import { detectAPIs } from '../methods/detectAPIs';
-
+import { useFilters } from '../components/FiltersContext';
 
 export default function SearchPage({ navigation }) {
-  
-  const [searchQuery, setSearchQuery] = useState({ keyword: '', apis: [] });
+  const { filters, setFilters } = useFilters();
+  const [searchQuery, setSearchQuery] = useState({ keyword: '', location: '', apis: [], date: ''  });
   const [events, setEvents] = useState([]);
   const [selectedAPIs, setSelectedAPIs] = useState([]);
   const [apiOptions, setApiOptions] = useState([]);
-  const { keyword } = searchQuery;
+  const { keyword, location } = searchQuery;
 
-  // 🔄 Scroll animation
   const scrollY = useRef(new Animated.Value(0)).current;
   const lastScrollY = useRef(0);
   const isSearchVisible = useRef(true);
-
-  // 🎥 Animated values for hiding & showing the search bar
   const translateY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const fetchAPIs = async () => {
       const apis = await detectAPIs();
       if (Array.isArray(apis) && apis.length) {
-        setApiOptions(apis);
+        setFilters((prev) => ({
+          ...prev,
+          apiOptions: apis,
+          selectedAPIs: apis,
+        }));
         setSelectedAPIs(apis);
         setSearchQuery((prev) => ({ ...prev, apis }));
       }
     };
+
+    const fetchLocation = async () => {
+      //const { status } = await Location.requestForegroundPermissionsAsync();
+        const { coords } = await Location.getCurrentPositionAsync({});
+        const address = await Location.reverseGeocodeAsync(coords);
+        console.log("user location: ", address);
+        if (address.length > 0) {
+          const city = address[0].city || address[0].region;
+          setSearchQuery((prev) => ({ ...prev, location: city }));
+        }
+      
+    };
+
     fetchAPIs();
+    fetchLocation();
   }, []);
 
   const submitForm = async () => {
@@ -65,42 +81,35 @@ export default function SearchPage({ navigation }) {
     setSearchQuery({ ...searchQuery, [fieldName]: value });
   };
 
-  // 🔄 Handle Scroll Event
   const handleScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
     {
       useNativeDriver: false,
       listener: (event) => {
         const currentScrollY = event.nativeEvent.contentOffset.y;
-
-        // If user scrolls DOWN by 50px and search bar is visible, hide it
         if (currentScrollY > lastScrollY.current + 50 && isSearchVisible.current) {
           isSearchVisible.current = false;
           Animated.timing(translateY, {
-            toValue: -325, // Move the search bar up
+            toValue: -325,
             duration: 300,
             useNativeDriver: false,
           }).start();
         }
-
-        // If user scrolls UP by 50px and search bar is hidden, show it
         if (currentScrollY < lastScrollY.current - 50 && !isSearchVisible.current) {
           isSearchVisible.current = true;
           Animated.timing(translateY, {
-            toValue: 0, // Bring the search bar back down
+            toValue: 0,
             duration: 300,
             useNativeDriver: false,
           }).start();
         }
-
-        lastScrollY.current = currentScrollY; // Update last scroll position
+        lastScrollY.current = currentScrollY;
       },
     }
   );
 
   return (
     <View style={{ flex: 1 }}>
-      {/* 🔍 Animated Search Bar */}
       <Animated.View
         style={{
           transform: [{ translateY }],
@@ -116,32 +125,44 @@ export default function SearchPage({ navigation }) {
         <SearchPageHeader heading="Find an Event" />
 
         <FormContainer>
-          <FormInput
+          <SearchPageInput
+            icon
+            iconName="search"
             value={keyword}
             onChangeText={(value) => handleOnChangeText(value, 'keyword')}
             placeholder="Search for something here..."
             returnKeyType="search"
-            onSubmitEditing={submitForm} // Triggers search when "Done" is pressed
+            onSubmitEditing={submitForm}
           />
-          <FormSubmitButton onPress={submitForm} title="Search" />
-        </FormContainer>
+          <SearchPageInput
+            icon
+            iconName="location-outline"
+            value={location}
+            onChangeText={(value) => handleOnChangeText(value, 'location')}
+            placeholder="Location"
+            returnKeyType="search"
+          />
 
-        <FilterMenu
-          apiOptions={apiOptions}
-          selectedAPIs={selectedAPIs}
-          onSelectionChange={(selected) => {
-            setSelectedAPIs(selected);
-            setSearchQuery((prev) => ({ ...prev, apis: selected }));
-          }}
-        />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 5 }}>
+            <TouchableOpacity
+              style={{ backgroundColor: '#6785c7', padding: 12, borderRadius: 8 }}
+              onPress={() => navigation.navigate('EventsFilters')}
+            >
+              <Text style={{ color: '#fff', fontWeight: 'bold' }}>Filters</Text>
+            </TouchableOpacity>
+
+            <View style={{ flex: 1, marginLeft: 10 }}>
+              <FormSubmitButton onPress={submitForm} title="Search" />
+            </View>
+          </View>
+        </FormContainer>
       </Animated.View>
 
-      {/* 📜 Scrollable Events List */}
       <Animated.FlatList
-        contentContainerStyle={{ paddingTop: 325, paddingBottom: 30 }} // Leaves space for hidden header
+        contentContainerStyle={{ paddingTop: 325, paddingBottom: 30 }}
         data={events}
         keyExtractor={(item) => item.eventId.toString()}
-        renderItem={({ item }) => <SearchResultCard item={item} navigation={navigation}/>}
+        renderItem={({ item }) => <SearchResultCard item={item} navigation={navigation} />}
         onScroll={handleScroll}
         scrollEventThrottle={16}
         ListEmptyComponent={

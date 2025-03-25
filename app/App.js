@@ -10,6 +10,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { PermissionsAndroid, Platform } from 'react-native';
 import { UserProvider } from "./components/UserContext";
 import { EventProvider } from "./components/EventContext";
+import { FiltersProvider } from "./components/FiltersContext";
 
 import LoginRegisterPage from './pages/LoginRegisterPage';
 
@@ -49,16 +50,18 @@ function App() {
   return (
     <UserProvider>
       <EventProvider>
-        <MenuProvider>
-          <PaperProvider>
-            <NavigationContainer>
-              <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="LoginRegisterPage" component={LoginRegisterPage} />
-                <Stack.Screen name="Tabs" component={BottomTabNavigator} />
-              </Stack.Navigator>
-            </NavigationContainer>
-          </PaperProvider>
-        </MenuProvider>
+        <FiltersProvider>
+          <MenuProvider>
+            <PaperProvider>
+              <NavigationContainer>
+                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="LoginRegisterPage" component={LoginRegisterPage} />
+                  <Stack.Screen name="Tabs" component={BottomTabNavigator} />
+                </Stack.Navigator>
+              </NavigationContainer>
+            </PaperProvider>
+          </MenuProvider>
+        </FiltersProvider>
       </EventProvider>
     </UserProvider>
   );

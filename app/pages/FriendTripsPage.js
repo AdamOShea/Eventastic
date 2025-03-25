@@ -1,10 +1,14 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback,} from "react";
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from "react-native";
 import TripCard from "../components/TripCard";
 import { fetchSharedTrips } from "../methods/fetchSharedTrips"; // ✅ API call to get trips
 import { useUser } from "../components/UserContext"; // ✅ Import UserContext
 
-export default function FriendTripsPage({ navigation }) {
+export default function FriendTripsPage({ navigation, route }) {
+
+  const { friend } = route.params;
+  //console.log(friend);
+
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -12,9 +16,9 @@ export default function FriendTripsPage({ navigation }) {
 
 
   const loadTrips = async () => {
-    if (!currentUser?.userid) return;
+    if (!friend?.id) return;
     setLoading(true);
-    const savedTrips = await fetchSharedTrips({ userid: currentUser.userid  });
+    const savedTrips = await fetchSharedTrips({ userid: friend.id  });
 
     //console.log("🔍 Processed trips for FlatList:", savedTrips);
 
@@ -40,7 +44,7 @@ export default function FriendTripsPage({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Your Saved Trips</Text>
+      <Text style={styles.header}>{friend.name}'s Shared Trips</Text>
 
       {loading ? (
         <ActivityIndicator size="large" color="#6785c7" />
@@ -53,7 +57,7 @@ export default function FriendTripsPage({ navigation }) {
             return (
               <TripCard
                 trip={item}
-                onPress={() => navigation.navigate("TripDetails", { trip: item })}
+                onPress={() => navigation.navigate("FriendTripDetails", { trip: item })}
               />
             );
           }}

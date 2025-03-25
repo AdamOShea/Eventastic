@@ -15,7 +15,7 @@ const fetchFriends = async (values) => {
         return null;
       }
     } catch (err) {
-      console.error("❌ fetchFriend error:", err.response?.data || err.message);
+      console.log("❌ fetchFriend error:", err.response?.data || err.message);
       return null;
     }
 };

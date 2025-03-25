@@ -10,7 +10,7 @@ import { useUser } from "./UserContext";
 
 const LoginForm = ({ navigation }) => {
   const [userInfo, setUserInfo] = useState({
-    email: 'test@gmail.com',
+    email: 'marta@gmail.com',
     password: 'password',
   });
 

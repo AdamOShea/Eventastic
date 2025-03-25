@@ -11,10 +11,23 @@ if (!apiKey) {
   process.exit(1); // Exit if the API key is missing
 }
 
-const Ticketmaster = async (keyword) => {
-  console.log(`ticketmasterAPI called with keyword: "${keyword}"`);
+const Ticketmaster = async (values) => {
+  console.log(`ticketmasterAPI called with keyword: "${values}"`);
 
-  const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?size=200&keyword=${encodeURIComponent(keyword)}&apikey=${apiKey}`;
+  const { keyword, location, date, } = values;
+
+  const params = new URLSearchParams({
+    size: 200,
+    apikey: apiKey,
+  });
+
+  if (keyword) params.append("keyword", keyword);
+  if (location) params.append("city", location); // or `postalCode`, `countryCode`, etc. depending on the API
+  if (date) params.append("startDateTime", date + "T14:00:00Z"); // ISO 8601 format
+  
+
+  const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?${params.toString()}`;
+
 
   try {
     const response = await axios.get(apiUrl);

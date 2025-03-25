@@ -48,7 +48,7 @@ export default function FriendsPage({ navigation }) {
         setFriends(enrichedFriends);
       }
     } catch (err) {
-      console.error("Error loading friends/trips:", err);
+      console.log("Error loading friends/trips:", err);
     }
   }, []);
 
@@ -105,13 +105,14 @@ export default function FriendsPage({ navigation }) {
   };
 
   const renderFriend = ({ item }) => (
-    <TouchableOpacity onPress={() => goToFriendTrips(item)} style={styles.friendContainer}>
-      <Text style={styles.friendName}>{item.name}'s Trips</Text>
-      {item.sharedTrips.slice(0, 2).map((trip) => (
-        <TripCard key={trip.tripid} trip={trip} />
-      ))}
-    </TouchableOpacity>
-  );
+  <TouchableOpacity onPress={() => goToFriendTrips(item)} style={styles.friendContainer}>
+    <Text style={styles.friendName}><Text style={{fontWeight: 'bold'}}>{item.name}'s</Text> Shared Trips</Text>
+    {item.sharedTrips.slice(0, 2).map((trip) => (
+      <TripCard key={trip.tripid} trip={trip} />
+    ))}
+  </TouchableOpacity>
+);
+
 
   return (
     <View style={styles.container}>
@@ -123,20 +124,20 @@ export default function FriendsPage({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      {/* Friends List */}
       <FlatList
         data={friends}
         keyExtractor={(item) => item.id}
         renderItem={renderFriend}
-        contentContainerStyle={{ paddingBottom: 30, flexGrow: 1 }}
+        contentContainerStyle={friends.length === 0 ? styles.centeredContainer : { paddingBottom: 30, flexGrow: 1 }}
         ListEmptyComponent={
-          <Text style={{ textAlign: 'center', color: '#888', marginTop: 20, fontSize: 16 }}>
+          <Text style={styles.emptyText}>
             No shared trips available. Add more friends or wait for your friends to share a trip!
           </Text>
         }
         refreshing={refreshing}
         onRefresh={onRefresh}
       />
+
 
 
       {/* Modal */}
@@ -209,6 +210,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "#f5f5f5",
   },
+  centeredContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: '#888',
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -231,7 +245,6 @@ const styles = StyleSheet.create({
   },
   friendName: {
     fontSize: 18,
-    fontWeight: "bold",
     marginBottom: 10,
   },
   modalOverlay: {
