@@ -24,8 +24,13 @@ const fetchFriends = async (req, res) => {
 
     try {
         const query = `
-        SELECT * FROM eventastic."Friends"
-        WHERE "userId_1" = $1;
+        SELECT 
+            f."userId_2", 
+            u."username"
+        FROM eventastic."Friends" f
+        JOIN eventastic."User" u ON f."userId_2" = u."userid"
+        WHERE f."userId_1" = $1;
+
         `;
 
         const values = [userId_1];

@@ -29,7 +29,7 @@ const createUser = async (req, res) => {
   }
 };
 
-const findOneUser = async (req, res) => {
+const findUserByEmail = async (req, res) => {
   const { email } = req.body;
   console.log(req.body);
 
@@ -39,6 +39,29 @@ const findOneUser = async (req, res) => {
       WHERE email = $1;
     `;
     const values = [email];
+    const result = await pool.query(query, values);
+
+    if (result.rows.length === 0) {
+      return res.status(404).send({ message: 'User not Found' });
+    }
+
+    res.status(200).send({ message: 'User Found', userID: result.rows[0].userid });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  }
+};
+
+const findUserById = async (req, res) => {
+  const { userid } = req.body;
+  console.log(req.body);
+
+  try {
+    const query = `
+      SELECT * FROM eventastic."User" 
+      WHERE userid = $1;
+    `;
+    const values = [userid];
     const result = await pool.query(query, values);
 
     if (result.rows.length === 0) {
@@ -115,7 +138,8 @@ const loginUser = async (req, res) => {
 
 module.exports = {
   createUser,
-  findOneUser,
+  findUserByEmail,
+  findUserById,
   loginUser,
   searchUsers
 };

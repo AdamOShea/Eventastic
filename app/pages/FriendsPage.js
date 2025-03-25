@@ -37,7 +37,6 @@ export default function FriendsPage({ navigation }) {
         const enrichedFriends = await Promise.all(
           friendList.map(async (friend) => {
             const trips = await fetchSharedTrips({ userid: friend.userId_2 });
-            const friendName = await fet
             //console.log("Friend:", friend.userId_2, "Shared trips:", trips);
             return {
               id: friend.userId_2,

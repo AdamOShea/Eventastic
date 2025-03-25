@@ -6,7 +6,7 @@ const register = async (values) => {
   try {
     // First, try to find the user
     console.log("first try ");
-    const response = await client.post('/find-one-user', values);
+    const response = await client.post('/find-user-by-email', values);
 
     // If the user exists, return their userID
     if (response.status === 200 && response.data.userID) {
