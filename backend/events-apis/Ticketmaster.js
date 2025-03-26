@@ -59,7 +59,7 @@ const Ticketmaster = async (values) => {
     }
 
     console.log(`Found ${events.length} events. Saving to the database...`);
-    console.log(events);
+    //console.log(events);
 
     insertEvents(events, ticketmasterMapper);
 

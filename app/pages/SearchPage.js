@@ -58,10 +58,25 @@ export default function SearchPage({ navigation }) {
   useFocusEffect(
     React.useCallback(() => {
       if (isLocationValid && !loadingLocation) {
+        // Only update date from filters, not location
+        setSearchQuery((prev) => ({
+          ...prev,
+          date: filters.customDate ? new Date(filters.customDate).toISOString() : '',
+        }));
+  
         getFilteredEvents();
       }
-    }, [isLocationValid, loadingLocation, filters.sortBy, filters.selectedAPIs, filters.selectedDateOption, filters.priceRange])
+    }, [
+      isLocationValid,
+      loadingLocation,
+      filters.sortBy,
+      filters.selectedAPIs,
+      filters.selectedDateOption,
+      filters.priceRange,
+      filters.customDate,
+    ])
   );
+  
 
   const getFilteredEvents = async () => {
     try {

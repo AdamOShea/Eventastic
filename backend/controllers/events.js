@@ -116,7 +116,7 @@ const eventsFromDb = async (req, res) => {
 
     query += ` ORDER BY "eventDate" ASC;`;
 
-    console.log(query, values);
+    //console.log(query, values);
 
 
     const result = await pool.query(query, values);
