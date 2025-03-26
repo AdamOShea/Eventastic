@@ -99,7 +99,7 @@ const eventsFromDb = async (req, res) => {
     }
 
     if (date) {
-      conditions.push(`DATE("eventDate") = $${values.length + 1}`);
+      conditions.push(`DATE("eventDate") = $${values.length + 1}::date`);
       values.push(date);
     }
 

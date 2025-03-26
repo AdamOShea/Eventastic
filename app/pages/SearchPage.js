@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { BlurView } from 'expo-blur';
 import {
   View,
   Text,
   Alert,
   Animated,
-  FlatList,
-  TextInput,
+  ActivityIndicator,
   TouchableOpacity
 } from 'react-native';
 import * as Location from 'expo-location';
@@ -17,13 +17,16 @@ import SearchResultCard from '../components/SearchResultCard';
 import SearchPageHeader from '../components/SearchPageHeader';
 import { detectAPIs } from '../methods/detectAPIs';
 import { useFilters } from '../components/FiltersContext';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function SearchPage({ navigation }) {
   const { filters, setFilters } = useFilters();
-  const [searchQuery, setSearchQuery] = useState({ keyword: '', location: '', apis: [], date: ''  });
+  const [searchQuery, setSearchQuery] = useState({ keyword: '', location: '', apis: [], date: '' });
   const [events, setEvents] = useState([]);
   const [selectedAPIs, setSelectedAPIs] = useState([]);
-  const [apiOptions, setApiOptions] = useState([]);
+  const [manualLocationMode, setManualLocationMode] = useState(false);
+  const [loadingLocation, setLoadingLocation] = useState(true); // starts true until location fetch finishes
+
   const { keyword, location } = searchQuery;
 
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -45,28 +48,43 @@ export default function SearchPage({ navigation }) {
       }
     };
 
-    const fetchLocation = async () => {
-      //const { status } = await Location.requestForegroundPermissionsAsync();
-        const { coords } = await Location.getCurrentPositionAsync({});
-        const address = await Location.reverseGeocodeAsync(coords);
-        console.log("user location: ", address);
-        if (address.length > 0) {
-          const city = address[0].city || address[0].region;
-          setSearchQuery((prev) => ({ ...prev, location: city }));
-        }
-      
-    };
-
     fetchAPIs();
     fetchLocation();
   }, []);
 
-  const submitForm = async () => {
+  // ✅ Trigger fetch only when location is available
+  const isLocationValid = searchQuery.location.trim().length > 0;
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (isLocationValid && !loadingLocation) {
+        getFilteredEvents();
+      }
+    }, [isLocationValid, loadingLocation, filters.sortBy, filters.selectedAPIs, filters.selectedDateOption, filters.priceRange])
+  );
+
+  const getFilteredEvents = async () => {
     try {
       const response = await fetchEvents({ ...searchQuery, apis: selectedAPIs });
 
       if (response?.events?.length > 0) {
-        setEvents(response.events);
+        let sortedEvents = [...response.events];
+
+        if (filters.sortBy === 'price') {
+          sortedEvents.sort((a, b) => {
+            const toNumber = (val) => {
+              if (!val) return Infinity;
+              const parsed = parseFloat(String(val).replace(/[^0-9.]/g, ''));
+              return isNaN(parsed) ? Infinity : parsed;
+            };
+
+            return toNumber(a.eventPrice) - toNumber(b.eventPrice);
+          });
+        } else if (filters.sortBy === 'date') {
+          sortedEvents.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+        }
+
+        setEvents(sortedEvents);
       } else {
         setEvents([]);
         Alert.alert('No Events Found', 'Try searching for something else.');
@@ -77,8 +95,38 @@ export default function SearchPage({ navigation }) {
     }
   };
 
+  const fetchLocation = async () => {
+    try {
+      setLoadingLocation(true);
+      const { coords } = await Location.getCurrentPositionAsync({});
+      const address = await Location.reverseGeocodeAsync(coords);
+
+      if (address.length > 0) {
+        let city = address[0].region || address[0].city || '';
+        if (/county/i.test(city)) {
+          city = city.replace(/county\s*/i, '').trim();
+        }
+
+        setSearchQuery((prev) => ({ ...prev, location: city }));
+      }
+    } catch (error) {
+      console.error('Error fetching location:', error);
+      Alert.alert('Location Error', 'Could not retrieve location.');
+    } finally {
+      setLoadingLocation(false);
+    }
+  };
+
+  const submitForm = () => {
+    getFilteredEvents();
+  };
+
   const handleOnChangeText = (value, fieldName) => {
     setSearchQuery({ ...searchQuery, [fieldName]: value });
+
+    if (fieldName === 'location' && value === '') {
+      setManualLocationMode(false);
+    }
   };
 
   const handleScroll = Animated.event(
@@ -119,7 +167,7 @@ export default function SearchPage({ navigation }) {
           right: 0,
           backgroundColor: 'white',
           zIndex: 10,
-          paddingTop: 25
+          paddingTop: 25,
         }}
       >
         <SearchPageHeader heading="Find an Event" />
@@ -134,14 +182,39 @@ export default function SearchPage({ navigation }) {
             returnKeyType="search"
             onSubmitEditing={submitForm}
           />
-          <SearchPageInput
-            icon
-            iconName="location-outline"
-            value={location}
-            onChangeText={(value) => handleOnChangeText(value, 'location')}
-            placeholder="Location"
-            returnKeyType="search"
-          />
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flex: 1 }}>
+              <SearchPageInput
+                icon
+                iconName="location-outline"
+                value={location}
+                onChangeText={(value) => handleOnChangeText(value, 'location')}
+                placeholder="Location"
+                returnKeyType="search"
+              />
+            </View>
+
+            <TouchableOpacity
+              onPress={fetchLocation}
+              style={{
+                marginLeft: 10,
+                backgroundColor: '#6785c7',
+                paddingVertical: 10,
+                paddingHorizontal: 12,
+                borderRadius: 8,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
+              {loadingLocation ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 12 }}>
+                  Use My Location
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 5 }}>
             <TouchableOpacity
@@ -157,6 +230,26 @@ export default function SearchPage({ navigation }) {
           </View>
         </FormContainer>
       </Animated.View>
+
+      {loadingLocation && (
+        <BlurView
+          intensity={60}
+          tint="light"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 100,
+          }}
+        >
+          <ActivityIndicator size="large" color="#6785c7" />
+          <Text style={{ marginTop: 10, fontSize: 16, fontWeight: '500' }}>Getting your location...</Text>
+        </BlurView>
+      )}
 
       <Animated.FlatList
         contentContainerStyle={{ paddingTop: 325, paddingBottom: 30 }}

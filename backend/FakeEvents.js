@@ -3,7 +3,8 @@ const { insertEvents } = require('./methods/insertEvent');
 const {generateFakeEvent} = require('./methods/generateFakeEvent');
 
 
-const FakeEvents = async (keyword) => {
+const FakeEvents = async (values) => {
+    const {keyword} = values;
     const events = Array.from({ length: 20 }, () => generateFakeEvent(keyword));
     console.log("Fetching from fakeEventAPI: " + keyword);
 

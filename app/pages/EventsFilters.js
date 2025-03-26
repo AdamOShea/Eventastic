@@ -17,7 +17,6 @@ const FILTER_DATE_OPTIONS = [
   { label: 'Today', value: 'today' },
   { label: 'Tomorrow', value: 'tomorrow' },
   { label: 'This Week', value: 'week' },
-  { label: 'This Weekend', value: 'weekend' },
 ];
 
 export default function EventsFilters({ navigation }) {
@@ -55,7 +54,7 @@ export default function EventsFilters({ navigation }) {
       <View style={styles.box}>
         {apiOptions.map((api) => (
             <TouchableOpacity style={styles.optionRow} key={api} onPress={() => toggleAPI(api)}>
-            <Text>{api}</Text>
+            <Text style={styles.optionLabel}>{api}</Text>
             <Checkbox status={selectedAPIs.includes(api) ? 'checked' : 'unchecked'} />
             </TouchableOpacity>
             ))}
@@ -73,17 +72,16 @@ export default function EventsFilters({ navigation }) {
 
             if (opt.value === 'today') {
                 // No change needed
+                console.log(date);
             } else if (opt.value === 'tomorrow') {
                 date.setDate(now.getDate() + 1);
+                console.log(date);
             } else if (opt.value === 'week') {
                 const day = now.getDay();
                 const diff = day === 0 ? 1 : 1 - day; // Start from Monday
                 date.setDate(now.getDate() + diff);
-            } else if (opt.value === 'weekend') {
-                const day = now.getDay();
-                const daysUntilSaturday = (6 - day + 7) % 7;
-                date.setDate(now.getDate() + daysUntilSaturday);
-            }
+                console.log(date);
+            } 
 
             setFilters({
                 ...filters,
@@ -103,17 +101,14 @@ export default function EventsFilters({ navigation }) {
                 if (opt.value === 'today') {
                 // No change needed
                 } else if (opt.value === 'tomorrow') {
-                date.setDate(now.getDate() + 1);
+                  date.setDate(now.getDate() + 1);
                 } else if (opt.value === 'week') {
-                const day = now.getDay();
-                const diff = day === 0 ? 1 : 1 - day;
+                  const day = now.getDay();
+                  const diff = day === 0 ? 1 : 1 - day;
                 date.setDate(now.getDate() + diff);
-                } else if (opt.value === 'weekend') {
-                const day = now.getDay();
-                const daysUntilSaturday = (6 - day + 7) % 7;
-                date.setDate(now.getDate() + daysUntilSaturday);
-                }
-
+                } 
+              
+                console.log(date);
                 setFilters({
                 ...filters,
                 selectedDateOption: opt.value,
@@ -162,6 +157,38 @@ export default function EventsFilters({ navigation }) {
           onChangeText={(text) => handlePriceChange('max', text)}
         />
       </View>
+
+      <Text style={styles.sectionTitle}>Sort By</Text>
+      <View style={styles.box}>
+        {['date', 'price', 'relevance'].map((option) => {
+          const isSelected = filters.sortBy === option;
+
+          const handleSortSelect = () => {
+            if (!isSelected) {
+              setFilters((prev) => ({ ...prev, sortBy: option }));
+            }
+          };
+
+          return (
+            <TouchableOpacity
+              key={option}
+              style={styles.optionRow}
+              onPress={handleSortSelect}
+            >
+              <Text style={styles.optionLabel}>
+                {option.charAt(0).toUpperCase() + option.slice(1)}
+              </Text>
+              <RadioButton
+                value={option}
+                status={isSelected ? 'checked' : 'unchecked'}
+                onPress={handleSortSelect}
+              />
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+
 
       <Pressable style={styles.submitButton} onPress={() => {
         console.log('Apply filters:', filters);

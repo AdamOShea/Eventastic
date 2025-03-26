@@ -9,6 +9,8 @@ export const FiltersProvider = ({ children }) => {
     selectedDateOption: 'any',
     customDate: null,
     priceRange: { min: '', max: '' },
+    sortBy: 'date', // default
+
   });
 
   return (
