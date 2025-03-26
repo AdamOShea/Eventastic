@@ -29,11 +29,18 @@ const Ticketmaster = async (values) => {
   if (typeof location === 'string' && location.trim()) {
     params.append("city", location.trim());
   }
+
+
+  const formatToTicketmasterDate = (d) => {
+    return new Date(d).toISOString().split('.')[0] + 'Z';
+  };
+  
   
   if (date) {
-    const formattedDate = new Date(date).toISOString();
+    const formattedDate = formatToTicketmasterDate(date);
     params.append("startDateTime", formattedDate);
   }
+  
   
   
   
