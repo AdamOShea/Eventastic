@@ -12,18 +12,30 @@ if (!apiKey) {
 }
 
 const Ticketmaster = async (values) => {
-  console.log(`ticketmasterAPI called with keyword: "${values}"`);
 
-  const { keyword, location, date, } = values;
+  console.log("ticketmasterAPI called with values:", values);
 
+  const { keyword, location, date } = values;
+  
   const params = new URLSearchParams({
     size: 200,
     apikey: apiKey,
   });
-
-  if (keyword) params.append("keyword", keyword);
-  if (location) params.append("city", location); // or `postalCode`, `countryCode`, etc. depending on the API
-  if (date) params.append("startDateTime", date); // ISO 8601 format
+  
+  if (typeof keyword === 'string' && keyword.trim()) {
+    params.append("keyword", keyword.trim());
+  }
+  
+  if (typeof location === 'string' && location.trim()) {
+    params.append("city", location.trim());
+  }
+  
+  if (date) {
+    const formattedDate = new Date(date).toISOString();
+    params.append("startDateTime", formattedDate);
+  }
+  
+  
   
 
   const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?${params.toString()}`;
