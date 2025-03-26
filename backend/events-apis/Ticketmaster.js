@@ -23,7 +23,7 @@ const Ticketmaster = async (values) => {
 
   if (keyword) params.append("keyword", keyword);
   if (location) params.append("city", location); // or `postalCode`, `countryCode`, etc. depending on the API
-  if (date) params.append("startDateTime", date + "T14:00:00Z"); // ISO 8601 format
+  if (date) params.append("startDateTime", date); // ISO 8601 format
   
 
   const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?${params.toString()}`;
