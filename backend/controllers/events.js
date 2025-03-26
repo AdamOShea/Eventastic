@@ -94,7 +94,8 @@ const eventsFromDb = async (req, res) => {
     }
 
     if (location) {
-      conditions.push(`"eventLocation" ILIKE $${values.length + 1} OR "eventVenue" ILIKE $${values.length + 1}`);
+      conditions.push(`("eventLocation" ILIKE $${values.length + 1} OR "eventVenue" ILIKE $${values.length + 1})`);
+
       values.push(`%${location}%`);
     }
 

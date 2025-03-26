@@ -65,7 +65,7 @@ export default function SearchPage({ navigation }) {
 
   const getFilteredEvents = async () => {
     try {
-      const response = await fetchEvents({ ...searchQuery, apis: selectedAPIs });
+      const response = await fetchEvents({ ...searchQuery, apis: selectedAPIs, date: filters.customDate || null });
 
       if (response?.events?.length > 0) {
         let sortedEvents = [...response.events];
