@@ -1,16 +1,28 @@
 import React from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import FlightCard from '../components/FlightCard';
-import { useEvent } from '../components/EventContext'; //  Import context
+import { useEvent } from '../components/EventContext';
 
 export default function ReturnFlights({ route, navigation }) {
   const { returnFlights, returnDate } = route.params;
-  const { selectedOutboundFlight, setSelectedReturnFlight } = useEvent(); //  Store selected return flight
+  const { selectedOutboundFlight, setSelectedReturnFlight } = useEvent();
 
   const handleReturnFlightSelection = (selectedReturnFlight) => {
-    setSelectedReturnFlight(selectedReturnFlight); //  Save selected return flight
-    navigation.navigate('ConfirmFlights'); //  Navigate to confirmation screen
+    setSelectedReturnFlight(selectedReturnFlight);
+    navigation.navigate('ConfirmFlights');
   };
+
+  // Helper to extract numerical value from price string
+  const parsePrice = (priceString) => {
+    if (!priceString) return Infinity;
+    const numberMatch = priceString.match(/[\d,]+(\.\d{1,2})?/);
+    if (!numberMatch) return Infinity;
+    return parseFloat(numberMatch[0].replace(/,/g, ''));
+  };
+
+  const sortedReturnFlights = [...returnFlights].sort(
+    (a, b) => parsePrice(a.flightPrice) - parsePrice(b.flightPrice)
+  );
 
   return (
     <View style={styles.container}>
@@ -20,9 +32,9 @@ export default function ReturnFlights({ route, navigation }) {
       <Text style={styles.header}>Select a Return Flight</Text>
       <Text style={styles.header}>Return Date: {returnDate}</Text>
 
-      {returnFlights.length > 0 ? (
+      {sortedReturnFlights.length > 0 ? (
         <FlatList
-          data={[...returnFlights]} //  Ensure it's a new array
+          data={sortedReturnFlights}
           keyExtractor={(item, index) => item.id || `flight_${index}`}
           renderItem={({ item }) => (
             <FlightCard {...item} onPress={() => handleReturnFlightSelection(item)} />
@@ -39,7 +51,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 15,
-    paddingTop: 50
+    paddingTop: 50,
   },
   header: {
     fontSize: 18,

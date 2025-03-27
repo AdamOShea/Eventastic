@@ -1,30 +1,39 @@
 import React, { useState } from 'react';
-import { View, FlatList, Text, StyleSheet } from 'react-native';
+import { View, FlatList, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import FlightCard from '../components/FlightCard';
 import { fetchFlightsAPI } from '../methods/fetchFlights';
-import { useEvent } from '../components/EventContext'; //  Import context
+import { useEvent } from '../components/EventContext';
 
 export default function OutboundFlights({ route, navigation }) {
-  const { outboundFlights, departureAirport, arrivalAirport, returnDate } = route.params;
-  const { setSelectedOutboundFlight } = useEvent(); //  Store selected outbound flight in context
+  const { outboundFlights, departureAirport, arrivalAirport, returnDate, direct } = route.params;
+  const { setSelectedOutboundFlight } = useEvent();
   const [loading, setLoading] = useState(false);
+  const [selectedFlightId, setSelectedFlightId] = useState(null);
+
+  const parsePrice = (priceString) => {
+    if (!priceString) return Infinity;
+    const numberMatch = priceString.match(/[\d,]+(\.\d{1,2})?/);
+    if (!numberMatch) return Infinity;
+    return parseFloat(numberMatch[0].replace(/,/g, ''));
+  };
 
   const fetchReturnFlights = async (selectedFlight) => {
     setLoading(true);
-    setSelectedOutboundFlight(selectedFlight); //  Save selected flight
+    setSelectedFlightId(selectedFlight.id || selectedFlight.flightDepartureTime); // fallback key
+    setSelectedOutboundFlight(selectedFlight);
 
     const returnValues = {
-      departureAirport: arrivalAirport, // Swapping for return trip
+      departureAirport: arrivalAirport,
       arrivalAirport: departureAirport,
       departureDate: returnDate,
       direction: "Return",
-      apis: ["googleFlights"]
+      apis: ["googleFlights"],
+      direct: direct
     };
-
-    console.log("🚀 Fetching return flights with values:", returnValues);
 
     const returnApiResults = await fetchFlightsAPI(returnValues);
     setLoading(false);
+    setSelectedFlightId(null);
 
     const returnFlights = [...(returnApiResults.results.find(result => result.api === "googleFlights")?.data || [])];
 
@@ -38,20 +47,35 @@ export default function OutboundFlights({ route, navigation }) {
     }
   };
 
+  const sortedFlights = [...outboundFlights].sort(
+    (a, b) => parsePrice(a.flightPrice) - parsePrice(b.flightPrice)
+  );
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Select an Outbound Flight</Text>
+
       <FlatList
-        data={[...outboundFlights].sort((a, b) => {
-          return new Date(`1970-01-01 ${a.flightDepartureTime.split(" on ")[0]}`) - 
-                 new Date(`1970-01-01 ${b.flightDepartureTime.split(" on ")[0]}`);
-        })}
+        data={sortedFlights}
         keyExtractor={(item, index) => item.id || `flight_${index}`}
         renderItem={({ item }) => (
-          <FlightCard {...item} onPress={() => fetchReturnFlights(item)} />
+          <View>
+            <FlightCard
+              {...item}
+              disabled={loading}
+              loading={loading && selectedFlightId === (item.id || item.flightDepartureTime)}
+              onPress={() => fetchReturnFlights(item)}
+            />
+          </View>
         )}
       />
-      {loading && <Text style={styles.loadingText}>Loading return flights...</Text>}
+
+      {loading && (
+        <View style={styles.spinnerContainer}>
+          <ActivityIndicator size="large" color="#6785c7" />
+          <Text style={styles.loadingText}>Loading return flights...</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -67,8 +91,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
+  spinnerContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
   loadingText: {
-    textAlign: 'center',
     marginTop: 10,
     fontSize: 16,
     color: '#666',

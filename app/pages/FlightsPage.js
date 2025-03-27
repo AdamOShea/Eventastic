@@ -68,6 +68,7 @@ const safeCheckOut = selectedAccommodation?.accommCheckOut && !isNaN(new Date(se
         arrivalAirport,
         departureDate: format(departureDate, 'yyyy-MM-dd'),
         returnDate: format(returnDate, 'yyyy-MM-dd'),
+        direct: directOnly
       });
     } else {
       alert('No outbound flights found.');
