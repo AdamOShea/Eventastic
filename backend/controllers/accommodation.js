@@ -96,16 +96,16 @@ const detectAPIs = async (req, res) => {
 };
 
 const saveAccomm = async (req, res) => {
-  const { accommName, accommImages, accommPrice, accommRating, accommUrl } = req.body;
+  const { accommName, accommImages, accommPrice, accommRating, accommUrl, accommCheckIn, accommCheckOut } = req.body;
 
   try {
   const query = `
-    INSERT INTO eventastic."Accommodation" ("accommName", "accommImages", "accommPrice", "accommRating", "accommUrl")
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO eventastic."Accommodation" ("accommName", "accommImages", "accommPrice", "accommRating", "accommUrl", "accommCheckIn", "accommCheckOut")
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
     RETURNING "accommId";
   `;
 
-  const values = [accommName, accommImages, accommPrice, accommRating, accommUrl ];
+  const values = [accommName, accommImages, accommPrice, accommRating, accommUrl, accommCheckIn, accommCheckOut ];
   const result = await pool.query(query, values);
 
   res.status(201).send({ message: 'Accomm stored successfully', accommId: result.rows[0].accommId })

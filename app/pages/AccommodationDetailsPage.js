@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -31,8 +31,16 @@ export default function AccommodationDetailsPage({ navigation, route }) {
 
   const handleSaveButton = () => {
     setSelectedAccommodation(accommodation);
-    console.log(" Saved to context:", accommodation.accommName);
     navigation.navigate('EventDetails');
+  };
+
+  const formatDetailsText = (text) => {
+    if (!text) return 'No additional details provided.';
+    return text
+      .replace(/_/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   return (
@@ -41,78 +49,109 @@ export default function AccommodationDetailsPage({ navigation, route }) {
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageScroll}>
         {parsedImages.map((imgUrl, index) => (
-          <Image key={index} source={{ uri: imgUrl }} style={styles.image} />
+          <Image key={index.toString()} source={{ uri: imgUrl }} style={styles.image} />
         ))}
       </ScrollView>
 
-      <Text style={styles.detail}>
-        <Text style={styles.bold}>Dates:</Text> {accommodation.checkIn} - {accommodation.checkOut}
-      </Text>
-      
-      <Text style={styles.detail}>
-        <Text style={styles.bold}>Price:</Text> {accommodation.accommPrice}
-      </Text>
-      <Text style={styles.detail}>
-        <Text style={styles.bold}>Rating:</Text> {accommodation.accommRating}
-      </Text>
-      <Text style={styles.detail}>
-        <Text style={styles.bold}>Details:</Text>{' '}
-        {accommodation.accommDetails || 'No additional details provided.'}
-      </Text>
+      <View style={styles.card}>
+        <Text style={styles.detail}>
+          <Text style={styles.bold}>Check-in:</Text> {accommodation.accommCheckIn}
+        </Text>
+        <Text style={styles.detail}>
+          <Text style={styles.bold}>Check-out:</Text> {accommodation.accommCheckOut}
+        </Text>
+        <Text style={styles.detail}>
+          <Text style={styles.bold}>Price:</Text> {accommodation.accommPrice}
+        </Text>
+        <Text style={styles.detail}>
+          <Text style={styles.bold}>Rating:</Text> {accommodation.accommRating}
+        </Text>
+        <Text style={styles.detail}>
+          <Text style={styles.bold}>Details:</Text> {formatDetailsText(accommodation.accommDetails)}
+        </Text>
+      </View>
 
-      <TouchableOpacity onPress={() => Linking.openURL(accommodation.accommUrl)} style={styles.button}>
-        <Text style={styles.buttonText}>View on Airbnb</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonGroup}>
+        <TouchableOpacity onPress={() => Linking.openURL(accommodation.accommUrl)} style={[styles.button, styles.outlineButton]}>
+          <Text style={styles.outlineButtonText}>View on Airbnb</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleSaveButton} style={styles.button}>
-        <Text style={styles.buttonText}>Save Accommodation to Trip</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={handleSaveButton} style={styles.button}>
+          <Text style={styles.buttonText}>Save to Trip</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingTop: 50,
-    padding: 20,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+    backgroundColor: '#f9f9f9',
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     marginBottom: 15,
     textAlign: 'center',
   },
   imageScroll: {
-    height: 220,
-    paddingTop: 50,
-    marginBottom: 15,
+    marginBottom: 20,
   },
   image: {
-    width: 300,
-    height: 300,
-    borderRadius: 10,
-    marginHorizontal: 5,
+    width: 400,
+    height: 320,
+    borderRadius: 12,
+    marginRight: 10,
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: 18,
+    borderRadius: 12,
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
   },
   detail: {
     fontSize: 16,
-    marginBottom: 8,
-    width: '100%',
+    marginBottom: 10,
+    lineHeight: 22,
   },
   bold: {
     fontWeight: 'bold',
+    color: '#333',
+  },
+  buttonGroup: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 12,
   },
   button: {
-    marginTop: 15,
     backgroundColor: '#6785c7',
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
     borderRadius: 10,
+    marginBottom: 10,
+    alignItems: 'center',
+    width: '100%',
   },
   buttonText: {
     color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  outlineButton: {
+    backgroundColor: '#fff',
+    borderColor: '#6785c7',
+    borderWidth: 1.5,
+  },
+  outlineButtonText: {
+    color: '#6785c7',
     fontSize: 16,
     fontWeight: 'bold',
   },

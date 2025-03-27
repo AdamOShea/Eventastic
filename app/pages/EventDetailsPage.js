@@ -3,22 +3,23 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'r
 import InfoContainer from '../components/InfoContainer';
 import ExpandableDescription from '../components/ExpandableDescription';
 import MapComponent from '../components/MapComponent';
-import { useEvent } from '../components/EventContext'; //  Import Context
-import AccommodationCard from '../components/AccommodationCard'; //  Import AccommodationCard
-import FlightCard from '../components/FlightCard'; //  Import FlightCard component
+import { useEvent } from '../components/EventContext';
+import AccommodationCard from '../components/AccommodationCard';
+import FlightCard from '../components/FlightCard';
 import { saveTrip } from '../methods/saveTrip';
 import { getEventId } from '../methods/getEventId';
 import { saveAccomm } from '../methods/saveAccomm';
-import {saveFlights} from '../methods/saveFlights';
-import { useUser } from "../components/UserContext"; 
+import { saveFlights } from '../methods/saveFlights';
+import { useUser } from "../components/UserContext";
 
 export default function EventDetailsPage({ navigation }) {
-  const { selectedEvent, selectedAccommodation, selectedOutboundFlight, selectedReturnFlight } = useEvent(); //  Get event & accommodation from context
-  const { currentUser } = useUser(); //  Get current user
+  const { selectedEvent, selectedAccommodation, selectedOutboundFlight, selectedReturnFlight } = useEvent();
+  const { currentUser } = useUser();
+
   useEffect(() => {
     if (!selectedEvent) {
       console.warn("No event selected. Redirecting to search page...");
-      navigation.navigate("SearchPage"); //  Redirect if no event found
+      navigation.navigate("SearchPage");
     }
   }, [selectedEvent]);
 
@@ -28,44 +29,37 @@ export default function EventDetailsPage({ navigation }) {
       return;
     }
 
-    const eventResponse = await getEventId({eventLink: selectedEvent.eventLink});
-    const event = eventResponse?.eventId || null; //  Extracts only the event ID
+    const eventResponse = await getEventId({ eventLink: selectedEvent.eventLink });
+    const event = eventResponse?.eventId || null;
 
     const accommResponse = selectedAccommodation ? await saveAccomm(selectedAccommodation) : null;
-    const accomm = accommResponse?.accommId || null; //  Extract accommodation ID safely
+    const accomm = accommResponse?.accommId || null;
 
     const outboundFlightResponse = selectedOutboundFlight ? await saveFlights(selectedOutboundFlight) : null;
-    const outboundflight = outboundFlightResponse?.flightId || null; //  Extract outbound flight ID safely
+    const outboundflight = outboundFlightResponse?.flightId || null;
 
     const returnFlightResponse = selectedReturnFlight ? await saveFlights(selectedReturnFlight) : null;
-    const returnflight = returnFlightResponse?.flightId || null; //  Extract return flight ID safely
-  
+    const returnflight = returnFlightResponse?.flightId || null;
 
-    
-    // Create the payload
     const tripData = {
       userid: currentUser.userid,
       eventid: event,
-      accommid: accomm || null, // Allow saving without accommodation
+      accommid: accomm || null,
       outflightid: outboundflight || null,
       returnflightid: returnflight || null,
     };
-  
+
     console.log("🚀 Saving Trip:", tripData);
-  
-    // Call saveTrip function
+
     const response = await saveTrip(tripData);
-  
+
     if (response) {
-      console.log(" Trip saved successfully:", response);
       alert("Trip saved successfully!");
-      navigation.navigate("SearchPage"); //  Redirect after saving
+      navigation.navigate("SearchPage");
     } else {
-      console.error("❌ Failed to save trip.");
       alert("Error saving trip. Please try again.");
     }
   };
-  
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -74,55 +68,44 @@ export default function EventDetailsPage({ navigation }) {
           <InfoContainer event={selectedEvent} />
           <ExpandableDescription event={selectedEvent} />
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => Linking.openURL(selectedEvent.eventLink)}
-          >
-            <Text style={styles.buttonText}>Event Website</Text>
+          <TouchableOpacity style={styles.websiteButton} onPress={() => Linking.openURL(selectedEvent.eventLink)}>
+            <Text style={styles.websiteButtonText}>Visit Event Website</Text>
           </TouchableOpacity>
 
-          <MapComponent eventLocation={`${selectedEvent.eventVenue} ${selectedEvent.eventLocation}`} eventTitle={selectedEvent.eventTitle} />
+          <View style={styles.mapWrapper}>
+            <MapComponent eventLocation={`${selectedEvent.eventVenue} ${selectedEvent.eventLocation}`} eventTitle={selectedEvent.eventTitle} />
+          </View>
 
-          {/*  Display Saved Accommodation if Exists */}
           {selectedAccommodation && (
-            <View style={styles.accommodationContainer}>
-              <Text style={styles.sectionTitle}>Your Saved Accommodation</Text>
+            <View style={styles.cardWrapper}>
+              <Text style={styles.sectionTitle}>Your Accommodation</Text>
               <AccommodationCard navigation={navigation} {...selectedAccommodation} />
             </View>
           )}
 
-          {/*  Display Selected Outbound Flight */}
           {selectedOutboundFlight && (
-            <View style={styles.flightContainer}>
-              <Text style={styles.sectionTitle}>✈️ Your Outbound Flight</Text>
+            <View style={styles.cardWrapper}>
+              <Text style={styles.sectionTitle}>Outbound Flight</Text>
               <FlightCard navigation={navigation} {...selectedOutboundFlight} />
             </View>
           )}
 
-          {/*  Display Selected Return Flight */}
           {selectedReturnFlight && (
-            <View style={styles.flightContainer}>
-              <Text style={styles.sectionTitle}>✈️ Your Return Flight</Text>
+            <View style={styles.cardWrapper}>
+              <Text style={styles.sectionTitle}>Return Flight</Text>
               <FlightCard navigation={navigation} {...selectedReturnFlight} />
             </View>
           )}
 
+          <View style={styles.buttonRow}>
+            <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('Accommodation')}>
+              <Text style={styles.secondaryButtonText}>+ Accommodation</Text>
+            </TouchableOpacity>
 
-          {/* 🚀 Action Buttons */}
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Accommodation')}
-          >
-            <Text style={styles.buttonText}>Search Accommodation</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Flights')}
-          >
-            <Text style={styles.buttonText}>Search Flights</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('Flights')}>
+              <Text style={styles.secondaryButtonText}>+ Flights</Text>
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity onPress={saveEvent} style={styles.saveButton}>
             <Text style={styles.buttonText}>Save Trip</Text>
@@ -139,62 +122,73 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 50,
     padding: 20,
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f9f9f9',
   },
-  accommodationContainer: {
-    width: '100%',
-    marginTop: 30,
-    padding: 15,
-    backgroundColor: '#fff',
+  mapWrapper: {
+    marginTop: 15,
+    marginBottom: 20,
     borderRadius: 10,
+    overflow: 'hidden',
+  },
+  cardWrapper: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 15,
     marginBottom: 15,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
   },
-  flightContainer: {
-    width: '100%',
-    marginTop:15,
-    padding: 15,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
     marginBottom: 10,
     textAlign: 'center',
+    color: '#444',
   },
-  button: {
+  websiteButton: {
+    marginTop: 10,
+    marginBottom: 15,
+    backgroundColor: '#444',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  websiteButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10,
+    marginTop: 10,
+  },
+  secondaryButton: {
+    flex: 1,
     backgroundColor: '#6785c7',
     paddingVertical: 12,
-    paddingHorizontal: 20,
     borderRadius: 10,
-    marginTop: 15,
-    width: '100%',
     alignItems: 'center',
+  },
+  secondaryButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
   },
   saveButton: {
     backgroundColor: '#4CAF50',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: 14,
     borderRadius: 10,
-    marginTop: 15,
-    width: '100%',
     alignItems: 'center',
+    marginTop: 20,
   },
-  buttonText: { 
-    color: '#fff', 
-    fontSize: 16, 
-    fontWeight: 'bold' 
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   errorText: {
     fontSize: 16,

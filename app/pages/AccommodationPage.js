@@ -6,57 +6,69 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import MapComponent from '../components/MapComponent';
-import SearchButton from '../components/SearchButton';
 import AccommodationCard from '../components/AccommodationCard';
 import DatePicker from 'react-native-neat-date-picker';
 import { format } from 'date-fns';
 import NoImageInfoContainer from '../components/NoImageInfoContainer';
 import { fetchAccom } from '../methods/fetchAccom';
 import { getGeolocation } from '../methods/getGeolocation';
-import { useEvent } from '../components/EventContext'; 
+import { useEvent } from '../components/EventContext';
+import SearchPageHeader from '../components/SearchPageHeader';
 
 export default function AccommodationPage({ navigation }) {
-  const { selectedEvent } = useEvent(); 
+  const { selectedEvent } = useEvent();
 
   if (!selectedEvent) {
-    console.warn("No event selected. Redirecting to search page...");
     navigation.navigate("SearchPage");
-    return null; // Prevents rendering if event is missing
+    return null;
   }
 
   const eventDate = new Date(selectedEvent.eventDate);
-  const today = new Date();
-  const tomorrow = new Date(today.getTime() + 86400000);
-
   const [checkInDate, setCheckInDate] = useState(eventDate);
   const [checkOutDate, setCheckOutDate] = useState(new Date(eventDate.getTime() + 86400000));
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [accommodations, setAccommodations] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(false);
   const [displayedAccommodations, setDisplayedAccommodations] = useState([]);
-  const ITEMS_PER_LOAD = 5;
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (accommodations.length > 0) {
-      setDisplayedAccommodations(accommodations.slice(0, ITEMS_PER_LOAD));
-      setHasMore(accommodations.length > ITEMS_PER_LOAD);
+  const [sortOption, setSortOption] = useState('rating_desc');
+  const [showSortModal, setShowSortModal] = useState(false);
+
+  const sortOptions = [
+    { label: 'Rating (High to Low)', value: 'rating_desc' },
+    { label: 'Price (Low to High)', value: 'price_asc' },
+    { label: 'Price (High to Low)', value: 'price_desc' },
+  ];
+
+  const parseNumber = (value) => {
+    if (!value) return 0;
+    return parseFloat(String(value).replace(/[^0-9.]/g, '')) || 0;
+  };
+  
+  const applySorting = (data) => {
+    let sorted = [...data];
+    if (sortOption === 'price_asc') {
+      sorted.sort((a, b) => parseNumber(a.accommPrice) - parseNumber(b.accommPrice));
+    } else if (sortOption === 'price_desc') {
+      sorted.sort((a, b) => parseNumber(b.accommPrice) - parseNumber(a.accommPrice));
+    } else if (sortOption === 'rating_desc') {
+      sorted.sort((a, b) => parseNumber(b.accommRating) - parseNumber(a.accommRating));
     }
-  }, [accommodations]);
+    setDisplayedAccommodations(sorted);
+  };
+  
 
   const fetchAccommodations = async () => {
     setLoading(true);
     setAccommodations([]);
 
-    let geoData = await getGeolocation(`${selectedEvent.eventVenue}, ${selectedEvent.eventLocation}`);
+    let geoData = await getGeolocation(`${selectedEvent.eventVenue}, ${selectedEvent.eventLocation}`) || await getGeolocation(selectedEvent.eventLocation);
+
     if (!geoData) {
-      console.warn(`❌ Geolocation failed for "${selectedEvent.eventVenue}, ${selectedEvent.eventLocation}". Trying "${selectedEvent.eventLocation}"...`);
-      geoData = await getGeolocation(selectedEvent.eventLocation);
-    }
-    if (!geoData) {
-      console.error("❌ Geolocation failed. Cannot proceed with accommodation search.");
       setLoading(false);
       return;
     }
@@ -66,120 +78,206 @@ export default function AccommodationPage({ navigation }) {
       longitude: geoData.longitude,
       checkIn: format(checkInDate, 'yyyy-MM-dd'),
       checkOut: format(checkOutDate, 'yyyy-MM-dd'),
-      apis: ["airbnb"],
+      apis: ["airbnb"]
     };
 
-    console.log("🚀 Fetching accommodations with values:", values);
-
     const apiResults = await fetchAccom(values);
-
     if (apiResults?.results) {
       const allAccommodations = apiResults.results
         .filter(api => api.status === 'fulfilled' && Array.isArray(api.data))
         .flatMap(api => api.data);
-
       setAccommodations(allAccommodations);
-      setDisplayedAccommodations(allAccommodations.slice(0, ITEMS_PER_LOAD));
-      setHasMore(allAccommodations.length > ITEMS_PER_LOAD);
-    } else {
-      console.log("❌ No accommodations found.");
+      applySorting(allAccommodations);
     }
 
     setLoading(false);
   };
 
-  const loadMoreAccommodations = () => {
-    if (!hasMore) return;
-
-    const newIndex = displayedAccommodations.length;
-    const nextAccommodations = accommodations.slice(newIndex, newIndex + ITEMS_PER_LOAD);
-
-    setDisplayedAccommodations([...displayedAccommodations, ...nextAccommodations]);
-    setHasMore(newIndex + ITEMS_PER_LOAD < accommodations.length);
-  };
+  useEffect(() => {
+    if (accommodations.length) applySorting(accommodations);
+  }, [sortOption]);
 
   return (
-    <FlatList
-      contentContainerStyle={styles.container}
-      data={displayedAccommodations}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <AccommodationCard navigation={navigation} {...item} />}
-      onEndReached={loadMoreAccommodations}
-      onEndReachedThreshold={0.5}
-      ListHeaderComponent={
-        <>
-          {/* Event Information */}
-          <NoImageInfoContainer event={selectedEvent} />
+    
+    <View style={styles.pageContainer}>
 
-          {/* Date Picker Button */}
-          <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
-            <Text style={styles.buttonText}>
-              {format(checkInDate, 'dd-MMM-yyyy')} → {format(checkOutDate, 'dd-MMM-yyyy')}
-            </Text>
-          </TouchableOpacity>
+      <FlatList
+        ListHeaderComponent={
+          <View style={styles.headerContainer}>
+            <NoImageInfoContainer event={selectedEvent} />
 
-          {/* Date Picker */}
-          <DatePicker
-            isVisible={showDatePicker}
-            mode="range"
-            minDate={tomorrow}
-            startDate={checkInDate}
-            endDate={checkOutDate}
-            onConfirm={(range) => {
-              setCheckInDate(new Date(range.startDate));
-              setCheckOutDate(new Date(range.endDate));
-              setShowDatePicker(false);
-            }}
-            onCancel={() => setShowDatePicker(false)}
-          />
+            <View style={styles.cardWhite}>
+              <MapComponent
+                eventVenue={selectedEvent.eventVenue}
+                eventLocation={selectedEvent.eventLocation}
+                eventTitle={selectedEvent.eventTitle}
+              />
 
-          {/* Interactive Map */}
-          <MapComponent eventVenue={selectedEvent.eventVenue} eventLocation={selectedEvent.eventLocation} eventTitle={selectedEvent.eventTitle} />
+              <View style={styles.controlsRow}>
+                <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
+                  <Text style={styles.dateButtonText}>
+                    {format(checkInDate, 'dd-MMM')} → {format(checkOutDate, 'dd-MMM')}
+                  </Text>
+                </TouchableOpacity>
 
-          {/* Search Button */}
-          <SearchButton text='Search Accommodation' onPress={fetchAccommodations} />
+                <TouchableOpacity style={styles.searchButton} onPress={fetchAccommodations}>
+                  <Text style={styles.searchButtonText}>Search</Text>
+                </TouchableOpacity>
+              </View>
 
-          {/* Loading Indicator */}
-          {loading && <Text style={styles.loadingText}>Loading accommodations...</Text>}
-        </>
-      }
-      ListFooterComponent={hasMore ? <ActivityIndicator size="large" color="#6785c7" /> : null}
-      windowSize={10}
-      initialNumToRender={10}
-      maxToRenderPerBatch={10}
-      removeClippedSubviews={true}
-      getItemLayout={(data, index) => ({
-        length: 200,
-        offset: 200 * index,
-        index,
-      })}
-    />
+              <TouchableOpacity style={styles.sortButton} onPress={() => setShowSortModal(true)}>
+                <Text style={styles.sortButtonText}>Sort: {sortOptions.find(opt => opt.value === sortOption)?.label}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <DatePicker
+              isVisible={showDatePicker}
+              mode="range"
+              minDate={new Date()}
+              startDate={checkInDate}
+              endDate={checkOutDate}
+              onConfirm={(range) => {
+                setCheckInDate(new Date(range.startDate));
+                setCheckOutDate(new Date(range.endDate));
+                setShowDatePicker(false);
+              }}
+              onCancel={() => setShowDatePicker(false)}
+            />
+
+            {loading && <ActivityIndicator size="large" color="#6785c7" style={{ marginTop: 20 }} />}
+          </View>
+        }
+        data={displayedAccommodations}
+        keyExtractor={(item, index) => item.id?.toString() || index.toString()}
+        renderItem={({ item }) => <AccommodationCard navigation={navigation} {...item} />}
+        contentContainerStyle={{ paddingBottom: 100 }}
+      />
+
+      {/* Sort Modal */}
+      <Modal
+        visible={showSortModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowSortModal(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setShowSortModal(false)}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Sort By</Text>
+              {sortOptions.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
+                  style={[
+                    styles.modalOption,
+                    sortOption === option.value && styles.selectedOption
+                  ]}
+                  onPress={() => {
+                    setSortOption(option.value);
+                    setShowSortModal(false);
+                  }}
+                >
+                  <Text style={styles.modalOptionText}>{option.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  pageContainer: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    padding: 15,
     paddingTop: 50,
-    paddingHorizontal: 15,
+  },
+  headerContainer: {
+
+  },
+  cardWhite: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 10,
+    
+  },
+  controlsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
   },
   dateButton: {
-    width: '100%',
-    backgroundColor: '#6785c7',
-    paddingVertical: 12,
-    borderRadius: 10,
-    marginVertical: 15,
+    flex: 1,
+    backgroundColor: '#fff',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    marginRight: 10,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  buttonText: {
+  dateButtonText: {
+    fontSize: 14,
+    color: '#333',
+  },
+  searchButton: {
+    backgroundColor: '#6785c7',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
+  },
+  sortButton: {
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: '#eee',
+    alignItems: 'center',
+  },
+  sortButtonText: {
+    color: '#333',
+    fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 30,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 14,
+    width: '100%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 10,
     textAlign: 'center',
   },
-  loadingText: {
-    textAlign: 'center',
-    marginTop: 10,
+  modalOption: {
+    paddingVertical: 10,
+    borderBottomColor: '#eee',
+    borderBottomWidth: 1,
+  },
+  modalOptionText: {
     fontSize: 16,
-    color: '#666',
+    textAlign: 'center',
+  },
+  selectedOption: {
+    backgroundColor: '#dce6ff',
   },
 });

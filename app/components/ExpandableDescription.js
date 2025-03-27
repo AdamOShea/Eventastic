@@ -7,11 +7,17 @@ export default function ExpandableDescription({ event }) {
   return (
     <View style={styles.container}>
       <Text style={styles.detail}>
-        <Text style={styles.label}>Event Type:</Text> {event.eventType || 'N/A'}
+        <Text style={styles.label}>Type:</Text> {event.eventType || 'N/A'}
       </Text>
 
       {showDescription ? (
         <>
+          <Text style={styles.detail}>
+            <Text style={styles.label}>Artist:</Text> {event.eventArtist || 'No description available'}
+          </Text>
+          <Text style={styles.detail}>
+            <Text style={styles.label}>Genre:</Text> {event.eventGenre || 'No description available'}
+          </Text>
           <Text style={styles.detail}>
             <Text style={styles.label}>Description:</Text> {event.eventDescription || 'No description available'}
           </Text>

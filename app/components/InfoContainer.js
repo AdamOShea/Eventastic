@@ -27,6 +27,9 @@ export default function InfoContainer({ event }) {
       <Text style={styles.detail}>
         <Text style={styles.label}>Ticket Price:</Text> €{event.eventPrice}
       </Text>
+      <Text style={styles.detail}>
+        <Text style={styles.label}>Seller:</Text> {event.eventSeller}
+      </Text>
     </View>
   );
 }
