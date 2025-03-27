@@ -8,7 +8,7 @@ const searchUsers = async (values) => {
       //console.log("Accomm API Response:", apiResponse.data);
 
       if (apiResponse.status === 200) {
-        console.log("✅ searchUsers successful");
+        console.log(" searchUsers successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
         console.log("❌ searchUsers failed with status:", apiResponse.status);

@@ -44,9 +44,9 @@ def result_to_dict(result, dep_airport, arr_airport):
         "flights": [
             {
                 "airline": flight.name,
-                "depAirport": dep_airport.name,  # ✅ Now includes departure airport
+                "depAirport": dep_airport.name,  #  Now includes departure airport
                 "depAirportCode": dep_airport.value,
-                "arrAirport": arr_airport.name,  # ✅ Now includes arrival airport
+                "arrAirport": arr_airport.name,  #  Now includes arrival airport
                 "arrAirportCode": arr_airport.value,
                 "departure": flight.departure,
                 "arrival": flight.arrival,
@@ -88,7 +88,7 @@ for departureAirport in departureAirports:
                 max_stops=1
             )
 
-            print(f"✅ Flights Found: {len(result.flights) if hasattr(result, 'flights') else 'None'}", file=sys.stderr)
+            print(f" Flights Found: {len(result.flights) if hasattr(result, 'flights') else 'None'}", file=sys.stderr)
 
             # Convert each result to dictionary format and store in results list
             all_results.append(result_to_dict(result, departureAirport, arrivalAirport))
@@ -101,5 +101,5 @@ for departureAirport in departureAirports:
 
 
 sys.stdout.reconfigure(encoding='utf-8')
-# ✅ Print JSON response including all processed flights
+#  Print JSON response including all processed flights
 print(json.dumps({"results": all_results}, indent=2, ensure_ascii=False))

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Linking } from 'react-native';
-import { useEvent } from './EventContext'; // ✅ Import context
+import { useEvent } from './EventContext'; //  Import context
 
 export default function TripAccommodationCard({ navigation, accommName, accommPrice, accommRating, accommFirstImage, accommImages, accommUrl }) {
 

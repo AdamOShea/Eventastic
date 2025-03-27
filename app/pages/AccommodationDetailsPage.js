@@ -31,7 +31,7 @@ export default function AccommodationDetailsPage({ navigation, route }) {
 
   const handleSaveButton = () => {
     setSelectedAccommodation(accommodation);
-    console.log("✅ Saved to context:", accommodation.accommName);
+    console.log(" Saved to context:", accommodation.accommName);
     navigation.navigate('EventDetails');
   };
 

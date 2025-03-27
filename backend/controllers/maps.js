@@ -26,7 +26,7 @@ const getGeocoding = async (req, res) => {
         }
 
         const { lat, lng } = response.data.results[0].geometry.location;
-        console.log('✅ Geocoding result:', { lat, lng });
+        console.log(' Geocoding result:', { lat, lng });
 
         res.json({ latitude: lat, longitude: lng });
     } catch (error) {

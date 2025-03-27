@@ -21,7 +21,7 @@ console.log('loaded APIs: ', apis);
 const apiToDb = async (req, res) => {
   const { apis: selectedAPIs } = req.body;
 
-  console.log('🔎 Received payload at /api-to-db:', req.body); // ✅ Check entire body
+  console.log('🔎 Received payload at /api-to-db:', req.body); //  Check entire body
 
   if (Array.isArray(selectedAPIs) && selectedAPIs.length > 0) {
     try {
@@ -153,4 +153,24 @@ const getEventId = async (req, res) => {
   }
 }
 
-module.exports = { eventsFromDb, apiToDb, detectAPIs, getEventId};
+const cleanEventsDB = async (req, res) => {
+  
+
+  try {
+    const query = `
+      DELETE FROM eventastic."Event"
+      WHERE "eventDate" < CURRENT_DATE;
+    `;
+    
+    const result = await pool.query(query);
+
+    res.json({
+      success: true,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  }
+}
+
+module.exports = { eventsFromDb, apiToDb, detectAPIs, getEventId, cleanEventsDB};

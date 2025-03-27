@@ -54,6 +54,7 @@ export default function TripDetailsPage({ route, navigation }) {
     eventLocation: trip.eventLocation,
     eventLink: trip.eventLink,
     eventImages: trip.eventImages,
+    eventPrice: trip.eventPrice
   };
 
   const accommodation = trip.accommName && {
@@ -87,6 +88,25 @@ export default function TripDetailsPage({ route, navigation }) {
     flightUrl: trip.returnFlightUrl,
   };
 
+
+  const estimateTotal = () => {
+    const getNumericPrice = (price) => {
+      if (!price) return 0;
+      const parsed = parseFloat(String(price).replace(/[^0-9.]/g, ""));
+      return isNaN(parsed) ? 0 : parsed;
+    };
+
+    const event = getNumericPrice(trip.eventPrice);
+    const accomm = getNumericPrice(trip.accommPrice);
+    const outFlight = getNumericPrice(trip.outFlightPrice);
+    const returnFlight = getNumericPrice(trip.returnFlightPrice);
+
+    return event + accomm + outFlight + returnFlight;
+  };
+
+  const estimatedTotal = estimateTotal();
+
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerRow}>
@@ -104,6 +124,13 @@ export default function TripDetailsPage({ route, navigation }) {
         </TouchableOpacity>
 
       </View>
+
+      {(estimatedTotal > 0) && (
+        <View style={styles.estimateBox}>
+          <Text style={styles.estimateTitle}>Estimated Total</Text>
+          <Text style={styles.estimateValue}>~ €{estimatedTotal.toFixed(2)}</Text>
+        </View>
+      )}
 
       <TappableInfoContainer event={event} />
 
@@ -177,5 +204,23 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 8,
+  },
+  estimateBox: {
+    backgroundColor: "#e8efff",
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    alignItems: "center",
+  },
+  estimateTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 5,
+    color: "#333",
+  },
+  estimateValue: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#1d4ed8",
   },
 });

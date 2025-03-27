@@ -8,7 +8,7 @@ const updateTripSharing = async (values) => {
       //console.log("Accomm API Response:", apiResponse.data);
 
       if (apiResponse.status === 200) {
-        console.log("✅ updateTripSharing successful");
+        console.log(" updateTripSharing successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
         console.log("❌ updateTripSharing failed with status:", apiResponse.status);

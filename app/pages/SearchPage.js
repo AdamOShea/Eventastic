@@ -52,7 +52,7 @@ export default function SearchPage({ navigation }) {
     fetchLocation();
   }, []);
 
-  // ✅ Trigger fetch only when location is available
+  //  Trigger fetch only when location is available
   const isLocationValid = searchQuery.location.trim().length > 0;
 
   useFocusEffect(

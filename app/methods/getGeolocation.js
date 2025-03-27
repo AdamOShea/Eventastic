@@ -6,7 +6,7 @@ const getGeolocation = async (location) => {
 
         const response = await client.get('/geocode', { params: { location } });
 
-        console.log('✅ Geolocation fetched successfully:', response.data);
+        console.log(' Geolocation fetched successfully:', response.data);
         return response.data; // { latitude, longitude }
     } catch (error) {
         console.error('❌ Error fetching geolocation:', error.response?.data || error.message);

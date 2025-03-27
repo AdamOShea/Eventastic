@@ -64,7 +64,7 @@ const SettingsStack = () => {
   </Stack.Navigator>
 }
 
-// ✅ Main Bottom Tab Navigator
+//  Main Bottom Tab Navigator
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator

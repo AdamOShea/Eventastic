@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback,} from "react";
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from "react-native";
 import TripCard from "../components/TripCard";
-import { fetchSharedTrips } from "../methods/fetchSharedTrips"; // ✅ API call to get trips
-import { useUser } from "../components/UserContext"; // ✅ Import UserContext
+import { fetchSharedTrips } from "../methods/fetchSharedTrips"; //  API call to get trips
+import { useUser } from "../components/UserContext"; //  Import UserContext
 
 export default function FriendTripsPage({ navigation, route }) {
 
@@ -12,7 +12,7 @@ export default function FriendTripsPage({ navigation, route }) {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const { currentUser } = useUser(); // ✅ Get current user
+  const { currentUser } = useUser(); //  Get current user
 
 
   const loadTrips = async () => {
@@ -51,7 +51,7 @@ export default function FriendTripsPage({ navigation, route }) {
       ) : (
         <FlatList
           data={trips}
-          keyExtractor={(item, index) => item.tripid ? item.tripid.toString() : `trip_${index}`} // ✅ Prevents crashing
+          keyExtractor={(item, index) => item.tripid ? item.tripid.toString() : `trip_${index}`} //  Prevents crashing
           renderItem={({ item }) => {
             //console.log("🔍 Rendering TripCard:", item);
             return (
@@ -63,7 +63,7 @@ export default function FriendTripsPage({ navigation, route }) {
           }}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#6785c7"]} />}
           ListEmptyComponent={<Text style={styles.noTripsText}>No saved trips found.</Text>}
-          contentContainerStyle={trips.length === 0 ? styles.centeredContainer : null} // ✅ Center "No trips found" message
+          contentContainerStyle={trips.length === 0 ? styles.centeredContainer : null} //  Center "No trips found" message
         />
       )}
     </View>
@@ -72,7 +72,7 @@ export default function FriendTripsPage({ navigation, route }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, // ✅ Use flex to prevent nesting issues
+    flex: 1, //  Use flex to prevent nesting issues
     paddingTop: 50,
     padding: 20,
     backgroundColor: "#f5f5f5",

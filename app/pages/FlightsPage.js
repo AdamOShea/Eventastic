@@ -71,7 +71,7 @@ export default function FlightsPage({ navigation }) {
       {/* Event Information */}
       <NoImageInfoContainer event={selectedEvent} />
 
-      {/* ✅ Saved Accommodation Information */}
+      {/*  Saved Accommodation Information */}
       {selectedAccommodation && (
         <View style={styles.accommodationContainer}>
           <Text style={styles.accomTitle}>📍 Your Saved Accommodation</Text>

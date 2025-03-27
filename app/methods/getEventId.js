@@ -8,7 +8,7 @@ const getEventId = async (values) => {
       //console.log("Accomm API Response:", apiResponse.data);
 
       if (apiResponse.status === 200) {
-        console.log("✅ getEventId successful");
+        console.log(" getEventId successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
         console.log("❌ getEventId failed with status:", apiResponse.status);

@@ -8,7 +8,7 @@ export default function InfoContainer({ event }) {
   try {
     const images = JSON.parse(event.eventImages || '[]'); // safely parse
     if (images.length > 0) {
-      imageSource = { uri: images[0] }; // ✅ access first image
+      imageSource = { uri: images[0] }; //  access first image
     }
   } catch (err) {
     //console.warn('❌ Failed to parse eventImages:', err);

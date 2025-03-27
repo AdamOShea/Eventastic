@@ -20,7 +20,7 @@ const callPythonApi = (scriptPath, args = []) => {
 
     // Handle process exit
     process.on('close', (code) => {
-      //console.log(`✅ Raw Python Output from ${scriptPath}:`, output.trim()); // 🔍 Debug Output
+      //console.log(` Raw Python Output from ${scriptPath}:`, output.trim()); // 🔍 Debug Output
 
       if (errorOutput.trim()) {
         //console.warn(`⚠️ Python stderr output (${scriptPath}):\n${errorOutput.trim()}`); 
@@ -33,7 +33,7 @@ const callPythonApi = (scriptPath, args = []) => {
       }
 
       try {
-        const jsonResponse = JSON.parse(output.trim());  // ✅ Ensure valid JSON
+        const jsonResponse = JSON.parse(output.trim());  //  Ensure valid JSON
         resolve(jsonResponse);
       } catch (parseError) {
         console.error(`❌ JSON Parse Error from ${scriptPath}:`, parseError);

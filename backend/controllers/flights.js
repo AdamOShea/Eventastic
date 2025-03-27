@@ -50,7 +50,7 @@ const flightsApis = async (req, res) => {
     // Wait for all API calls to complete
     const results = await Promise.all(apiPromises);
 
-    //console.log(`📦 Raw API Results:`, results); // ✅ Debug
+    //console.log(`📦 Raw API Results:`, results); //  Debug
 
     // Apply Mappers to API responses
     const mappedResults = results.map(({ api, data, error }) => {
@@ -59,7 +59,7 @@ const flightsApis = async (req, res) => {
         return { api, status: "rejected", error, data: null };
       }
 
-      //console.log(`🎯 ${api} succeeded:`, JSON.stringify(data, null, 2)); // ✅ Debug JSON
+      //console.log(`🎯 ${api} succeeded:`, JSON.stringify(data, null, 2)); //  Debug JSON
 
       let mappedData = [];
       switch (api) {
@@ -71,7 +71,7 @@ const flightsApis = async (req, res) => {
           mappedData = data;
       }
 
-      //console.log(`✅ Mapped Data for ${api}:`, JSON.stringify(mappedData, null, 2)); // ✅ Debug mapped data
+      //console.log(` Mapped Data for ${api}:`, JSON.stringify(mappedData, null, 2)); //  Debug mapped data
 
       return { api, status: "fulfilled", data: mappedData };
     });

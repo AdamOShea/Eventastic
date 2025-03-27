@@ -17,7 +17,7 @@ const ticketmasterMapper = (events) => {
         eventLink: event.url || 'No Link',
         eventTitle: event.name || 'Untitled Event',
         eventDescription: event.info || event.description || 'No event description found :/',
-        eventImages: JSON.stringify(imageUrls), // ✅ all image URLs as array
+        eventImages: JSON.stringify(imageUrls), //  all image URLs as array
       };
     });
   };

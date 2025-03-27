@@ -1,14 +1,14 @@
 # Use Node.js official image
 FROM node:18-alpine
 
-# ✅ Install Python & Pip in Alpine
+#  Install Python & Pip in Alpine
 RUN apk add --no-cache python3 py3-pip
 
-# ✅ Create and activate a virtual environment for Python
+#  Create and activate a virtual environment for Python
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# ✅ Install Python dependencies inside the virtual environment
+#  Install Python dependencies inside the virtual environment
 RUN pip install --no-cache-dir pyairbnb
 RUN pip install --no-cache-dir fast-flights
 

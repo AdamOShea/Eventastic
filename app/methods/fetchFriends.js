@@ -8,7 +8,7 @@ const fetchFriends = async (values) => {
       //console.log("Accomm API Response:", apiResponse.data);
 
       if (apiResponse.status === 200) {
-        console.log("✅ fetchFriends successful");
+        console.log(" fetchFriends successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
         console.log("❌ fetchFriend failed with status:", apiResponse.status);

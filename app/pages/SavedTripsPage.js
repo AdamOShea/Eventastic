@@ -2,13 +2,13 @@ import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from "react-native";
 import TripCard from "../components/TripCard";
 import { fetchSavedTrips } from "../methods/fetchSavedTrips";
-import { useUser } from "../components/UserContext"; // ✅ Import UserContext
+import { useUser } from "../components/UserContext"; //  Import UserContext
 
 export default function SavedTripsPage({ navigation }) {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const { currentUser } = useUser(); // ✅ Get current user
+  const { currentUser } = useUser(); //  Get current user
 
   const loadTrips = async () => {
     if (!currentUser?.userid) {

@@ -8,7 +8,7 @@ const saveTrip = async (values) => {
       //console.log("Accomm API Response:", apiResponse.data);
 
       if (apiResponse.status === 201) {
-        console.log("✅ saveTrip successful");
+        console.log(" saveTrip successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
         console.log("❌ saveTrip failed with status:", apiResponse.status);

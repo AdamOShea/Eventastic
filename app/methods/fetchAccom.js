@@ -8,7 +8,7 @@ const fetchAccom = async (values) => {
       //console.log("Accomm API Response:", apiResponse.data);
 
       if (apiResponse.status === 200) {
-        console.log("✅ fetchAccom successful");
+        console.log(" fetchAccom successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
         console.log("❌ fetchAccom failed with status:", apiResponse.status);

@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import FlightCard from '../components/FlightCard';
 import { fetchFlightsAPI } from '../methods/fetchFlights';
-import { useEvent } from '../components/EventContext'; // ✅ Import context
+import { useEvent } from '../components/EventContext'; //  Import context
 
 export default function OutboundFlights({ route, navigation }) {
   const { outboundFlights, departureAirport, arrivalAirport, returnDate } = route.params;
-  const { setSelectedOutboundFlight } = useEvent(); // ✅ Store selected outbound flight in context
+  const { setSelectedOutboundFlight } = useEvent(); //  Store selected outbound flight in context
   const [loading, setLoading] = useState(false);
 
   const fetchReturnFlights = async (selectedFlight) => {
     setLoading(true);
-    setSelectedOutboundFlight(selectedFlight); // ✅ Save selected flight
+    setSelectedOutboundFlight(selectedFlight); //  Save selected flight
 
     const returnValues = {
       departureAirport: arrivalAirport, // Swapping for return trip

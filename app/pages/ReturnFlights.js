@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import FlightCard from '../components/FlightCard';
-import { useEvent } from '../components/EventContext'; // ✅ Import context
+import { useEvent } from '../components/EventContext'; //  Import context
 
 export default function ReturnFlights({ route, navigation }) {
   const { returnFlights, returnDate } = route.params;
-  const { selectedOutboundFlight, setSelectedReturnFlight } = useEvent(); // ✅ Store selected return flight
+  const { selectedOutboundFlight, setSelectedReturnFlight } = useEvent(); //  Store selected return flight
 
   const handleReturnFlightSelection = (selectedReturnFlight) => {
-    setSelectedReturnFlight(selectedReturnFlight); // ✅ Save selected return flight
-    navigation.navigate('ConfirmFlights'); // ✅ Navigate to confirmation screen
+    setSelectedReturnFlight(selectedReturnFlight); //  Save selected return flight
+    navigation.navigate('ConfirmFlights'); //  Navigate to confirmation screen
   };
 
   return (
@@ -22,7 +22,7 @@ export default function ReturnFlights({ route, navigation }) {
 
       {returnFlights.length > 0 ? (
         <FlatList
-          data={[...returnFlights]} // ✅ Ensure it's a new array
+          data={[...returnFlights]} //  Ensure it's a new array
           keyExtractor={(item, index) => item.id || `flight_${index}`}
           renderItem={({ item }) => (
             <FlightCard {...item} onPress={() => handleReturnFlightSelection(item)} />

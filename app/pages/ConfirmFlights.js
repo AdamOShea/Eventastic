@@ -8,27 +8,44 @@ export default function ConfirmFlights({ navigation }) {
   const {
     selectedOutboundFlight,
     selectedReturnFlight,
-    
   } = useEvent();
 
   const handleSaveFlights = () => {
     console.log("Flights saved:", selectedOutboundFlight, selectedReturnFlight);
-    navigation.navigate('EventDetails'); // ✅ Navigate back to Event Details
+    navigation.navigate('EventDetails'); // Navigate back to Event Details
   };
 
+  const getNumericPrice = (price) => {
+    if (!price) return 0;
+    const parsed = parseFloat(String(price).replace(/[^0-9.]/g, ''));
+    return isNaN(parsed) ? 0 : parsed;
+  };
 
+  const totalPrice =
+    getNumericPrice(selectedOutboundFlight?.flightPrice) +
+    getNumericPrice(selectedReturnFlight?.flightPrice);
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Your Selected Flights</Text>
 
-      <Text style={styles.subHeader}>Outbound Flight on {selectedOutboundFlight.flightDepartureTime.split(" on ")[1]}</Text>
+      <Text style={styles.subHeader}>
+        Outbound Flight on {selectedOutboundFlight.flightDepartureTime.split(" on ")[1]}
+      </Text>
       <FlightCard {...selectedOutboundFlight} />
 
-      <Text style={styles.subHeader}>Return Flight on {selectedReturnFlight.flightDepartureTime.split(" on ")[1]}</Text>
+      <Text style={styles.subHeader}>
+        Return Flight on {selectedReturnFlight.flightDepartureTime.split(" on ")[1]}
+      </Text>
       <FlightCard {...selectedReturnFlight} />
 
-      <SearchButton text="Save Flights & Return" onPress={handleSaveFlights}></SearchButton>
+      {/* ✨ Total Price Section */}
+      <View style={styles.totalBox}>
+        <Text style={styles.totalLabel}>Estimated Total Price</Text>
+        <Text style={styles.totalPrice}>€{totalPrice.toFixed(2)}</Text>
+      </View>
+
+      <SearchButton text="Save Flights & Return" onPress={handleSaveFlights} />
     </View>
   );
 }
@@ -51,16 +68,22 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 5,
   },
-  saveButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 12,
+  totalBox: {
+    backgroundColor: '#f2f2f2',
+    padding: 15,
     borderRadius: 10,
-    marginTop: 20,
+    marginVertical: 20,
     alignItems: 'center',
   },
-  buttonText: {
-    color: '#fff',
+  totalLabel: {
     fontSize: 16,
+    fontWeight: '600',
+    color: '#444',
+  },
+  totalPrice: {
+    fontSize: 22,
     fontWeight: 'bold',
+    color: '#1d4ed8',
+    marginTop: 5,
   },
 });

@@ -15,6 +15,7 @@ import { FiltersProvider } from "./components/FiltersContext";
 import LoginRegisterPage from './pages/LoginRegisterPage';
 
 import BottomTabNavigator from "./components/BottomTabNavigator";
+import { cleanEventsDB } from "./methods/cleanEventsDB";
 
 enableScreens();
 
@@ -45,6 +46,7 @@ const requestLocationPermission = async () => {
 function App() {
   useEffect(() => {
     requestLocationPermission();
+    cleanEventsDB();
   }, []);
 
   return (

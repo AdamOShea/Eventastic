@@ -3,22 +3,22 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'r
 import InfoContainer from '../components/InfoContainer';
 import ExpandableDescription from '../components/ExpandableDescription';
 import MapComponent from '../components/MapComponent';
-import { useEvent } from '../components/EventContext'; // ✅ Import Context
-import AccommodationCard from '../components/AccommodationCard'; // ✅ Import AccommodationCard
-import FlightCard from '../components/FlightCard'; // ✅ Import FlightCard component
+import { useEvent } from '../components/EventContext'; //  Import Context
+import AccommodationCard from '../components/AccommodationCard'; //  Import AccommodationCard
+import FlightCard from '../components/FlightCard'; //  Import FlightCard component
 import { saveTrip } from '../methods/saveTrip';
 import { getEventId } from '../methods/getEventId';
 import { saveAccomm } from '../methods/saveAccomm';
 import {saveFlights} from '../methods/saveFlights';
-
+import { useUser } from "../components/UserContext"; 
 
 export default function EventDetailsPage({ navigation }) {
-  const { selectedEvent, selectedAccommodation, selectedOutboundFlight, selectedReturnFlight } = useEvent(); // ✅ Get event & accommodation from context
+  const { selectedEvent, selectedAccommodation, selectedOutboundFlight, selectedReturnFlight } = useEvent(); //  Get event & accommodation from context
 
   useEffect(() => {
     if (!selectedEvent) {
       console.warn("No event selected. Redirecting to search page...");
-      navigation.navigate("SearchPage"); // ✅ Redirect if no event found
+      navigation.navigate("SearchPage"); //  Redirect if no event found
     }
   }, [selectedEvent]);
 
@@ -29,20 +29,22 @@ export default function EventDetailsPage({ navigation }) {
     }
 
     const eventResponse = await getEventId({eventLink: selectedEvent.eventLink});
-    const event = eventResponse?.eventId || null; // ✅ Extracts only the event ID
+    const event = eventResponse?.eventId || null; //  Extracts only the event ID
 
     const accommResponse = selectedAccommodation ? await saveAccomm(selectedAccommodation) : null;
-    const accomm = accommResponse?.accommId || null; // ✅ Extract accommodation ID safely
+    const accomm = accommResponse?.accommId || null; //  Extract accommodation ID safely
 
     const outboundFlightResponse = selectedOutboundFlight ? await saveFlights(selectedOutboundFlight) : null;
-    const outboundflight = outboundFlightResponse?.flightId || null; // ✅ Extract outbound flight ID safely
+    const outboundflight = outboundFlightResponse?.flightId || null; //  Extract outbound flight ID safely
 
     const returnFlightResponse = selectedReturnFlight ? await saveFlights(selectedReturnFlight) : null;
-    const returnflight = returnFlightResponse?.flightId || null; // ✅ Extract return flight ID safely
+    const returnflight = returnFlightResponse?.flightId || null; //  Extract return flight ID safely
   
+
+    const { currentUser } = useUser(); //  Get current user
     // Create the payload
     const tripData = {
-      userid: '4100febd-1cb8-45ed-91e8-ca242ac97e6f',
+      userid: currentUser.userid,
       eventid: event,
       accommid: accomm || null, // Allow saving without accommodation
       outflightid: outboundflight || null,
@@ -55,9 +57,9 @@ export default function EventDetailsPage({ navigation }) {
     const response = await saveTrip(tripData);
   
     if (response) {
-      console.log("✅ Trip saved successfully:", response);
+      console.log(" Trip saved successfully:", response);
       alert("Trip saved successfully!");
-      navigation.navigate("SearchPage"); // ✅ Redirect after saving
+      navigation.navigate("SearchPage"); //  Redirect after saving
     } else {
       console.error("❌ Failed to save trip.");
       alert("Error saving trip. Please try again.");
@@ -81,7 +83,7 @@ export default function EventDetailsPage({ navigation }) {
 
           <MapComponent eventLocation={`${selectedEvent.eventVenue} ${selectedEvent.eventLocation}`} eventTitle={selectedEvent.eventTitle} />
 
-          {/* ✅ Display Saved Accommodation if Exists */}
+          {/*  Display Saved Accommodation if Exists */}
           {selectedAccommodation && (
             <View style={styles.accommodationContainer}>
               <Text style={styles.sectionTitle}>Your Saved Accommodation</Text>
@@ -89,7 +91,7 @@ export default function EventDetailsPage({ navigation }) {
             </View>
           )}
 
-          {/* ✅ Display Selected Outbound Flight */}
+          {/*  Display Selected Outbound Flight */}
           {selectedOutboundFlight && (
             <View style={styles.flightContainer}>
               <Text style={styles.sectionTitle}>✈️ Your Outbound Flight</Text>
@@ -97,7 +99,7 @@ export default function EventDetailsPage({ navigation }) {
             </View>
           )}
 
-          {/* ✅ Display Selected Return Flight */}
+          {/*  Display Selected Return Flight */}
           {selectedReturnFlight && (
             <View style={styles.flightContainer}>
               <Text style={styles.sectionTitle}>✈️ Your Return Flight</Text>

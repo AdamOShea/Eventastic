@@ -1,14 +1,14 @@
 const { callPythonApi } = require('../methods/callPythonApi'); // Function to run Python scripts
 const fs = require('fs');
 const path = require('path');
-const { mapAirbnb, mapBooking, mapExpedia } = require('../mappers/accommodationMappers'); // ✅ Import API mappers
+const { mapAirbnb, mapBooking, mapExpedia } = require('../mappers/accommodationMappers'); //  Import API mappers
 const { pool } = require('../models/db');
 
 const apiDirectory = path.join(__dirname, '../accommodation-apis');
 
 const apis = {};
 
-// ✅ Load all Python API scripts from the accommodation-apis folder
+//  Load all Python API scripts from the accommodation-apis folder
 fs.readdirSync(apiDirectory).forEach((file) => {
   if (file.endsWith('.py')) {
     const apiName = path.basename(file, '.py');
@@ -16,7 +16,7 @@ fs.readdirSync(apiDirectory).forEach((file) => {
   }
 });
 
-console.log('✅ Loaded Accommodation APIs:', Object.keys(apis));
+console.log(' Loaded Accommodation APIs:', Object.keys(apis));
 
 const accommApis = async (req, res) => {
   const { latitude, longitude, checkIn, checkOut, apis: selectedAPIs } = req.body;
@@ -32,7 +32,7 @@ const accommApis = async (req, res) => {
   }
 
   try {
-    // ✅ Create an array of promises for calling selected API scripts
+    //  Create an array of promises for calling selected API scripts
     const apiPromises = selectedAPIs.map((apiName) => {
       const scriptPath = apis[apiName];
 
@@ -47,17 +47,17 @@ const accommApis = async (req, res) => {
       }
     });
 
-    // ✅ Wait for all API calls to complete
+    //  Wait for all API calls to complete
     const results = await Promise.all(apiPromises);
 
-    // ✅ Apply Mappers to API responses
+    //  Apply Mappers to API responses
     const mappedResults = results.map(({ api, data, error }) => {
       if (error) {
         console.error(`❌ ${api} failed:`, error);
         return { api, status: 'rejected', error, data: null };
       }
 
-      console.log(`✅ ${api} succeeded:`, data);
+      console.log(` ${api} succeeded:`, data);
 
       // Map response using appropriate function
       let mappedData = [];
@@ -79,7 +79,7 @@ const accommApis = async (req, res) => {
       return { api, status: 'fulfilled', data: mappedData };
     });
 
-    // ✅ Send response with mapped results
+    //  Send response with mapped results
     res.status(200).json({
       message: 'API calls completed.',
       results: mappedResults,
@@ -90,7 +90,7 @@ const accommApis = async (req, res) => {
   }
 };
 
-// ✅ Endpoint to detect available APIs
+//  Endpoint to detect available APIs
 const detectAPIs = async (req, res) => {
   res.json({ apis: Object.keys(apis) });
 };

@@ -9,7 +9,7 @@ export default function InfoContainer({ event }) {
   try {
     const images = JSON.parse(event.eventImages || '[]'); // safely parse
     if (images.length > 0) {
-      imageSource = { uri: images[0] }; // ✅ access first image
+      imageSource = { uri: images[0] }; //  access first image
     }
   } catch (err) {
     //console.warn('❌ Failed to parse eventImages:', err);
@@ -35,6 +35,9 @@ export default function InfoContainer({ event }) {
         </Text>
         <Text style={styles.detail}>
             <Text style={styles.label}>Location:</Text> {event.eventLocation.trim()}, {event.eventVenue}
+        </Text>
+        <Text style={styles.detail}>
+            <Text style={styles.label}>Price:</Text> €{event.eventPrice}
         </Text>
         </View>
     </TouchableOpacity>

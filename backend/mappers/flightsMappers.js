@@ -1,5 +1,5 @@
 const mapGoogleFlights = (result, dctn) => {
-    //console.log(`🔍 Mapping Google Flights Data:`, JSON.stringify(result, null, 2)); // ✅ Debug
+    //console.log(`🔍 Mapping Google Flights Data:`, JSON.stringify(result, null, 2)); //  Debug
   
     if (!result || !result.results || result.results.length === 0) {
       console.warn("⚠️ No flights found in result");
