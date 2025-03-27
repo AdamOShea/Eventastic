@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 import DatePicker from 'react-native-neat-date-picker';
 import { format } from 'date-fns';
 import NoImageInfoContainer from '../components/NoImageInfoContainer';
 import SearchButton from '../components/SearchButton';
-import FormInput from '../components/FormInput';
 import { fetchFlightsAPI } from '../methods/fetchFlights';
-import { useEvent, selectedAccommodation } from '../components/EventContext'; 
-
+import { useEvent } from '../components/EventContext';
 
 export default function FlightsPage({ navigation }) {
-  const { selectedEvent } = useEvent(); 
+  const { selectedEvent, selectedAccommodation } = useEvent();
 
-  // Ensure the event exists before using its data
+
   if (!selectedEvent) {
     console.warn("No event selected. Redirecting to search page...");
     navigation.navigate("SearchPage");
-    return null; // Prevent rendering if event is missing
+    return null;
   }
 
   const eventDate = new Date(selectedEvent.eventDate);
@@ -24,11 +22,16 @@ export default function FlightsPage({ navigation }) {
   const tomorrow = new Date(today.getTime() + 86400000);
 
   const [departureAirport, setDepartureAirport] = useState('');
-  const [arrivalAirport, setArrivalAirport] = useState(selectedEvent.eventLocation); // Autofill from event
-  const [departureDate, setDepartureDate] = useState(eventDate);
-  const [returnDate, setReturnDate] = useState(new Date(eventDate.getTime() + 86400000));
+  const [arrivalAirport, setArrivalAirport] = useState(selectedEvent.eventLocation);
+  const [departureDate, setDepartureDate] = useState(
+    selectedAccommodation?.checkIn ? new Date(selectedAccommodation.checkIn) : eventDate
+  );
+  const [returnDate, setReturnDate] = useState(
+    selectedAccommodation?.checkOut ? new Date(selectedAccommodation.checkOut) : new Date(eventDate.getTime() + 86400000)
+  );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [directOnly, setDirectOnly] = useState(false);
 
   const searchOutboundFlights = async () => {
     if (!departureAirport || !arrivalAirport) {
@@ -46,8 +49,6 @@ export default function FlightsPage({ navigation }) {
       apis: ["googleFlights"]
     };
 
-    console.log("🚀 Fetching outbound flights with values:", outboundValues);
-
     const outboundApiResults = await fetchFlightsAPI(outboundValues);
     setLoading(false);
 
@@ -59,7 +60,7 @@ export default function FlightsPage({ navigation }) {
         departureAirport,
         arrivalAirport,
         departureDate: format(departureDate, 'yyyy-MM-dd'),
-        returnDate: format(returnDate, 'yyyy-MM-dd'), // Fix: Pass correct return date
+        returnDate: format(returnDate, 'yyyy-MM-dd'),
       });
     } else {
       alert('No outbound flights found.');
@@ -68,10 +69,8 @@ export default function FlightsPage({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Event Information */}
       <NoImageInfoContainer event={selectedEvent} />
 
-      {/*  Saved Accommodation Information */}
       {selectedAccommodation && (
         <View style={styles.accommodationContainer}>
           <Text style={styles.accomTitle}>📍 Your Saved Accommodation</Text>
@@ -82,28 +81,50 @@ export default function FlightsPage({ navigation }) {
         </View>
       )}
 
-      {/* Departure Airport Input */}
-      <FormInput
-        value={departureAirport}
-        onChangeText={(value) => setDepartureAirport(value)}
-        title="Departure Airport"
-        placeholder="Enter airport or location (JFK/New York)"
-      />
+      <View style={styles.inputsContainer}>
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Departure Airport</Text>
+          <TextInput
+            style={styles.textInput}
+            value={departureAirport}
+            onChangeText={setDepartureAirport}
+            placeholder="Enter airport or location (JFK/New York)"
+            placeholderTextColor="#999"
+          />
+        </View>
 
-      {/* Arrival Airport Input (Autofilled but editable) */}
-      <FormInput
-        value={arrivalAirport}
-        onChangeText={(value) => setArrivalAirport(value)}
-        title="Arrival Airport"
-        placeholder="Enter airport or location (Gatwick/London)"
-      />
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Arrival Airport</Text>
+          <TextInput
+            style={styles.textInput}
+            value={arrivalAirport}
+            onChangeText={setArrivalAirport}
+            placeholder="Enter airport or location (Gatwick/London)"
+            placeholderTextColor="#999"
+          />
+        </View>
 
-      {/* Date Picker */}
-      <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
-        <Text style={styles.buttonText}>
-          {format(departureDate, 'dd-MMM-yyyy')} → {format(returnDate, 'dd-MMM-yyyy')}
-        </Text>
-      </TouchableOpacity>
+        <View style={styles.rowContainer}>
+          <View style={styles.dateSection}>
+            <Text style={styles.inputLabel2}>Dates</Text>
+            <TouchableOpacity style={styles.smallDateButton} onPress={() => setShowDatePicker(true)}>
+              <Text style={styles.smallButtonText}>
+                {format(departureDate, 'dd-MMM')} → {format(returnDate, 'dd-MMM')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.switchContainer}>
+            <Switch
+              value={directOnly}
+              onValueChange={(value) => setDirectOnly(value)}
+              trackColor={{ false: '#ccc', true: '#6785c7' }}
+              thumbColor={directOnly ? '#fff' : '#f4f3f4'}
+            />
+            <Text style={styles.switchLabel}>Direct only</Text>
+          </View>
+        </View>
+
 
       <DatePicker
         isVisible={showDatePicker}
@@ -119,11 +140,10 @@ export default function FlightsPage({ navigation }) {
         onCancel={() => setShowDatePicker(false)}
       />
 
-      {/* Search Button */}
       <SearchButton text="Search Flights" onPress={searchOutboundFlights} />
 
-      {/* Loading Indicator */}
       {loading && <Text style={styles.loadingText}>Loading flights...</Text>}
+      </View>
     </View>
   );
 }
@@ -134,25 +154,83 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingHorizontal: 15,
   },
-  dateButton: {
-    width: '100%',
-    backgroundColor: '#6785c7',
-    paddingVertical: 12,
-    borderRadius: 10,
-    marginVertical: 15,
+  rowContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
+    marginBottom: 10,
+    gap: 20,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  
+  inputsContainer: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    marginBottom: 20,
+    paddingBottom: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
   },
-  loadingText: {
-    textAlign: 'center',
-    marginTop: 10,
+  inputGroup: {
+    marginBottom: 15,
+    borderRadius: 10,
+  },
+  inputLabel: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+    marginLeft: 15,
+    marginTop: 15,
+  },
+  inputLabel2: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+    marginTop: 15,
+  },
+  textInput: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    fontSize: 15,
+    marginHorizontal: 15,
+  },
+  dateSection: {
+    paddingHorizontal: 15,
+    marginBottom: 10,
+  },
+  smallDateButton: {
+    backgroundColor: '#fff',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    marginTop: 6,
+    marginRight: 200,
+    justifyContent: 'center',
+    alignItems: 'left',
+  },
+  smallButtonText: {
+    color: '#333',
+    fontSize: 14,
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+  },
+  switchLabel: {
     fontSize: 16,
-    color: '#666',
+    color: '#333',
+    fontWeight: '500',
   },
   accommodationContainer: {
     backgroundColor: '#f5f5f5',
@@ -172,5 +250,11 @@ const styles = StyleSheet.create({
   },
   bold: {
     fontWeight: 'bold',
+  },
+  loadingText: {
+    textAlign: 'center',
+    marginTop: 10,
+    fontSize: 16,
+    color: '#666',
   },
 });

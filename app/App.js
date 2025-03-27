@@ -45,9 +45,14 @@ const requestLocationPermission = async () => {
 
 function App() {
   useEffect(() => {
-    requestLocationPermission();
-    cleanEventsDB();
+    const init = async () => {
+      await requestLocationPermission(); // We wait for permission since it's needed early
+      cleanEventsDB(); // Don't await this, let it run in the background
+    };
+  
+    init();
   }, []);
+  
 
   return (
     <UserProvider>

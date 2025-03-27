@@ -37,7 +37,7 @@ export default function InfoContainer({ event }) {
             <Text style={styles.label}>Location:</Text> {event.eventLocation.trim()}, {event.eventVenue}
         </Text>
         <Text style={styles.detail}>
-            <Text style={styles.label}>Price:</Text> €{event.eventPrice}
+            <Text style={styles.label}>Price:</Text><Text style={styles.priceLabel}> €{event.eventPrice}</Text>
         </Text>
         </View>
     </TouchableOpacity>
@@ -76,5 +76,9 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: 'bold',
+  },
+  priceLabel: {
+    fontWeight: 'bold',
+    color: '#27ae60'
   },
 });

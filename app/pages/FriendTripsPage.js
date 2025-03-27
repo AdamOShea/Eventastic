@@ -42,6 +42,8 @@ export default function FriendTripsPage({ navigation, route }) {
     setRefreshing(false);
   }, []);
 
+
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{friend.name}'s Shared Trips</Text>

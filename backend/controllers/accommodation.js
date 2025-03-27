@@ -63,7 +63,7 @@ const accommApis = async (req, res) => {
       let mappedData = [];
       switch (api) {
         case 'airbnb':
-          mappedData = mapAirbnb(data);
+          mappedData = mapAirbnb(data, checkIn, checkOut);
           break;
         case 'booking':
           mappedData = mapBooking(data);

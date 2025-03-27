@@ -14,7 +14,7 @@ import { useUser } from "../components/UserContext";
 
 export default function EventDetailsPage({ navigation }) {
   const { selectedEvent, selectedAccommodation, selectedOutboundFlight, selectedReturnFlight } = useEvent(); //  Get event & accommodation from context
-
+  const { currentUser } = useUser(); //  Get current user
   useEffect(() => {
     if (!selectedEvent) {
       console.warn("No event selected. Redirecting to search page...");
@@ -41,7 +41,7 @@ export default function EventDetailsPage({ navigation }) {
     const returnflight = returnFlightResponse?.flightId || null; //  Extract return flight ID safely
   
 
-    const { currentUser } = useUser(); //  Get current user
+    
     // Create the payload
     const tripData = {
       userid: currentUser.userid,

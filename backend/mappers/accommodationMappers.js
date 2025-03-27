@@ -1,6 +1,6 @@
 // backend/mappers/accommodationMappers.js
 
-const mapAirbnb = (data) =>
+const mapAirbnb = (data, checkIn, checkOut) =>
     data.map((accom) => ({
       accommId: accom.room_id.toString(),
       accommName: accom.title,
@@ -10,6 +10,8 @@ const mapAirbnb = (data) =>
       accommFirstImage: accom.images?.[0]?.url || null,
       accommImages: JSON.stringify(accom.images?.map((img) => img.url)) || [],
       accommUrl: `https://www.airbnb.ie/rooms/${accom.room_id}`,
+      accommCheckIn: checkIn,
+      accommCheckOut: checkOut
     }));
   
   const mapBooking = (data) =>

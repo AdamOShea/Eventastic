@@ -69,11 +69,15 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   totalBox: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#fff',
     padding: 15,
     borderRadius: 10,
     marginVertical: 20,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
   totalLabel: {
     fontSize: 16,
@@ -83,7 +87,7 @@ const styles = StyleSheet.create({
   totalPrice: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#1d4ed8',
+    color: '#27ae60',
     marginTop: 5,
   },
 });

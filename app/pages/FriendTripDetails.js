@@ -10,6 +10,7 @@ import {
 import TappableInfoContainer from "../components/TappableInfoContainer";
 import TripAccommodationCard from "../components/TripAccommodationCard";
 import TripFlightCard from "../components/TripFlightCard";
+import { estimateTotal } from '../methods/estimateTripTotal';
 
 export default function FriendTripDetails({ route, navigation }) {
   const { trip } = route.params;
@@ -34,6 +35,7 @@ export default function FriendTripDetails({ route, navigation }) {
     eventLocation: trip.eventLocation,
     eventLink: trip.eventLink,
     eventImages: trip.eventImages,
+    eventPrice: trip.eventPrice
   };
 
   const accommodation = trip.accommName && {
@@ -67,11 +69,20 @@ export default function FriendTripDetails({ route, navigation }) {
     flightUrl: trip.returnFlightUrl,
   };
 
+  const estimatedTotal = estimateTotal(trip);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.header}>Trip Details</Text>
       </View>
+
+      {(estimatedTotal > 0) && (
+              <View style={styles.estimateBox}>
+                <Text style={styles.estimateTitle}>Estimated Trip Total</Text>
+                <Text style={styles.estimateValue}>~ €{estimatedTotal.toFixed(2)}</Text>
+              </View>
+      )}
 
       <TappableInfoContainer event={event} />
 
@@ -130,7 +141,24 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16
   },
-  
+  estimateBox: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    alignItems: "center",
+  },
+  estimateTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 5,
+    color: "#333",
+  },
+  estimateValue: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#27ae60",
+  },
   section: {
     backgroundColor: "#fff",
     padding: 15,

@@ -1,7 +1,7 @@
 const client = require('../api/client');
 
 const cleanEventsDB = async (values) => {
-    console.log("Payload sent to cleanEventsDB:", values); 
+    console.log("Cleaning old events from db"); 
 
     try {
       const apiResponse = await client.post('/clean-events', values);

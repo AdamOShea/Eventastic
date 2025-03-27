@@ -11,6 +11,7 @@ import TappableInfoContainer from "../components/TappableInfoContainer";
 import TripAccommodationCard from "../components/TripAccommodationCard";
 import TripFlightCard from "../components/TripFlightCard";
 import { updateTripSharing } from "../methods/updateTripSharing";
+import { estimateTotal } from '../methods/estimateTripTotal';
 
 export default function TripDetailsPage({ route, navigation }) {
   const { trip } = route.params;
@@ -89,22 +90,7 @@ export default function TripDetailsPage({ route, navigation }) {
   };
 
 
-  const estimateTotal = () => {
-    const getNumericPrice = (price) => {
-      if (!price) return 0;
-      const parsed = parseFloat(String(price).replace(/[^0-9.]/g, ""));
-      return isNaN(parsed) ? 0 : parsed;
-    };
-
-    const event = getNumericPrice(trip.eventPrice);
-    const accomm = getNumericPrice(trip.accommPrice);
-    const outFlight = getNumericPrice(trip.outFlightPrice);
-    const returnFlight = getNumericPrice(trip.returnFlightPrice);
-
-    return event + accomm + outFlight + returnFlight;
-  };
-
-  const estimatedTotal = estimateTotal();
+  const estimatedTotal = estimateTotal(trip);
 
 
   return (
@@ -127,7 +113,7 @@ export default function TripDetailsPage({ route, navigation }) {
 
       {(estimatedTotal > 0) && (
         <View style={styles.estimateBox}>
-          <Text style={styles.estimateTitle}>Estimated Total</Text>
+          <Text style={styles.estimateTitle}>Estimated Trip Total</Text>
           <Text style={styles.estimateValue}>~ €{estimatedTotal.toFixed(2)}</Text>
         </View>
       )}
@@ -206,7 +192,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   estimateBox: {
-    backgroundColor: "#e8efff",
+    backgroundColor: "#fff",
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
@@ -221,6 +207,6 @@ const styles = StyleSheet.create({
   estimateValue: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#1d4ed8",
+    color: "#27ae60",
   },
 });

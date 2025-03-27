@@ -46,6 +46,10 @@ export default function AccommodationDetailsPage({ navigation, route }) {
       </ScrollView>
 
       <Text style={styles.detail}>
+        <Text style={styles.bold}>Dates:</Text> {accommodation.checkIn} - {accommodation.checkOut}
+      </Text>
+      
+      <Text style={styles.detail}>
         <Text style={styles.bold}>Price:</Text> {accommodation.accommPrice}
       </Text>
       <Text style={styles.detail}>

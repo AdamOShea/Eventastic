@@ -105,13 +105,32 @@ export default function FriendsPage({ navigation }) {
   };
 
   const renderFriend = ({ item }) => (
-  <TouchableOpacity onPress={() => goToFriendTrips(item)} style={styles.friendContainer}>
-    <Text style={styles.friendName}><Text style={{fontWeight: 'bold'}}>{item.name}'s</Text> Shared Trips</Text>
-    {item.sharedTrips.slice(0, 2).map((trip) => (
-      <TripCard key={trip.tripid} trip={trip} />
-    ))}
-  </TouchableOpacity>
-);
+    <TouchableOpacity onPress={() => goToFriendTrips(item)} style={styles.friendContainer}>
+      <Text style={styles.friendName}>
+        <Text style={{ fontWeight: 'bold' }}>{item.name}'s</Text> Shared Trips
+      </Text>
+  
+      {item.sharedTrips.length > 0 ? (
+        <>
+          {item.sharedTrips.slice(0, 2).map((trip) => (
+            <TripCard
+              key={trip.tripid}
+              trip={trip}
+              onPress={() => navigation.navigate("FriendTripDetails", { trip })}
+            />
+          ))}
+
+          <Text style={styles.hintText}>Tap to view all of {item.name}'s trips</Text>
+        </>
+      ) : (
+        <Text style={styles.noTripsText}>This friend has no shared trips yet.</Text>
+      )}
+    </TouchableOpacity>
+  );
+  
+  
+  
+  
 
 
   return (
@@ -210,6 +229,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "#f5f5f5",
   },
+  hintText: {
+    marginTop: 10,
+    fontSize: 13,
+    color: '#666',
+    fontStyle: 'italic',
+  },
+  
   centeredContainer: {
     flexGrow: 1,
     justifyContent: "center",
@@ -229,6 +255,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: "center",
   },
+  noTripsText: {
+    fontStyle: 'italic',
+    color: '#888',
+    
+  },
+  
   title: {
     fontSize: 24,
     fontWeight: "bold",
