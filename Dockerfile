@@ -9,7 +9,7 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 #  Install Python dependencies inside the virtual environment
-RUN pip install --no-cache-dir pyairbnb
+RUN pip install --no-cache-dir pyairbnb==0.0.10
 RUN pip install --no-cache-dir fast-flights
 
 # Set the working directory inside the container
