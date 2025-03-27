@@ -19,7 +19,7 @@ fs.readdirSync(apiDirectory).forEach((file) => {
 console.log("Loaded Flights APIs:", Object.keys(apis));
 
 const flightsApis = async (req, res) => {
-  const { departureDate, departureAirport, arrivalAirport, direction, apis: selectedAPIs } = req.body;
+  const { departureDate, departureAirport, arrivalAirport, direction, direct, apis: selectedAPIs } = req.body;
 
   console.log("🔎 Received payload at /flights-apis:", req.body);
 
@@ -38,7 +38,7 @@ const flightsApis = async (req, res) => {
 
       if (scriptPath) {
         console.log(`🚀 Calling API: ${apiName}`);
-        return callPythonApi(scriptPath, [departureDate, departureAirport, arrivalAirport])
+        return callPythonApi(scriptPath, [departureDate, departureAirport, arrivalAirport, direct])
           .then((data) => ({ api: apiName, data }))
           .catch((error) => ({ api: apiName, error: error.message }));
       } else {

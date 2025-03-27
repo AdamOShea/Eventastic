@@ -87,6 +87,7 @@ export default function AccommodationPage({ navigation }) {
         .filter(api => api.status === 'fulfilled' && Array.isArray(api.data))
         .flatMap(api => api.data);
       setAccommodations(allAccommodations);
+      console.log(allAccommodations);
       applySorting(allAccommodations);
     }
 

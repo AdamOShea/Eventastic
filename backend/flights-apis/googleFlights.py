@@ -2,13 +2,11 @@ import json
 from fast_flights import FlightData, Passengers, Result, get_flights, search_airport
 import fast_flights.core
 import sys
-from primp import Client  # Now it should resolve
+from primp import Client
+from datetime import datetime
 
-
-# Custom fetch function (your version)
 def custom_fetch(params: dict) -> Result:
     client = Client(impersonate="chrome_133", verify=False)
-
     cookies = {
         "OTZ": "7988884_56_56_123900_52_436380",
         "AEC": "AVcja2dUwdQQLhhFsfGjnMJuycioOesAPpyr2uXZNpOm751HKJYM7VydrQI",
@@ -18,35 +16,23 @@ def custom_fetch(params: dict) -> Result:
 
     res = client.get("https://www.google.com/travel/flights", params=params, cookies=cookies)
     assert res.status_code == 200, f"{res.status_code} Result: {res.text_markdown}"
-    return res  # Ensure this returns the correct response type for fast_flights
-
-from datetime import datetime
+    return res
 
 def format_flight_date(date_string):
-    # Extract the date part (everything after "on ")
     date_part = date_string.split(" on ")[-1]
-
-    # Convert to datetime object
-    dt = datetime.strptime(date_part, "%a, %b %d")  
-
-    # Set a default year (e.g., 2025) if the year is missing
+    dt = datetime.strptime(date_part, "%a, %b %d")
     dt = dt.replace(year=2025)
-
-    # Convert to YYYY-MM-DD format
     return dt.strftime("%Y-%m-%d")
 
-
-
 def result_to_dict(result, dep_airport, arr_airport):
-    """Convert Result object to a dictionary for JSON serialization."""
     return {
         "current_price": result.current_price,
         "flights": [
             {
                 "airline": flight.name,
-                "depAirport": dep_airport.name,  #  Now includes departure airport
+                "depAirport": dep_airport.name,
                 "depAirportCode": dep_airport.value,
-                "arrAirport": arr_airport.name,  #  Now includes arrival airport
+                "arrAirport": arr_airport.name,
                 "arrAirportCode": arr_airport.value,
                 "departure": flight.departure,
                 "arrival": flight.arrival,
@@ -60,21 +46,25 @@ def result_to_dict(result, dep_airport, arr_airport):
         ] if hasattr(result, "flights") else []
     }
 
-
-# Monkey patch the fetch function in fast_flights
+# Apply the custom fetch logic
 fast_flights.core.fetch = custom_fetch
 
-if len(sys.argv) < 4:
-    print(json.dumps({"error": "dates and airports required"}))
+if len(sys.argv) < 5:
+    print(json.dumps({"error": "dates and airports and direct param required"}))
     sys.exit(1)
 
 departureDate = sys.argv[1]
 departureAirports = search_airport(sys.argv[2])
 arrivalAirports = search_airport(sys.argv[3])
+direct_arg = sys.argv[4].strip().lower()
+direct = direct_arg == "true"
 
-print(f"🔍 Python received: Date={departureDate}, From={departureAirports}, To={arrivalAirports}", file=sys.stderr)
 
-all_results = []  # To store flight data from multiple airport combinations
+max_stops = 0 if direct else 2
+
+print(f"🔍 Python received: Date={departureDate}, From={departureAirports}, To={arrivalAirports}, Direct={direct}, MaxStops={max_stops}", file=sys.stderr)
+
+all_results = []
 
 for departureAirport in departureAirports:
     for arrivalAirport in arrivalAirports:
@@ -85,21 +75,17 @@ for departureAirport in departureAirports:
                 seat="economy",
                 passengers=Passengers(adults=1, children=0, infants_in_seat=0, infants_on_lap=0),
                 fetch_mode="common",
-                max_stops=1
+                max_stops=max_stops
             )
 
             print(f" Flights Found: {len(result.flights) if hasattr(result, 'flights') else 'None'}", file=sys.stderr)
-
-            # Convert each result to dictionary format and store in results list
             all_results.append(result_to_dict(result, departureAirport, arrivalAirport))
 
         except Exception as e:
             error_message = str(e)
             if "No flights found" in error_message:
-                continue  # Ignore errors related to no flights
-            print(f"Error fetching flight: {error_message[:200]}...", file=sys.stderr)  # Truncate error message
-
+                continue
+            print(f"Error fetching flight: {error_message[:200]}...", file=sys.stderr)
 
 sys.stdout.reconfigure(encoding='utf-8')
-#  Print JSON response including all processed flights
 print(json.dumps({"results": all_results}, indent=2, ensure_ascii=False))

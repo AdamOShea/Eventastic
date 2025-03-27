@@ -9,7 +9,9 @@ export default function AccommodationCard({
   accommFirstImage,
   accommImages,
   accommUrl,
-  accommDetails
+  accommDetails,
+  accommCheckIn,
+  accommCheckOut
 }) {
   const handleSelectAccommodation = () => {
     navigation.navigate('AccommodationDetails', {
@@ -20,7 +22,9 @@ export default function AccommodationCard({
         accommFirstImage,
         accommImages,
         accommUrl,
-        accommDetails
+        accommDetails,
+        accommCheckIn,
+        accommCheckOut
       }
     });
   };

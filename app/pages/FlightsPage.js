@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Switch, ActivityIndicator } from 'react-native';
+
 import DatePicker from 'react-native-neat-date-picker';
 import { format } from 'date-fns';
 import NoImageInfoContainer from '../components/NoImageInfoContainer';
@@ -21,10 +22,16 @@ export default function FlightsPage({ navigation }) {
 
   const [departureAirport, setDepartureAirport] = useState('');
   const [arrivalAirport, setArrivalAirport] = useState(selectedEvent.eventLocation);
+  const safeCheckIn = selectedAccommodation?.accommCheckIn && !isNaN(new Date(selectedAccommodation.accommCheckIn)) 
+  ? new Date(selectedAccommodation.accommCheckIn) 
+  : eventDate;
 
+const safeCheckOut = selectedAccommodation?.accommCheckOut && !isNaN(new Date(selectedAccommodation.accommCheckOut)) 
+  ? new Date(selectedAccommodation.accommCheckOut) 
+  : new Date(eventDate.getTime() + 86400000);
 
-  const [departureDate, setDepartureDate] = useState(null);
-  const [returnDate, setReturnDate] = useState(null);
+  const [departureDate, setDepartureDate] = useState(safeCheckIn);
+  const [returnDate, setReturnDate] = useState(safeCheckOut);
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -43,10 +50,11 @@ export default function FlightsPage({ navigation }) {
       arrivalAirport,
       departureDate: format(departureDate, 'yyyy-MM-dd'),
       direction: "Outbound",
-      apis: ["googleFlights"]
+      apis: ["googleFlights"],
+      direct: directOnly
     };
 
-    console.log("🧳 selectedAccommodation:", selectedAccommodation);
+    console.log(directOnly);
 
     const outboundApiResults = await fetchFlightsAPI(outboundValues);
     setLoading(false);
@@ -74,8 +82,9 @@ export default function FlightsPage({ navigation }) {
         <View style={styles.accommodationContainer}>
           <Text style={styles.accomTitle}>Your Saved Accommodation</Text>
           <Text style={styles.accomText}><Text style={styles.bold}>Name:</Text> {selectedAccommodation.accommName}</Text>
-          <Text style={styles.accomText}><Text style={styles.bold}>Location:</Text> {selectedAccommodation.accommLocation}</Text>
-</View>
+          <Text style={styles.accomText}><Text style={styles.bold}>Check-In:</Text> {format(new Date(selectedAccommodation.accommCheckIn), 'dd-MMM-yyyy')}</Text>
+          <Text style={styles.accomText}><Text style={styles.bold}>Check-Out:</Text> {format(new Date(selectedAccommodation.accommCheckOut), 'dd-MMM-yyyy')}</Text>
+        </View>
       )}
 
       <View style={styles.inputsContainer}>
@@ -103,7 +112,7 @@ export default function FlightsPage({ navigation }) {
 
         <View style={styles.rowContainer}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.inputLabel}>Dates</Text>
+            <Text style={styles.dateLabel}>Dates</Text>
             <TouchableOpacity style={styles.smallDateButton} onPress={() => setShowDatePicker(true)}>
               <Text style={styles.smallButtonText}>
                 {format(departureDate, 'dd-MMM')} → {format(returnDate, 'dd-MMM')}
@@ -140,7 +149,13 @@ export default function FlightsPage({ navigation }) {
           <Text style={styles.searchButtonText}>Search Flights</Text>
         </TouchableOpacity>
 
-        {loading && <Text style={styles.loadingText}>Loading flights...</Text>}
+        {loading && (
+          <View style={styles.spinnerContainer}>
+            <ActivityIndicator size="large" color="#6785c7" />
+            <Text style={styles.loadingText}>Searching for flights...</Text>
+          </View>
+        )}
+
       </View>
     </View>
   );
@@ -152,11 +167,21 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingHorizontal: 15,
   },
+  spinnerContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
   accommodationContainer: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: 'white',
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 1,
   },
   accomTitle: {
     fontSize: 18,
@@ -190,6 +215,12 @@ const styles = StyleSheet.create({
     color: '#333',
     fontWeight: '500',
     marginLeft: 15,
+    marginBottom: 5,
+  },
+  dateLabel: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
     marginBottom: 5,
   },
   textInput: {
@@ -229,6 +260,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    paddingTop: 30
   },
   switchLabel: {
     fontSize: 15,
