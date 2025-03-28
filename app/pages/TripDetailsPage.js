@@ -12,38 +12,36 @@ import TripAccommodationCard from "../components/TripAccommodationCard";
 import TripFlightCard from "../components/TripFlightCard";
 import { updateTripSharing } from "../methods/updateTripSharing";
 import { estimateTotal } from '../methods/estimateTripTotal';
-import { fetchTripById } from "../methods/fetchTripById"; // ✅ Make sure this exists
 
 export default function TripDetailsPage({ route, navigation }) {
-  const { tripid } = route.params;
-  const [trip, setTrip] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { trip } = route.params;
 
-  useEffect(() => {
-    const fetchTrip = async () => {
-      try {
-        const latestTrip = await fetchTripById(tripid);
-        setTrip(latestTrip);
-      } catch (err) {
-        console.error("❌ Failed to fetch trip:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  let accommImages = [];
+  let accommFirstImage;
 
-    const unsubscribe = navigation.addListener("focus", fetchTrip);
-    return unsubscribe;
-  }, [navigation]);
+  try {
+    accommImages = JSON.parse(trip.accommImages || "[]");
+    if (accommImages.length > 0) {
+      accommFirstImage = accommImages[0];
+    }
+  } catch (err) {
+    console.warn("❌ Failed to parse accommImages:", err);
+  }
+
+  const [sharedStatus, setSharedStatus] = useState(() => trip.shared);
+
+  
+
 
   const toggleSharing = async () => {
     try {
       const updated = await updateTripSharing({
         tripid: trip.tripid,
-        shared: !trip.shared,
+        shared: !sharedStatus,
       });
 
       if (updated?.message === "Trip sharing status updated") {
-        setTrip(prev => ({ ...prev, shared: !prev.shared }));
+        setSharedStatus((prev) => !prev);
       } else {
         Alert.alert("Update failed", "Could not update sharing status.");
       }
@@ -52,15 +50,6 @@ export default function TripDetailsPage({ route, navigation }) {
       Alert.alert("Error", "An error occurred while sharing the trip.");
     }
   };
-
-  if (loading || !trip) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading trip...</Text>
-      </View>
-    );
-  }
-
 
   const event = {
     eventTitle: trip.eventTitle,
