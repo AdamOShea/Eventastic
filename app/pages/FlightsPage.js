@@ -71,7 +71,7 @@ export default function FlightsPage({ navigation }) {
         })
       });
 
-      console.log(response);
+      //console.log(response);
 
       const json = await response.json();
       const place = json?.places?.[0];

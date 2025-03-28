@@ -1,5 +1,5 @@
 import json
-from fast_flights import FlightData, Passengers, Result, get_flights, search_airport
+from fast_flights import FlightData, Passengers, Result, get_flights, search_airport, Airport
 import fast_flights.core
 import sys
 from primp import Client
@@ -7,6 +7,7 @@ from datetime import datetime
 
 def custom_fetch(params: dict) -> Result:
     client = Client(impersonate="chrome_133", verify=False)
+    
     cookies = {
         "OTZ": "7988884_56_56_123900_52_436380",
         "AEC": "AVcja2dUwdQQLhhFsfGjnMJuycioOesAPpyr2uXZNpOm751HKJYM7VydrQI",
@@ -18,11 +19,18 @@ def custom_fetch(params: dict) -> Result:
     assert res.status_code == 200, f"{res.status_code} Result: {res.text_markdown}"
     return res
 
+
 def format_flight_date(date_string):
     date_part = date_string.split(" on ")[-1]
     dt = datetime.strptime(date_part, "%a, %b %d")
     dt = dt.replace(year=2025)
     return dt.strftime("%Y-%m-%d")
+
+def get_airport_by_iata(code):
+    for airport in Airport:
+        if airport.value == code.upper():
+            return airport
+    return None
 
 def result_to_dict(result, dep_airport, arr_airport):
     return {
@@ -40,13 +48,13 @@ def result_to_dict(result, dep_airport, arr_airport):
                 "stops": flight.stops,
                 "price": flight.price.encode("utf-8").decode("utf-8"),
                 "best_option": flight.is_best,
-                "url": "https://www.google.com/travel/flights?q=" + dep_airport.value + "-to-" + arr_airport.value + "-" + format_flight_date(flight.departure)
+                "url": f"https://www.google.com/travel/flights?q={dep_airport.value}-to-{arr_airport.value}-{format_flight_date(flight.departure)}"
             }
             for flight in result.flights
         ] if hasattr(result, "flights") else []
     }
 
-# Apply the custom fetch logic
+# Apply custom fetch
 fast_flights.core.fetch = custom_fetch
 
 if len(sys.argv) < 5:
@@ -60,18 +68,16 @@ direct_arg = sys.argv[4].strip().lower()
 direct = direct_arg == "true"
 max_stops = 0 if direct else 2
 
-# Check if input is exactly 3 characters (likely IATA code), otherwise search
-if len(departureInput) == 3:
-    from fast_flights import Airport
-    departureAirports = [Airport.from_str(departureInput)]
-else:
-    departureAirports = search_airport(departureInput)
+def resolve_airports(input_str):
+    if len(input_str) == 3:
+        exact = get_airport_by_iata(input_str)
+        if exact:
+            return [exact]
+        print(f"⚠️ No exact IATA match found for {input_str}, fallback to full search", file=sys.stderr)
+    return search_airport(input_str)
 
-if len(arrivalInput) == 3:
-    from fast_flights import Airport
-    arrivalAirports = [Airport.from_str(arrivalInput)]
-else:
-    arrivalAirports = search_airport(arrivalInput)
+departureAirports = resolve_airports(departureInput)
+arrivalAirports = resolve_airports(arrivalInput)
 
 print(f"🔍 Python received: Date={departureDate}, From={departureAirports}, To={arrivalAirports}, Direct={direct}, MaxStops={max_stops}", file=sys.stderr)
 
@@ -89,14 +95,14 @@ for departureAirport in departureAirports:
                 max_stops=max_stops
             )
 
-            print(f" Flights Found: {len(result.flights) if hasattr(result, 'flights') else 'None'}", file=sys.stderr)
+            print(f"✈️ Flights Found: {len(result.flights) if hasattr(result, 'flights') else 'None'}", file=sys.stderr)
             all_results.append(result_to_dict(result, departureAirport, arrivalAirport))
 
         except Exception as e:
             error_message = str(e)
             if "No flights found" in error_message:
                 continue
-            print(f"Error fetching flight: {error_message[:200]}...", file=sys.stderr)
+            print(f"❌ Error fetching flight: {error_message[:200]}...", file=sys.stderr)
 
 sys.stdout.reconfigure(encoding='utf-8')
 print(json.dumps({"results": all_results}, indent=2, ensure_ascii=False))
