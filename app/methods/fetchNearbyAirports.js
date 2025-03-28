@@ -4,7 +4,7 @@ const fetchNearbyAirports = async (values) => {
     console.log("Payload sent to fetchNearbyAirports:", values); 
 
     try {
-      const apiResponse = await client.post('/find-nearby-airports', values);
+      const apiResponse = await client.post('/find-nearest-airport', values);
       //console.log("Accomm API Response:", apiResponse.data);
 
       if (apiResponse.status === 201) {

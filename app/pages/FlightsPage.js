@@ -16,9 +16,9 @@ import Constants from 'expo-constants';
 import NoImageInfoContainer from '../components/NoImageInfoContainer';
 import { fetchFlightsAPI } from '../methods/fetchFlights';
 import { useEvent } from '../components/EventContext';
+import { fetchNearbyAirports } from '../methods/fetchNearbyAirports';
+import { getGeolocation} from '../methods/getGeolocation';
 
-
-const GOOGLE_PLACES_API_KEY = Constants.expoConfig.extra.googleMapsApiKey;
 
 export default function FlightsPage({ navigation }) {
   const { selectedEvent, selectedAccommodation } = useEvent();
@@ -63,16 +63,16 @@ export default function FlightsPage({ navigation }) {
         const location = await Location.getCurrentPositionAsync({});
         const { latitude, longitude } = location.coords;
     
-        const nearestDeparture = await fetchNearbyAirports(latitude, longitude);
-        setDepartureAirport(nearestDeparture);
+        const departureRes = await fetchNearbyAirports({ latitude, longitude });
+        setDepartureAirport(departureRes?.iata || '');
     
-        const geocodeRes = getGeolocation(selectedEvent.eventLocation);
-        const geoJson = await geocodeRes.json();
-        const loc = geoJson.results[0]?.geometry?.location;
+        const geocodeRes = await getGeolocation(selectedEvent.eventLocation);
+        
+        const loc = geocodeRes.results[0]?.geometry?.location;
     
         if (loc) {
-          const nearestArrival = await fetchNearbyAirports(loc.lat, loc.lng);
-          setArrivalAirport(nearestArrival);
+          const arrivalRes = await fetchNearbyAirports({ latitude: loc.lat, longitude: loc.lng });
+          setArrivalAirport(arrivalRes?.iata || '');
         }
       } catch (err) {
         console.warn("⚠️ Autofill failed:", err);
@@ -80,6 +80,7 @@ export default function FlightsPage({ navigation }) {
         setAutofillLoading(false);
       }
     };
+    
 
     autofillAirports();
   }, [selectedEvent]);

@@ -156,8 +156,9 @@ const findNearestAirport = async (req, res) => {
       });
     }
 
-    const nearest = data?.places?.[0]?.displayName?.text || null;
+    const nearestName = data?.places?.[0]?.displayName?.text || null;
     const iataCode = nearestName ? airportCodeMatcher(nearestName) : null;
+
 
     if (!nearest) {
       return res.status(404).json({ error: 'No airport found near location' });
