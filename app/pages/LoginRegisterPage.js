@@ -1,3 +1,4 @@
+// Animated horizontal scrolling view for switching between login and registration forms, using interpolated animations for visual feedback.
 import { ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View, Dimensions, Animated } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import LoginHeader from '../components/LoginHeader';

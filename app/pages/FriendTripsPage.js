@@ -1,3 +1,4 @@
+// Component displaying a friend's shared trips in a list with refresh functionality and loading indicators.
 import React, { useEffect, useState, useCallback,} from "react";
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from "react-native";
 import TripCard from "../components/TripCard";
@@ -14,7 +15,7 @@ export default function FriendTripsPage({ navigation, route }) {
   const [refreshing, setRefreshing] = useState(false);
   const { currentUser } = useUser(); //  Get current user
 
-
+  // Loads shared trips for the selected friend from the API.
   const loadTrips = async () => {
     if (!friend?.id) return;
     setLoading(true);
@@ -36,6 +37,7 @@ export default function FriendTripsPage({ navigation, route }) {
     loadTrips();
   }, []);
 
+  // Handles refreshing of the trip list manually by the user.
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadTrips();

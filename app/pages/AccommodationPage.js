@@ -1,3 +1,4 @@
+// Accommodation search and selection page with date filtering, sorting, map integration, and results display.
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -43,12 +44,12 @@ export default function AccommodationPage({ navigation }) {
     { label: 'Price (Low to High)', value: 'price_asc' },
     { label: 'Price (High to Low)', value: 'price_desc' },
   ];
-
+// Parses numeric values from strings for sorting purposes.
   const parseNumber = (value) => {
     if (!value) return 0;
     return parseFloat(String(value).replace(/[^0-9.]/g, '')) || 0;
   };
-  
+  // Applies selected sorting criteria to accommodation results.
   const applySorting = (data) => {
     let sorted = [...data];
     if (sortOption === 'price_asc') {
@@ -61,7 +62,7 @@ export default function AccommodationPage({ navigation }) {
     setDisplayedAccommodations(sorted);
   };
   
-
+// Fetches accommodation data based on user-selected dates and event location.
   const fetchAccommodations = async () => {
     setLoading(true);
     setAccommodations([]);

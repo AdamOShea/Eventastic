@@ -1,3 +1,4 @@
+// Compact card component showing brief information about a trip, such as event title, date, and location, with clickable functionality to navigate to detailed view.
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { format } from 'date-fns';

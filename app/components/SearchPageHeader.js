@@ -1,3 +1,5 @@
+// Simple header component for displaying a prominent heading on the search page.
+
 import {View, StyleSheet, Text} from 'react-native';
 
 const SearchPageHeader = ({heading}) => {

@@ -1,3 +1,4 @@
+// Component displaying detailed event information including image, title, date, location, and price, with tappable functionality to open an external link to the event.
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { format } from 'date-fns';
@@ -14,7 +15,8 @@ export default function InfoContainer({ event }) {
   } catch (err) {
     //console.warn('❌ Failed to parse eventImages:', err);
   }
-
+  
+  // Opens the provided event link in an external browser, including validation and error handling for missing or invalid URLs.
   const handlePress = (event) => {
     if (event?.eventLink && typeof event.eventLink === 'string') {
       Linking.openURL(event.eventLink).catch(err => {

@@ -1,3 +1,5 @@
+// Component displaying basic event information such as title, date, and location without an image.
+
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { format } from 'date-fns';

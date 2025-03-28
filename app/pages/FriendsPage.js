@@ -1,3 +1,4 @@
+// Screen component displaying a user's friends and shared trips, with functionality to search and add new friends through a modal interface.
 import React, { useState, useEffect, useCallback } from "react";
 import {  View,  Text,  StyleSheet,  FlatList,  TouchableOpacity,  Modal, TextInput,  ScrollView,} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -26,7 +27,7 @@ export default function FriendsPage({ navigation }) {
   }, [currentUser, loadFriendsAndTrips]);
   
 
-// Shared async function
+  // Loads user's friends and their shared trips from API.
   const loadFriendsAndTrips = useCallback(async (userId) => {
     try {
       const response = await fetchFriends({ userId_1: userId });
@@ -52,16 +53,17 @@ export default function FriendsPage({ navigation }) {
     }
   }, []);
 
+  // Refreshes the list of friends and their trips upon user action.
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadFriendsAndTrips(currentUser.userid);
     setRefreshing(false);
   }, [currentUser, loadFriendsAndTrips]);
   
-    
+  // Performs user search based on entered username query.
   const userSearch = async (query) => {
     try {
-      const response = await searchUsers({ username: query }); // Wrap query in object
+      const response = await searchUsers({ username: query }); 
       console.log(response.users);
       return Array.isArray(response.users) ? response.users : [];
     } catch (err) {
@@ -70,7 +72,8 @@ export default function FriendsPage({ navigation }) {
     }
   };
 
-
+  
+// Opens the modal to initiate friend addition.
   const openAddFriendModal = () => {
     setAddFriendModal(true);
     setSearchQuery("");
@@ -78,13 +81,14 @@ export default function FriendsPage({ navigation }) {
     setSelectedUser(null);
   };
 
+  // Handles searching for users to add as friends based on query input.
   const handleSearch = async () => {
     const results = await userSearch(searchQuery);
     const filtered = results.filter((u) => u.userid !== currentUser.userid);
     setSearchResults(filtered);
   };
   
-
+  // Adds selected user as a friend via API.
   const handleAddFriend = async () => {
     if (selectedUser) {
       console.log(currentUser.userid);
@@ -100,10 +104,12 @@ export default function FriendsPage({ navigation }) {
     }
   };
 
+  // Navigates to a friend's detailed list of shared trips.
   const goToFriendTrips = (friend) => {
     navigation.navigate("FriendTripsPage", { friend });
   };
 
+  // Renders friend information along with preview of their shared trips.
   const renderFriend = ({ item }) => (
     <TouchableOpacity onPress={() => goToFriendTrips(item)} style={styles.friendContainer}>
       <Text style={styles.friendName}>
@@ -127,11 +133,6 @@ export default function FriendsPage({ navigation }) {
       )}
     </TouchableOpacity>
   );
-  
-  
-  
-  
-
 
   return (
     <View style={styles.container}>
@@ -158,8 +159,6 @@ export default function FriendsPage({ navigation }) {
       />
 
 
-
-      {/* Modal */}
       <Modal visible={addFriendModal} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -189,7 +188,7 @@ export default function FriendsPage({ navigation }) {
                   styles.resultItem,
                   selectedUser?.userid === user.userid && styles.selectedItem,
                 ]}
-                onPress={() => setSelectedUser(user)} // Save whole user object
+                onPress={() => setSelectedUser(user)} 
               >
                 <Text style={styles.resultText}>{user.username}</Text>
               </TouchableOpacity>

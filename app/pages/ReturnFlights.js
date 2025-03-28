@@ -1,3 +1,4 @@
+// Screen component for selecting return flights, displaying sorted flight options based on price, and navigating to confirmation screen after selection.
 import React from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import FlightCard from '../components/FlightCard';
@@ -7,12 +8,13 @@ export default function ReturnFlights({ route, navigation }) {
   const { returnFlights, returnDate } = route.params;
   const { selectedOutboundFlight, setSelectedReturnFlight } = useEvent();
 
+  // Handles return flight selection and navigates to flight confirmation screen.
   const handleReturnFlightSelection = (selectedReturnFlight) => {
     setSelectedReturnFlight(selectedReturnFlight);
     navigation.navigate('ConfirmFlights');
   };
 
-  // Helper to extract numerical value from price string
+  // Parses numeric price values from flight data for accurate sorting.
   const parsePrice = (priceString) => {
     if (!priceString) return Infinity;
     const numberMatch = priceString.match(/[\d,]+(\.\d{1,2})?/);

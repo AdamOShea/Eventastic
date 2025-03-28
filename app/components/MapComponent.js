@@ -1,3 +1,6 @@
+// Component that renders a Google Map displaying the event location, with functionality to view it in fullscreen mode.
+
+
 import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -12,6 +15,7 @@ export default function MapComponent({ eventVenue, eventLocation, eventTitle }) 
   const [showFullMap, setShowFullMap] = useState(false);
 
   useEffect(() => {
+    // Fetches geolocation coordinates based on event venue and location.
     const fetchCoordinates = async () => {
       let geoData = await getGeolocation(`${eventVenue}, ${eventLocation}`);
       if (!geoData) {
@@ -31,6 +35,7 @@ export default function MapComponent({ eventVenue, eventLocation, eventTitle }) 
     fetchCoordinates();
   }, [eventVenue, eventLocation]);
 
+  // Helper method to render map view with specified styles and scrollability.
   const renderMap = (style, scroll = false) =>
     region && (
       <MapView

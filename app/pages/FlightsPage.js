@@ -1,3 +1,4 @@
+// Screen for searching outbound flights, including autofill functionality for airports, date selection, direct flight filtering, and displaying loading states.
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -53,6 +54,7 @@ export default function FlightsPage({ navigation }) {
 
   useEffect(() => {
 
+    // Automatically fills in the nearest airports based on user's location and event location.
     const autofillAirports = async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
@@ -92,6 +94,8 @@ export default function FlightsPage({ navigation }) {
     autofillAirports();
   }, [selectedEvent]);
 
+  
+// Performs flight search based on selected criteria and navigates to outbound flight results
   const searchOutboundFlights = async () => {
     if (!departureAirport || !arrivalAirport) {
       alert('Please enter both departure and arrival airports.');

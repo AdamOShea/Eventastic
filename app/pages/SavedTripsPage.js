@@ -1,3 +1,4 @@
+// Screen component displaying user's saved trips, with functionality to refresh the trips list and navigate to detailed views.
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from "react-native";
 import TripCard from "../components/TripCard";
@@ -10,6 +11,7 @@ export default function SavedTripsPage({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const { currentUser } = useUser(); //  Get current user
 
+// Fetches saved trips for the current user from API, handling loading state and errors.
   const loadTrips = async () => {
     if (!currentUser?.userid) {
       setLoading(false); // prevent indefinite spinner if no user
@@ -39,6 +41,7 @@ export default function SavedTripsPage({ navigation }) {
     loadTrips();
   }, [currentUser]);
 
+  // Refreshes the trips list upon user's action.
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadTrips();

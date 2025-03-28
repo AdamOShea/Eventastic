@@ -1,3 +1,5 @@
+// Interactive card component displaying brief search result details (event image, title, date, location, and price), with navigation to detailed event view on press.
+
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { format } from 'date-fns';
@@ -15,6 +17,7 @@ export default function SearchResultCard({ item, navigation }) {
 
   const { setSelectedEvent } = useEvent();
 
+  // Handles user interaction by setting the selected event and navigating to the detailed event page.
   const handlePress = () => {
     setSelectedEvent(item);
     navigation.navigate('EventDetails');

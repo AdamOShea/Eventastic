@@ -1,3 +1,6 @@
+// Container component using KeyboardAvoidingView to handle keyboard appearance gracefully, particularly on iOS.
+
+
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
 

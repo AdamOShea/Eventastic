@@ -1,11 +1,10 @@
+// Screen component showing detailed information about a friend's selected trip, including event, accommodation, and flights, with an estimated trip total.
 import React, { useState } from "react";
 import {
   View,
   ScrollView,
   Text,
   StyleSheet,
-  TouchableOpacity,
-  Alert,
 } from "react-native";
 import TappableInfoContainer from "../components/TappableInfoContainer";
 import TripAccommodationCard from "../components/TripAccommodationCard";

@@ -1,3 +1,6 @@
+
+// Reusable button component primarily used to initiate search operations or actions related to searching.
+
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 

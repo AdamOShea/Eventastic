@@ -1,3 +1,5 @@
+// Header component for login screens, displaying an app-specific logo.
+
 import {View, StyleSheet, Text, Image} from 'react-native';
 
 const LoginHeader = ({}) => {

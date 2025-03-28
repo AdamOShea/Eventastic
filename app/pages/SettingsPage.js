@@ -1,3 +1,4 @@
+// Simple settings screen providing logout functionality, prompting user confirmation before logging out and clearing user context.
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { useNavigation, StackActions } from "@react-navigation/native";
@@ -7,6 +8,7 @@ export default function SettingsPage() {
   const { setCurrentUser } = useUser();
   const navigation = useNavigation();
 
+  // Confirms logout action with the user and logs them out by resetting user state and navigation.
   const handleLogout = () => {
     Alert.alert("Log Out", "Are you sure you want to log out?", [
       {

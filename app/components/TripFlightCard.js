@@ -1,3 +1,4 @@
+// Card component displaying detailed flight information for a trip, including airline, price, departure and arrival details, and clickable functionality to open external flight links.
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 
@@ -15,7 +16,7 @@ export default function TripFlightCard({
   flightUrl,
   onPress
 }) {
-
+    // Opens the provided flight URL in an external browser, with error handling for missing or invalid URLs.
     const handleSelectFlight = () => {
         if (flightUrl) {
             Linking.openURL(flightUrl).catch(err => {
@@ -26,7 +27,7 @@ export default function TripFlightCard({
           }
       };
 
-
+  // Formats the flight's departure or arrival time string by removing the date part for cleaner display.
   const formatTime = (time) => {
     return time.split(" on ")[0];
   };

@@ -1,9 +1,12 @@
+// Component displaying accommodation details specifically for trips, including image, name, price, and rating, with clickable functionality to open an external link.
+
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Linking } from 'react-native';
 import { useEvent } from './EventContext'; //  Import context
 
 export default function TripAccommodationCard({ navigation, accommName, accommPrice, accommRating, accommFirstImage, accommImages, accommUrl }) {
 
+  // Opens the provided accommodation URL in an external browser, handling missing or invalid URLs gracefully.
 
   const handleSelectAccommodation = () => {
     if (accommUrl) {

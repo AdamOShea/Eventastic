@@ -1,3 +1,6 @@
+// Displays event details with expandable/collapsible description functionality.
+
+
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 

@@ -1,3 +1,5 @@
+// User login form component managing login state, authentication process, error handling, and navigation upon successful login.
+
 import React, { useState, useRef } from 'react';
 import { StyleSheet, TextInput, Alert } from 'react-native';
 import FormContainer from './FormContainer';
@@ -20,6 +22,7 @@ const LoginForm = ({ navigation }) => {
   // Refs for inputs
   const passwordRef = useRef(null);
 
+  // Handles form submission, authenticates the user, and navigates to the main app on success.
   const submitForm = async () => {
     try {
       const response = await login(userInfo);
@@ -38,7 +41,7 @@ const LoginForm = ({ navigation }) => {
     }
   };
   
-
+  // Updates the state based on input changes for email and password fields.
   const handleOnChangeText = (value, fieldName) => {
     setUserInfo({ ...userInfo, [fieldName]: value });
   };

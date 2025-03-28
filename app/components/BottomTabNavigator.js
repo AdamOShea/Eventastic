@@ -1,9 +1,10 @@
+// Defines the main navigation structure using a bottom tab navigator, including nested stack navigators for different sections (Search, Saved, Friends, Settings).
+
+
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import Icon from "react-native-vector-icons/Ionicons";
-
-// Pages
 import SearchPage from "../pages/SearchPage";
 import EventsFilters from "../pages/EventsFilters"
 import EventDetailsPage from "../pages/EventDetailsPage";
@@ -26,7 +27,7 @@ import FriendTripDetails from "../pages/FriendTripDetails";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// 🔁 Search Tab Stack
+// Stack navigator for Search tab screens including event search, accommodation, and flights.
 const SearchStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="SearchPage" component={SearchPage} />
@@ -41,7 +42,7 @@ const SearchStack = () => (
   </Stack.Navigator>
 );
 
-// 💾 Saved Trips Stack
+// Stack navigator for Saved Trips section, managing saved trips and their details.
 const SavedStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="SavedTripsPage" component={SavedTrips} />
@@ -50,6 +51,7 @@ const SavedStack = () => (
   </Stack.Navigator>
 );
 
+// Stack navigator for Friends section, showing friends' trips and details.
 const FriendsStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="FriendsPage" component={FriendsPage} />
@@ -58,13 +60,14 @@ const FriendsStack = () => (
   </Stack.Navigator>
 );
 
+// Stack navigator for Settings section. 
 const SettingsStack = () => {
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="SettingsPage" component={SettingsPage} />
   </Stack.Navigator>
 }
 
-//  Main Bottom Tab Navigator
+// Bottom tab navigator rendering all primary sections (Search, Saved, Friends, Settings).
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator

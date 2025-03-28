@@ -1,3 +1,4 @@
+// Screen component showing comprehensive event details, including accommodation, flights, expandable description, and map. Allows saving trip data.
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import InfoContainer from '../components/InfoContainer';
@@ -23,6 +24,7 @@ export default function EventDetailsPage({ navigation }) {
     }
   }, [selectedEvent]);
 
+  // Saves the complete trip (event, accommodation, flights) to the user's account, clearing context and navigating after successful save.
   const saveEvent = async () => {
     if (!selectedEvent) {
       console.warn("❌ No event selected.");

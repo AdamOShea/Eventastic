@@ -1,3 +1,5 @@
+// Component displaying detailed event information, including image, title, date, location, ticket price, and seller information.
+
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { format } from 'date-fns';

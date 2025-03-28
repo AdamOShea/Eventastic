@@ -1,3 +1,5 @@
+// A popup menu component allowing selection and toggling of filter options, using checkboxes.
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
@@ -7,18 +9,19 @@ const FilterMenu = ({ apiOptions, selectedAPIs, onSelectionChange }) => {
   const [selected, setSelected] = useState(selectedAPIs || []);
 
   useEffect(() => {
-    setSelected(selectedAPIs); // Update internal state when props change
+    setSelected(selectedAPIs); 
   }, [selectedAPIs]);
 
   console.log('FilterMenu apiOptions:', apiOptions); 
 
+  // Updates the selected APIs state and notifies parent component about the changes.
   const toggleSelection = (api) => {
     const updatedSelection = selected.includes(api)
       ? selected.filter((item) => item !== api)
       : [...selected, api];
 
     setSelected(updatedSelection);
-    onSelectionChange(updatedSelection); // Notify parent
+    onSelectionChange(updatedSelection); 
   };
 
   return (

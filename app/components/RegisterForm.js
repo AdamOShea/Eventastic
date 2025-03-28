@@ -1,3 +1,5 @@
+// User registration form component managing input states, validation, user registration, automatic login, and navigation upon successful registration.
+
 import React, { useState, useRef } from 'react';
 import { Alert } from 'react-native';
 import FormContainer from './FormContainer';
@@ -25,10 +27,12 @@ const RegisterForm = ({ navigation }) => {
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
 
+  // Updates the state based on input changes for registration fields.
   const handleOnChangeText = (value, fieldName) => {
     setUserInfo({ ...userInfo, [fieldName]: value });
   };
 
+  // Handles form submission, user registration, and auto-login on successful registration.
   const submitForm = async () => {
     console.log(userInfo);
     register(userInfo).then(async (response) => {

@@ -1,3 +1,6 @@
+// Customizable button component specifically used for submitting form data.
+
+
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 

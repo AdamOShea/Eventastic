@@ -1,3 +1,4 @@
+// Screen component for selecting outbound flights, displaying flight options sorted by price, and initiating search for corresponding return flights upon selection.
 import React, { useState } from 'react';
 import { View, FlatList, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import FlightCard from '../components/FlightCard';
@@ -10,6 +11,7 @@ export default function OutboundFlights({ route, navigation }) {
   const [loading, setLoading] = useState(false);
   const [selectedFlightId, setSelectedFlightId] = useState(null);
 
+  // Parses numeric flight price from string for sorting purposes.
   const parsePrice = (priceString) => {
     if (!priceString) return Infinity;
     const numberMatch = priceString.match(/[\d,]+(\.\d{1,2})?/);
@@ -17,6 +19,7 @@ export default function OutboundFlights({ route, navigation }) {
     return parseFloat(numberMatch[0].replace(/,/g, ''));
   };
 
+  // Fetches return flights based on selected outbound flight and navigates to return flights selection screen.
   const fetchReturnFlights = async (selectedFlight) => {
     setLoading(true);
     setSelectedFlightId(selectedFlight.id || selectedFlight.flightDepartureTime); // fallback key

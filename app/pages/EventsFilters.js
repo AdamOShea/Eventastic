@@ -1,3 +1,4 @@
+// Screen for applying filters to event searches, including event sources, dates, prices, and sorting criteria.
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -24,6 +25,7 @@ export default function EventsFilters({ navigation }) {
   const { apiOptions, selectedAPIs } = filters;
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  // Toggles the selection of event source APIs.
   const toggleAPI = (api) => {
     const updated = selectedAPIs.includes(api)
       ? selectedAPIs.filter((a) => a !== api)
@@ -32,6 +34,7 @@ export default function EventsFilters({ navigation }) {
     setFilters((prev) => ({ ...prev, selectedAPIs: updated }));
   };
 
+  // Handles date selection from the date picker and updates filter states.
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
     if (selectedDate) {
@@ -39,6 +42,7 @@ export default function EventsFilters({ navigation }) {
     }
   };
 
+  // Updates price range inputs, sanitizing and formatting numeric input.
   const handlePriceChange = (type, value) => {
     const sanitized = value.replace(/[^0-9]/g, '');
     const formatted = sanitized ? `€${sanitized}` : '';

@@ -1,3 +1,4 @@
+// Displays detailed accommodation information including images, check-in/check-out dates, price, and ratings, with options to view externally or save accommodation.
 import React from 'react';
 import {
   View,
@@ -29,6 +30,7 @@ export default function AccommodationDetailsPage({ navigation, route }) {
     console.warn("Failed to parse accommodation images:", err);
   }
 
+// Saves selected accommodation to user's trip and navigates back to event details.
   const handleSaveButton = () => {
     setSelectedAccommodation(accommodation);
     console.log('Saving this accommodation:', accommodation);
@@ -36,6 +38,7 @@ export default function AccommodationDetailsPage({ navigation, route }) {
     navigation.navigate('EventDetails');
   };
 
+  // Formats the details text to a more readable form.
   const formatDetailsText = (text) => {
     if (!text) return 'No additional details provided.';
     return text

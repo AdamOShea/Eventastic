@@ -1,3 +1,4 @@
+// Detailed view for user's individual trip, displaying event, accommodation, flights, estimated total cost, and providing functionality to toggle trip sharing status.
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -32,7 +33,7 @@ export default function TripDetailsPage({ route, navigation }) {
 
   
 
-
+// Toggles trip sharing status through API call and updates state based on response.
   const toggleSharing = async () => {
     try {
       const updated = await updateTripSharing({

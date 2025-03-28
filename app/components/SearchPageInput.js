@@ -1,3 +1,5 @@
+// Customizable input field component with optional icon, primarily used for entering search criteria.
+
 import React from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';

@@ -1,3 +1,6 @@
+// Component rendering flight information as a card, including airline, price, departure/arrival times, and stops.
+
+
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 
@@ -16,7 +19,7 @@ export default function FlightCard({
   onPress
 }) {
 
-
+  // Formats flight time strings for display by removing unnecessary date details.
   const formatTime = (time) => {
     return time.split(" on ")[0];
   };

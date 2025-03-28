@@ -1,4 +1,5 @@
-// components/FiltersContext.js
+// Context provider for managing filter states like selected APIs, date options, custom dates, price ranges, and sorting criteria.
+
 import React, { createContext, useContext, useState } from 'react';
 
 const FiltersContext = createContext();

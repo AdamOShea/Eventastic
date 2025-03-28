@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
+// Component rendering accommodation details as a clickable card that navigates to detailed view.
+
 export default function AccommodationCard({
   navigation,
   accommName,
@@ -13,6 +15,7 @@ export default function AccommodationCard({
   accommCheckIn,
   accommCheckOut
 }) {
+  // Handles the navigation to the accommodation details page with all relevant data.
   const handleSelectAccommodation = () => {
     navigation.navigate('AccommodationDetails', {
       accommDetails: {

@@ -1,3 +1,4 @@
+// Main event search screen that includes input fields for keyword and location, location autofill, filtering, sorting, and animated visibility controls based on scroll behavior.
 import React, { useEffect, useState, useRef } from 'react';
 import { BlurView } from 'expo-blur';
 import {
@@ -35,6 +36,7 @@ export default function SearchPage({ navigation }) {
   const translateY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    // Retrieves available APIs and initial user location for automatic event search setup.
     const fetchAPIs = async () => {
       const apis = await detectAPIs();
       if (Array.isArray(apis) && apis.length) {
@@ -52,9 +54,10 @@ export default function SearchPage({ navigation }) {
     fetchLocation();
   }, []);
 
-  //  Trigger fetch only when location is available
+  // Checks if location data is available and valid.
   const isLocationValid = searchQuery.location.trim().length > 0;
 
+  // Triggers filtered events retrieval based on updated filters and location validity.
   useFocusEffect(
     React.useCallback(() => {
       if (isLocationValid && !loadingLocation) {
@@ -77,7 +80,7 @@ export default function SearchPage({ navigation }) {
     ])
   );
   
-
+  // Fetches events based on current search query and filters, applies sorting and updates event state.
   const getFilteredEvents = async () => {
     try {
       const response = await fetchEvents({ ...searchQuery, apis: selectedAPIs, date: filters.customDate || null });
@@ -110,6 +113,7 @@ export default function SearchPage({ navigation }) {
     }
   };
 
+  // Retrieves the user's current location and updates search location field accordingly.
   const fetchLocation = async () => {
     try {
       setLoadingLocation(true);
@@ -132,10 +136,12 @@ export default function SearchPage({ navigation }) {
     }
   };
 
+  // Initiates event search upon form submission.
   const submitForm = () => {
     getFilteredEvents();
   };
 
+  // Updates search query state based on user input, also toggles manual location mode.
   const handleOnChangeText = (value, fieldName) => {
     setSearchQuery({ ...searchQuery, [fieldName]: value });
 
@@ -144,6 +150,7 @@ export default function SearchPage({ navigation }) {
     }
   };
 
+  // Animates search bar visibility based on scroll direction.
   const handleScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
     {

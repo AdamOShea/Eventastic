@@ -1,3 +1,4 @@
+// Page confirming user's selected outbound and return flights with total price calculation and functionality to save selections to the event.
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import FlightCard from '../components/FlightCard';
@@ -10,11 +11,13 @@ export default function ConfirmFlights({ navigation }) {
     selectedReturnFlight,
   } = useEvent();
 
+  // Saves selected flights and navigates back to event details.
   const handleSaveFlights = () => {
     console.log("Flights saved:", selectedOutboundFlight, selectedReturnFlight);
     navigation.navigate('EventDetails'); // Navigate back to Event Details
   };
 
+  // Parses numeric flight prices from strings to calculate total price accurately.
   const getNumericPrice = (price) => {
     if (!price) return 0;
     const parsed = parseFloat(String(price).replace(/[^0-9.]/g, ''));
