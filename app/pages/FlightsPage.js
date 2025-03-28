@@ -17,6 +17,7 @@ import NoImageInfoContainer from '../components/NoImageInfoContainer';
 import { fetchFlightsAPI } from '../methods/fetchFlights';
 import { useEvent } from '../components/EventContext';
 
+
 const GOOGLE_PLACES_API_KEY = Constants.expoConfig.extra.googleMapsApiKey;
 
 export default function FlightsPage({ navigation }) {
@@ -50,34 +51,6 @@ export default function FlightsPage({ navigation }) {
   const [directOnly, setDirectOnly] = useState(false);
 
   useEffect(() => {
-    const findNearestAirport = async (lat, lng) => {
-      const url = `https://places.googleapis.com/v1/places:searchNearby`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Goog-Api-Key': GOOGLE_PLACES_API_KEY,
-          'X-Goog-FieldMask': 'places.displayName,places.formattedAddress'
-        },
-        body: JSON.stringify({
-          locationRestriction: {
-            circle: {
-              center: { latitude: lat, longitude: lng },
-              radius: 50000
-            }
-          },
-          includedTypes: ['airport'],
-          rankPreference: "DISTANCE"
-        })
-      });
-
-      //console.log(response);
-
-      const json = await response.json();
-      const place = json?.places?.[0];
-      console.log("📍 Nearest airport result:", place);
-      return place?.displayName?.text || '';
-    };
 
     const autofillAirports = async () => {
       try {
@@ -86,17 +59,19 @@ export default function FlightsPage({ navigation }) {
           console.warn('Permission to access location was denied');
           return;
         }
-
+    
         const location = await Location.getCurrentPositionAsync({});
         const { latitude, longitude } = location.coords;
-        const nearestDeparture = await findNearestAirport(latitude, longitude);
+    
+        const nearestDeparture = await fetchNearbyAirports(latitude, longitude);
         setDepartureAirport(nearestDeparture);
-
-        const geocodeRes = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${selectedEvent.eventLocation}&key=${GOOGLE_PLACES_API_KEY}`);
+    
+        const geocodeRes = getGeolocation(selectedEvent.eventLocation);
         const geoJson = await geocodeRes.json();
         const loc = geoJson.results[0]?.geometry?.location;
+    
         if (loc) {
-          const nearestArrival = await findNearestAirport(loc.lat, loc.lng);
+          const nearestArrival = await fetchNearbyAirports(loc.lat, loc.lng);
           setArrivalAirport(nearestArrival);
         }
       } catch (err) {

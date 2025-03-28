@@ -6,7 +6,7 @@ const { pool } = require('../models/db');
 require('dotenv').config();
 const fetch = require('node-fetch');
 const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
-
+const { airportCodeMatcher } = require('../utils/airportCodeMatcher');
 
 const apiDirectory = path.join(__dirname, "../flights-apis");
 
@@ -157,12 +157,13 @@ const findNearestAirport = async (req, res) => {
     }
 
     const nearest = data?.places?.[0]?.displayName?.text || null;
+    const iataCode = nearestName ? airportCodeMatcher(nearestName) : null;
 
     if (!nearest) {
       return res.status(404).json({ error: 'No airport found near location' });
     }
 
-    res.status(200).json({ airport: nearest });
+    res.status(200).json({ airport: nearestName, iata: iataCode });
   } catch (err) {
     console.error('❌ Server Error:', err);
     res.status(500).json({ error: 'Internal server error' });
