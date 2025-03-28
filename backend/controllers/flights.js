@@ -3,6 +3,10 @@ const fs = require("fs");
 const path = require("path");
 const { mapGoogleFlights } = require("../mappers/flightsMappers");
 const { pool } = require('../models/db');
+require('dotenv').config();
+const fetch = require('node-fetch');
+const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+
 
 const apiDirectory = path.join(__dirname, "../flights-apis");
 
@@ -112,4 +116,51 @@ const saveFlight = async (req, res) => {
   }
 };
 
-module.exports = { flightsApis, detectAPIs, saveFlight };
+const findNearestAirport = async (req, res) => {
+  const { latitude, longitude } = req.body;
+
+  if (!latitude || !longitude) {
+    return res.status(400).json({ error: "Missing latitude or longitude" });
+  }
+
+  try {
+    const googleResponse = await fetch('https://places.googleapis.com/v1/places:searchNearby', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': GOOGLE_PLACES_API_KEY,
+        'X-Goog-FieldMask': 'places.displayName,places.location',
+      },
+      body: JSON.stringify({
+        location: {
+          latitude: latitude,
+          longitude: longitude,
+        },
+        rankPreference: 'DISTANCE',
+        includedTypes: ['airport'],
+      }),
+    });
+
+    const data = await googleResponse.json();
+
+    if (!googleResponse.ok) {
+      return res.status(googleResponse.status).json({
+        error: 'Failed to fetch airport',
+        details: data,
+      });
+    }
+
+    const nearest = data?.places?.[0]?.displayName?.text || null;
+
+    if (!nearest) {
+      return res.status(404).json({ error: 'No airport found near location' });
+    }
+
+    res.status(200).json({ airport: nearest });
+  } catch (err) {
+    console.error('❌ Server Error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+module.exports = { flightsApis, detectAPIs, saveFlight, findNearestAirport  };

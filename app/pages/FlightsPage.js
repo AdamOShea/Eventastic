@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Switch, ActivityIndicator } from 'react-native';
-
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Switch,
+  ActivityIndicator,
+} from 'react-native';
 import DatePicker from 'react-native-neat-date-picker';
 import { format } from 'date-fns';
+import * as Location from 'expo-location';
+
+import Constants from 'expo-constants';
 import NoImageInfoContainer from '../components/NoImageInfoContainer';
 import { fetchFlightsAPI } from '../methods/fetchFlights';
 import { useEvent } from '../components/EventContext';
+
+const GOOGLE_PLACES_API_KEY = Constants.expoConfig.extra.googleMapsApiKey;
 
 export default function FlightsPage({ navigation }) {
   const { selectedEvent, selectedAccommodation } = useEvent();
@@ -20,22 +32,82 @@ export default function FlightsPage({ navigation }) {
   const today = new Date();
   const tomorrow = new Date(today.getTime() + 86400000);
 
+  const safeCheckIn = selectedAccommodation?.accommCheckIn && !isNaN(new Date(selectedAccommodation.accommCheckIn))
+    ? new Date(selectedAccommodation.accommCheckIn)
+    : eventDate;
+
+  const safeCheckOut = selectedAccommodation?.accommCheckOut && !isNaN(new Date(selectedAccommodation.accommCheckOut))
+    ? new Date(selectedAccommodation.accommCheckOut)
+    : new Date(eventDate.getTime() + 86400000);
+
   const [departureAirport, setDepartureAirport] = useState('');
-  const [arrivalAirport, setArrivalAirport] = useState(selectedEvent.eventLocation);
-  const safeCheckIn = selectedAccommodation?.accommCheckIn && !isNaN(new Date(selectedAccommodation.accommCheckIn)) 
-  ? new Date(selectedAccommodation.accommCheckIn) 
-  : eventDate;
-
-const safeCheckOut = selectedAccommodation?.accommCheckOut && !isNaN(new Date(selectedAccommodation.accommCheckOut)) 
-  ? new Date(selectedAccommodation.accommCheckOut) 
-  : new Date(eventDate.getTime() + 86400000);
-
+  const [arrivalAirport, setArrivalAirport] = useState('');
   const [departureDate, setDepartureDate] = useState(safeCheckIn);
   const [returnDate, setReturnDate] = useState(safeCheckOut);
-
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [autofillLoading, setAutofillLoading] = useState(true);
   const [directOnly, setDirectOnly] = useState(false);
+
+  useEffect(() => {
+    const findNearestAirport = async (lat, lng) => {
+      const url = `https://places.googleapis.com/v1/places:searchNearby`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': GOOGLE_PLACES_API_KEY,
+          'X-Goog-FieldMask': 'places.displayName,places.formattedAddress'
+        },
+        body: JSON.stringify({
+          locationRestriction: {
+            circle: {
+              center: { latitude: lat, longitude: lng },
+              radius: 50000
+            }
+          },
+          includedTypes: ['airport'],
+          rankPreference: "DISTANCE"
+        })
+      });
+
+      console.log(response);
+
+      const json = await response.json();
+      const place = json?.places?.[0];
+      console.log("📍 Nearest airport result:", place);
+      return place?.displayName?.text || '';
+    };
+
+    const autofillAirports = async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          console.warn('Permission to access location was denied');
+          return;
+        }
+
+        const location = await Location.getCurrentPositionAsync({});
+        const { latitude, longitude } = location.coords;
+        const nearestDeparture = await findNearestAirport(latitude, longitude);
+        setDepartureAirport(nearestDeparture);
+
+        const geocodeRes = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${selectedEvent.eventLocation}&key=${GOOGLE_PLACES_API_KEY}`);
+        const geoJson = await geocodeRes.json();
+        const loc = geoJson.results[0]?.geometry?.location;
+        if (loc) {
+          const nearestArrival = await findNearestAirport(loc.lat, loc.lng);
+          setArrivalAirport(nearestArrival);
+        }
+      } catch (err) {
+        console.warn("⚠️ Autofill failed:", err);
+      } finally {
+        setAutofillLoading(false);
+      }
+    };
+
+    autofillAirports();
+  }, [selectedEvent]);
 
   const searchOutboundFlights = async () => {
     if (!departureAirport || !arrivalAirport) {
@@ -54,12 +126,10 @@ const safeCheckOut = selectedAccommodation?.accommCheckOut && !isNaN(new Date(se
       direct: directOnly
     };
 
-    console.log(directOnly);
-
     const outboundApiResults = await fetchFlightsAPI(outboundValues);
     setLoading(false);
 
-    let outboundFlights = outboundApiResults.results.find(result => result.api === "googleFlights")?.data || [];
+    const outboundFlights = outboundApiResults.results.find(result => result.api === "googleFlights")?.data || [];
 
     if (outboundFlights.length > 0) {
       navigation.navigate('OutboundFlights', {
@@ -79,85 +149,93 @@ const safeCheckOut = selectedAccommodation?.accommCheckOut && !isNaN(new Date(se
     <View style={styles.container}>
       <NoImageInfoContainer event={selectedEvent} />
 
-      {selectedAccommodation && (
-        <View style={styles.accommodationContainer}>
-          <Text style={styles.accomTitle}>Your Saved Accommodation</Text>
-          <Text style={styles.accomText}><Text style={styles.bold}>Name:</Text> {selectedAccommodation.accommName}</Text>
-          <Text style={styles.accomText}><Text style={styles.bold}>Check-In:</Text> {format(new Date(selectedAccommodation.accommCheckIn), 'dd-MMM-yyyy')}</Text>
-          <Text style={styles.accomText}><Text style={styles.bold}>Check-Out:</Text> {format(new Date(selectedAccommodation.accommCheckOut), 'dd-MMM-yyyy')}</Text>
+      {autofillLoading ? (
+        <View style={styles.spinnerContainer}>
+          <ActivityIndicator size="large" color="#6785c7" />
+          <Text style={styles.loadingText}>Finding airports...</Text>
         </View>
-      )}
+      ) : (
+        <>
+          {selectedAccommodation && (
+            <View style={styles.accommodationContainer}>
+              <Text style={styles.accomTitle}>Your Saved Accommodation</Text>
+              <Text style={styles.accomText}><Text style={styles.bold}>Name:</Text> {selectedAccommodation.accommName}</Text>
+              <Text style={styles.accomText}><Text style={styles.bold}>Check-In:</Text> {format(new Date(selectedAccommodation.accommCheckIn), 'dd-MMM-yyyy')}</Text>
+              <Text style={styles.accomText}><Text style={styles.bold}>Check-Out:</Text> {format(new Date(selectedAccommodation.accommCheckOut), 'dd-MMM-yyyy')}</Text>
+            </View>
+          )}
 
-      <View style={styles.inputsContainer}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.inputLabel}>Departure Airport</Text>
-          <TextInput
-            style={styles.textInput}
-            value={departureAirport}
-            onChangeText={setDepartureAirport}
-            placeholder="Enter airport or location (JFK/New York)"
-            placeholderTextColor="#999"
-          />
-        </View>
+          <View style={styles.inputsContainer}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Departure Airport</Text>
+              <TextInput
+                style={styles.textInput}
+                value={departureAirport}
+                onChangeText={setDepartureAirport}
+                placeholder="Enter airport or location"
+                placeholderTextColor="#999"
+              />
+            </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.inputLabel}>Arrival Airport</Text>
-          <TextInput
-            style={styles.textInput}
-            value={arrivalAirport}
-            onChangeText={setArrivalAirport}
-            placeholder="Enter airport or location (Gatwick/London)"
-            placeholderTextColor="#999"
-          />
-        </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Arrival Airport</Text>
+              <TextInput
+                style={styles.textInput}
+                value={arrivalAirport}
+                onChangeText={setArrivalAirport}
+                placeholder="Enter airport or location"
+                placeholderTextColor="#999"
+              />
+            </View>
 
-        <View style={styles.rowContainer}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.dateLabel}>Dates</Text>
-            <TouchableOpacity style={styles.smallDateButton} onPress={() => setShowDatePicker(true)}>
-              <Text style={styles.smallButtonText}>
-                {format(departureDate, 'dd-MMM')} → {format(returnDate, 'dd-MMM')}
-              </Text>
-            </TouchableOpacity>
-          </View>
+            <View style={styles.rowContainer}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.dateLabel}>Dates</Text>
+                <TouchableOpacity style={styles.smallDateButton} onPress={() => setShowDatePicker(true)}>
+                  <Text style={styles.smallButtonText}>
+                    {format(departureDate, 'dd-MMM')} → {format(returnDate, 'dd-MMM')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
-          <View style={styles.switchContainer}>
-            <Switch
-              value={directOnly}
-              onValueChange={setDirectOnly}
-              trackColor={{ false: '#ccc', true: '#6785c7' }}
-              thumbColor={directOnly ? '#fff' : '#f4f3f4'}
+              <View style={styles.switchContainer}>
+                <Switch
+                  value={directOnly}
+                  onValueChange={setDirectOnly}
+                  trackColor={{ false: '#ccc', true: '#6785c7' }}
+                  thumbColor={directOnly ? '#fff' : '#f4f3f4'}
+                />
+                <Text style={styles.switchLabel}>Direct only</Text>
+              </View>
+            </View>
+
+            <DatePicker
+              isVisible={showDatePicker}
+              mode="range"
+              minDate={tomorrow}
+              startDate={departureDate}
+              endDate={returnDate}
+              onConfirm={(range) => {
+                setDepartureDate(new Date(range.startDate));
+                setReturnDate(new Date(range.endDate));
+                setShowDatePicker(false);
+              }}
+              onCancel={() => setShowDatePicker(false)}
             />
-            <Text style={styles.switchLabel}>Direct only</Text>
+
+            <TouchableOpacity style={styles.searchButton} onPress={searchOutboundFlights}>
+              <Text style={styles.searchButtonText}>Search Flights</Text>
+            </TouchableOpacity>
+
+            {loading && (
+              <View style={styles.spinnerContainer}>
+                <ActivityIndicator size="large" color="#6785c7" />
+                <Text style={styles.loadingText}>Searching for flights...</Text>
+              </View>
+            )}
           </View>
-        </View>
-
-        <DatePicker
-          isVisible={showDatePicker}
-          mode="range"
-          minDate={tomorrow}
-          startDate={departureDate}
-          endDate={returnDate}
-          onConfirm={(range) => {
-            setDepartureDate(new Date(range.startDate));
-            setReturnDate(new Date(range.endDate));
-            setShowDatePicker(false);
-          }}
-          onCancel={() => setShowDatePicker(false)}
-        />
-
-        <TouchableOpacity style={styles.searchButton} onPress={searchOutboundFlights}>
-          <Text style={styles.searchButtonText}>Search Flights</Text>
-        </TouchableOpacity>
-
-        {loading && (
-          <View style={styles.spinnerContainer}>
-            <ActivityIndicator size="large" color="#6785c7" />
-            <Text style={styles.loadingText}>Searching for flights...</Text>
-          </View>
-        )}
-
-      </View>
+        </>
+      )}
     </View>
   );
 }
@@ -173,7 +251,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
   accommodationContainer: {
     backgroundColor: 'white',
     padding: 15,
@@ -261,7 +338,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingTop: 30
+    paddingTop: 30,
   },
   switchLabel: {
     fontSize: 15,
