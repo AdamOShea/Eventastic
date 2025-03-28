@@ -6,7 +6,7 @@ const { pool } = require('../models/db');
 require('dotenv').config();
 const fetch = require('node-fetch');
 const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
-const { airportCodeMatcher } = require('../utils/airportCodeMatcher');
+const { airportCodeMatcher } = require('../methods/airportCodeMatcher');
 
 const apiDirectory = path.join(__dirname, "../flights-apis");
 
