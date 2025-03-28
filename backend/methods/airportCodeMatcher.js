@@ -1,9 +1,13 @@
 const Fuse = require('fuse.js');
 const airportEnum = require('../data/airports.json'); // Adjust path as needed
 
-// Convert enum to searchable array
+// Convert enum to user-friendly searchable array
 const airportList = Object.entries(airportEnum).map(([enumName, code]) => ({
-  name: enumName.replace(/_/g, ' ').replace(/ AIRPORT$/, ''), // Clean name
+  name: enumName
+    .replace(/_/g, ' ')
+    .replace(/\bINTERNATIONAL\b/, '') // optional cleanup
+    .replace(/\s+AIRPORT$/, ' Airport') // normalize casing
+    .trim(),
   code
 }));
 
@@ -19,7 +23,14 @@ const fuse = new Fuse(airportList, {
  */
 function airportCodeMatcher(input) {
   const result = fuse.search(input);
-  return result.length ? result[0].item.code : null;
+  console.log("🧠 Fuzzy match input:", input);
+  if (result.length) {
+    console.log("✅ Match found:", result[0].item.name, "→", result[0].item.code);
+    return result[0].item.code;
+  } else {
+    console.warn("❌ No match found for:", input);
+    return null;
+  }
 }
 
 module.exports = { airportCodeMatcher };

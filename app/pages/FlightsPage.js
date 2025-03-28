@@ -64,7 +64,9 @@ export default function FlightsPage({ navigation }) {
         const { latitude, longitude } = location.coords;
     
         const departureRes = await fetchNearbyAirports({ latitude, longitude });
-        setDepartureAirport(departureRes?.iata || '');
+        if (!departureRes || !departureRes.iata) throw new Error("No IATA code returned for current location");
+        setDepartureAirport(departureRes.iata);
+
     
         const geocodeRes = await getGeolocation(selectedEvent.eventLocation);
         
@@ -72,7 +74,9 @@ export default function FlightsPage({ navigation }) {
     
         if (loc) {
           const arrivalRes = await fetchNearbyAirports({ latitude: loc.lat, longitude: loc.lng });
-          setArrivalAirport(arrivalRes?.iata || '');
+          if (!arrivalRes || !arrivalRes.iata) throw new Error("No IATA code returned for event location");
+          setArrivalAirport(arrivalRes.iata);
+
         }
       } catch (err) {
         console.warn("⚠️ Autofill failed:", err);

@@ -160,7 +160,7 @@ const findNearestAirport = async (req, res) => {
     const iataCode = nearestName ? airportCodeMatcher(nearestName) : null;
 
 
-    if (!nearest) {
+    if (!nearestName) {
       return res.status(404).json({ error: 'No airport found near location' });
     }
 
