@@ -102,7 +102,7 @@ for departureAirport in departureAirports:
             error_message = str(e)
             if "No flights found" in error_message:
                 continue
-            print(f"❌ Error fetching flight: {error_message[:200]}...", file=sys.stderr)
+            print(f" Error fetching flight: {error_message[:200]}...", file=sys.stderr)
 
 sys.stdout.reconfigure(encoding='utf-8')
 print(json.dumps({"results": all_results}, indent=2, ensure_ascii=False))

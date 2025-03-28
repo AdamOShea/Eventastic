@@ -9,11 +9,11 @@ export const fetchFlightsAPI = async (values) => {
       console.log(" fetchFlights successful");
       return apiResponse.data; // 🔥 Ensure function returns API data
     } else {
-      console.log("❌ fetchFlights failed with status:", apiResponse.status);
+      console.log(" fetchFlights failed with status:", apiResponse.status);
       return null;
     }
   } catch (err) {
-    console.error("❌ fetchflights error:", err.response?.data || err.message);
+    console.error(" fetchflights error:", err.response?.data || err.message);
     return null;
   }
 };

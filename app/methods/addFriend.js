@@ -11,11 +11,11 @@ const addFriend = async (values) => {
         console.log(" addFriend successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
-        console.log("❌ addFriend failed with status:", apiResponse.status);
+        console.log(" addFriend failed with status:", apiResponse.status);
         return null;
       }
     } catch (err) {
-      console.error("❌ addFriend error:", err.response?.data || err.message);
+      console.error(" addFriend error:", err.response?.data || err.message);
       return null;
     }
 };

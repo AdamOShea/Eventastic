@@ -27,7 +27,7 @@ const callPythonApi = (scriptPath, args = []) => {
       }
 
       if (!output.trim()) {
-        console.error(`❌ Python script returned empty response: ${scriptPath}`);
+        console.error(` Python script returned empty response: ${scriptPath}`);
         reject(new Error("No data returned from Python script"));
         return;
       }
@@ -36,7 +36,7 @@ const callPythonApi = (scriptPath, args = []) => {
         const jsonResponse = JSON.parse(output.trim());  //  Ensure valid JSON
         resolve(jsonResponse);
       } catch (parseError) {
-        console.error(`❌ JSON Parse Error from ${scriptPath}:`, parseError);
+        console.error(` JSON Parse Error from ${scriptPath}:`, parseError);
         reject(new Error("Failed to parse JSON output from Python"));
       }
     });

@@ -11,11 +11,11 @@ const saveFlights = async (values) => {
         console.log(" saveFlights successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
-        console.log("❌ saveFlights failed with status:", apiResponse.status);
+        console.log(" saveFlights failed with status:", apiResponse.status);
         return null;
       }
     } catch (err) {
-      console.error("❌ saveFlights error:", err.response?.data || err.message);
+      console.error(" saveFlights error:", err.response?.data || err.message);
       return null;
     }
 };

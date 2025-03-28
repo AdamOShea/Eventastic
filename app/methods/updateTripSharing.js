@@ -11,11 +11,11 @@ const updateTripSharing = async (values) => {
         console.log(" updateTripSharing successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
-        console.log("❌ updateTripSharing failed with status:", apiResponse.status);
+        console.log(" updateTripSharing failed with status:", apiResponse.status);
         return null;
       }
     } catch (err) {
-      console.error("❌ updateTripSharing error:", err.response?.data || err.message);
+      console.error(" updateTripSharing error:", err.response?.data || err.message);
       return null;
     }
 };

@@ -13,7 +13,7 @@ export default function InfoContainer({ event }) {
       imageSource = { uri: images[0] }; //  access first image
     }
   } catch (err) {
-    //console.warn('❌ Failed to parse eventImages:', err);
+    //console.warn(' Failed to parse eventImages:', err);
   }
 
   return (

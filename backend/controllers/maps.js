@@ -30,7 +30,7 @@ const getGeocoding = async (req, res) => {
 
         res.json({ latitude: lat, longitude: lng });
     } catch (error) {
-        console.error('❌ Error fetching geolocation:', error.response?.data || error.message);
+        console.error(' Error fetching geolocation:', error.response?.data || error.message);
         res.status(500).json({ error: 'Failed to fetch geolocation' });
     }
 };

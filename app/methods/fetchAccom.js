@@ -11,11 +11,11 @@ const fetchAccom = async (values) => {
         console.log(" fetchAccom successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
-        console.log("❌ fetchAccom failed with status:", apiResponse.status);
+        console.log(" fetchAccom failed with status:", apiResponse.status);
         return null;
       }
     } catch (err) {
-      console.error("❌ fetchAccom error:", err.response?.data || err.message);
+      console.error(" fetchAccom error:", err.response?.data || err.message);
       return null;
     }
 };

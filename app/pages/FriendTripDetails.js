@@ -23,7 +23,7 @@ export default function FriendTripDetails({ route, navigation }) {
       accommFirstImage = accommImages[0];
     }
   } catch (err) {
-    console.warn("❌ Failed to parse accommImages:", err);
+    console.warn(" Failed to parse accommImages:", err);
   }
 
 

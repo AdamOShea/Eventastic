@@ -24,7 +24,7 @@ export default function FriendTripsPage({ navigation, route }) {
     //console.log("🔍 Processed trips for FlatList:", savedTrips);
 
     if (!Array.isArray(savedTrips) || savedTrips.length === 0) {
-      //console.error("❌ API returned an invalid trip format or empty array.");
+      //console.error(" API returned an invalid trip format or empty array.");
       setTrips([]);
     } else {
       setTrips(savedTrips);

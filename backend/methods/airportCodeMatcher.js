@@ -29,13 +29,13 @@ function airportCodeMatcher(input) {
   const cleanedInput = normalizeAirportName(input);
   const result = fuse.search(cleanedInput);
 
-  console.log("🧠 Cleaned input:", cleanedInput);
+  console.log(" Cleaned input:", cleanedInput);
 
   if (result.length) {
-    console.log("✅ Match found:", result[0].item.name, "→", result[0].item.code);
+    console.log(" Match found:", result[0].item.name, "→", result[0].item.code);
     return result[0].item.code;
   } else {
-    console.warn("❌ No match found for:", input);
+    console.warn(" No match found for:", input);
     return null;
   }
 }

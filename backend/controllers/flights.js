@@ -46,7 +46,7 @@ const flightsApis = async (req, res) => {
           .then((data) => ({ api: apiName, data }))
           .catch((error) => ({ api: apiName, error: error.message }));
       } else {
-        console.log(`❌ API "${apiName}" not found.`);
+        console.log(` API "${apiName}" not found.`);
         return Promise.resolve({ api: apiName, error: `API "${apiName}" does not exist.` });
       }
     });
@@ -59,7 +59,7 @@ const flightsApis = async (req, res) => {
     // Apply Mappers to API responses
     const mappedResults = results.map(({ api, data, error }) => {
       if (error) {
-        console.error(`❌ ${api} failed:`, error);
+        console.error(` ${api} failed:`, error);
         return { api, status: "rejected", error, data: null };
       }
 
@@ -86,7 +86,7 @@ const flightsApis = async (req, res) => {
       results: mappedResults,
     });
   } catch (error) {
-    console.error("❌ Error during API calls:", error);
+    console.error(" Error during API calls:", error);
     res.status(500).json({ error: "An error occurred while processing the APIs." });
   }
 };
@@ -174,7 +174,7 @@ const findNearestAirport = async (req, res) => {
 
     res.status(200).json(matched);
   } catch (err) {
-    console.error('❌ Server Error:', err);
+    console.error(' Server Error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

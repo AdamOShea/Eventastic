@@ -42,7 +42,7 @@ const accommApis = async (req, res) => {
           .then((data) => ({ api: apiName, data })) // Return successful result
           .catch((error) => ({ api: apiName, error: error.message })); // Handle failure
       } else {
-        console.log(`❌ API "${apiName}" not found.`);
+        console.log(` API "${apiName}" not found.`);
         return Promise.resolve({ api: apiName, error: `API "${apiName}" does not exist.` });
       }
     });
@@ -53,7 +53,7 @@ const accommApis = async (req, res) => {
     //  Apply Mappers to API responses
     const mappedResults = results.map(({ api, data, error }) => {
       if (error) {
-        console.error(`❌ ${api} failed:`, error);
+        console.error(` ${api} failed:`, error);
         return { api, status: 'rejected', error, data: null };
       }
 
@@ -85,7 +85,7 @@ const accommApis = async (req, res) => {
       results: mappedResults,
     });
   } catch (error) {
-    console.error('❌ Error during API calls:', error);
+    console.error(' Error during API calls:', error);
     res.status(500).json({ error: 'An error occurred while processing the APIs.' });
   }
 };

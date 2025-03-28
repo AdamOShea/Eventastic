@@ -26,7 +26,7 @@ export default function TripDetailsPage({ route, navigation }) {
       accommFirstImage = accommImages[0];
     }
   } catch (err) {
-    console.warn("❌ Failed to parse accommImages:", err);
+    console.warn(" Failed to parse accommImages:", err);
   }
 
   const [sharedStatus, setSharedStatus] = useState(() => trip.shared);

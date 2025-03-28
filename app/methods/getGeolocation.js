@@ -9,7 +9,7 @@ const getGeolocation = async (location) => {
         console.log(' Geolocation fetched successfully:', response.data);
         return response.data; // { latitude, longitude }
     } catch (error) {
-        console.error('❌ Error fetching geolocation:', error.response?.data || error.message);
+        console.error(' Error fetching geolocation:', error.response?.data || error.message);
         return null;
     }
 };

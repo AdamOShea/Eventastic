@@ -6,11 +6,11 @@ export const fetchTripById = async (values) => {
     if (response.status === 200 && response.data.success) {
         return response.data.trips || [];
     } else {
-      console.warn("❌ Failed to fetch trips.");
+      console.warn(" Failed to fetch trips.");
       return [];
     }
   } catch (error) {
-    console.error("❌ Error fetching trips:", error);
+    console.error(" Error fetching trips:", error);
     return [];
   }
 };

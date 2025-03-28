@@ -11,11 +11,11 @@ const fetchFriends = async (values) => {
         console.log(" fetchFriends successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
-        console.log("❌ fetchFriend failed with status:", apiResponse.status);
+        console.log(" fetchFriend failed with status:", apiResponse.status);
         return null;
       }
     } catch (err) {
-      console.log("❌ fetchFriend error:", err.response?.data || err.message);
+      console.log(" fetchFriend error:", err.response?.data || err.message);
       return null;
     }
 };

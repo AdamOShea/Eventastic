@@ -11,11 +11,11 @@ const getEventId = async (values) => {
         console.log(" getEventId successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
-        console.log("❌ getEventId failed with status:", apiResponse.status);
+        console.log(" getEventId failed with status:", apiResponse.status);
         return null;
       }
     } catch (err) {
-      console.error("❌ getEventId error:", err.response?.data || err.message);
+      console.error(" getEventId error:", err.response?.data || err.message);
       return null;
     }
 };

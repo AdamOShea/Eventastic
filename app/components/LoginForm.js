@@ -36,7 +36,7 @@ const LoginForm = ({ navigation }) => {
         Alert.alert('Error', response.message);
       }
     } catch (err) {
-      console.error("❌ Login error:", err);
+      console.error(" Login error:", err);
       Alert.alert('Error', 'Something went wrong while logging in.');
     }
   };

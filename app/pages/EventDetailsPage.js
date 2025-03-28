@@ -27,7 +27,7 @@ export default function EventDetailsPage({ navigation }) {
   // Saves the complete trip (event, accommodation, flights) to the user's account, clearing context and navigating after successful save.
   const saveEvent = async () => {
     if (!selectedEvent) {
-      console.warn("❌ No event selected.");
+      console.warn(" No event selected.");
       return;
     }
 

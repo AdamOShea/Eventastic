@@ -76,7 +76,7 @@ const Ticketmaster = async (values) => {
       requestMethod: error.config?.method ?? null,
     };
 
-    console.error('❌ Error fetching or saving events from Ticketmaster:', errorDetails);
+    console.error(' Error fetching or saving events from Ticketmaster:', errorDetails);
     throw new Error(JSON.stringify(errorDetails));
   }
 };
