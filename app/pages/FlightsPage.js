@@ -67,17 +67,19 @@ export default function FlightsPage({ navigation }) {
         if (!departureRes || !departureRes.iata) throw new Error("No IATA code returned for current location");
         setDepartureAirport(departureRes.iata);
 
-    
-        const geocodeRes = await getGeolocation(selectedEvent.eventLocation);
         
-        const loc = geocodeRes.results[0]?.geometry?.location;
-    
-        if (loc) {
-          const arrivalRes = await fetchNearbyAirports({ latitude: loc.lat, longitude: loc.lng });
+        const geocodeRes = await getGeolocation(selectedEvent.eventLocation);
+
+        if (geocodeRes && geocodeRes.latitude && geocodeRes.longitude) {
+          const arrivalRes = await fetchNearbyAirports({
+            latitude: geocodeRes.latitude,
+            longitude: geocodeRes.longitude
+          });
+
           if (!arrivalRes || !arrivalRes.iata) throw new Error("No IATA code returned for event location");
           setArrivalAirport(arrivalRes.iata);
-
         }
+
       } catch (err) {
         console.warn("⚠️ Autofill failed:", err);
       } finally {

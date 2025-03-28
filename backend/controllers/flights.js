@@ -137,11 +137,8 @@ const findNearestAirport = async (req, res) => {
         rankPreference: 'DISTANCE',
         locationRestriction: {
           circle: {
-            center: {
-              latitude: latitude,
-              longitude: longitude
-            },
-            radius: 50000 // in meters
+            center: { latitude, longitude },
+            radius: 50000
           }
         }
       })
@@ -156,20 +153,32 @@ const findNearestAirport = async (req, res) => {
       });
     }
 
-    const nearestName = data?.places?.[0]?.displayName?.text || null;
-    const iataCode = nearestName ? airportCodeMatcher(nearestName) : null;
+    const places = data?.places || [];
+    let matched = null;
 
-
-    if (!nearestName) {
-      return res.status(404).json({ error: 'No airport found near location' });
+    for (const place of places) {
+      const name = place?.displayName?.text;
+      if (name) {
+        const iata = airportCodeMatcher(name);
+        console.log(`🔎 Trying: ${name} → ${iata}`);
+        if (iata) {
+          matched = { airport: name, iata };
+          break;
+        }
+      }
     }
 
-    res.status(200).json({ airport: nearestName, iata: iataCode });
+    if (!matched) {
+      return res.status(404).json({ error: 'No valid airport with IATA code found near location' });
+    }
+
+    res.status(200).json(matched);
   } catch (err) {
     console.error('❌ Server Error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 
 module.exports = { flightsApis, detectAPIs, saveFlight, findNearestAirport  };
