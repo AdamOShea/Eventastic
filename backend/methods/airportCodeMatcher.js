@@ -1,12 +1,21 @@
 const Fuse = require('fuse.js');
 const airportEnum = require('../data/airports.json'); // Adjust path as needed
 
-// Convert enum to user-friendly searchable array
+// Clean extra info from names
+function normalizeAirportName(name) {
+  return name
+    .replace(/\(.*?\)/g, '') // remove parentheticals
+    .replace(/(terminal|building|departures|arrivals|work|office|center|centre)/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Build airport list
 const airportList = Object.entries(airportEnum).map(([enumName, code]) => ({
   name: enumName
     .replace(/_/g, ' ')
-    .replace(/\bINTERNATIONAL\b/, '') // optional cleanup
-    .replace(/\s+AIRPORT$/, ' Airport') // normalize casing
+    .replace(/\bINTERNATIONAL\b/, '')
+    .replace(/\s+AIRPORT$/, ' Airport')
     .trim(),
   code
 }));
@@ -16,14 +25,12 @@ const fuse = new Fuse(airportList, {
   threshold: 0.3,
 });
 
-/**
- * Fuzzy match an airport name to its IATA code.
- * @param {string} input - Airport name to match.
- * @returns {string|null} IATA code or null if not found.
- */
 function airportCodeMatcher(input) {
-  const result = fuse.search(input);
-  console.log("🧠 Fuzzy match input:", input);
+  const cleanedInput = normalizeAirportName(input);
+  const result = fuse.search(cleanedInput);
+
+  console.log("🧠 Cleaned input:", cleanedInput);
+
   if (result.length) {
     console.log("✅ Match found:", result[0].item.name, "→", result[0].item.code);
     return result[0].item.code;

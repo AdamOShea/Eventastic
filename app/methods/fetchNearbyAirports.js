@@ -7,7 +7,7 @@ const fetchNearbyAirports = async (values) => {
       const apiResponse = await client.post('/find-nearest-airport', values);
       //console.log("Accomm API Response:", apiResponse.data);
 
-      if (apiResponse.status === 201) {
+      if (apiResponse.status === 200) {
         console.log(" fetchNearbyAirports successful");
         return apiResponse.data; // 🔥 Ensure function returns API data
       } else {
