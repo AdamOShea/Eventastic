@@ -3,13 +3,19 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { format } from 'date-fns';
 
 export default function TripCard({ trip, onPress }) {
-  if (!trip || !trip.eventTitle) return null; //  Prevents crash
+  if (!trip || !trip.eventTitle) return null;
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      <Text style={styles.title}>{trip.eventTitle}</Text>
-      <Text style={styles.date}>{format(new Date(trip.eventDate), 'dd-LLL-yyyy')}</Text>
-      <Text style={styles.location}>{trip.eventVenue}, {trip.eventLocation}</Text>
+      <Text style={styles.title} numberOfLines={1}>
+        {trip.eventTitle}
+      </Text>
+      <Text style={styles.date}>
+        {format(new Date(trip.eventDate), 'dd-LLL-yyyy')}
+      </Text>
+      <Text style={styles.location} numberOfLines={1}>
+        {trip.eventVenue}, {trip.eventLocation}
+      </Text>
     </TouchableOpacity>
   );
 }
@@ -24,6 +30,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    height: 110, // 🔒 Fixed height
+    justifyContent: 'space-between', // Distribute items vertically
   },
   title: {
     fontSize: 18,

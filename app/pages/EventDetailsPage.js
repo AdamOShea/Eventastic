@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'r
 import InfoContainer from '../components/InfoContainer';
 import ExpandableDescription from '../components/ExpandableDescription';
 import MapComponent from '../components/MapComponent';
-import { useEvent } from '../components/EventContext';
+import { useEvent,  } from '../components/EventContext';
 import AccommodationCard from '../components/AccommodationCard';
 import FlightCard from '../components/FlightCard';
 import { saveTrip } from '../methods/saveTrip';
@@ -13,7 +13,7 @@ import { saveFlights } from '../methods/saveFlights';
 import { useUser } from "../components/UserContext";
 
 export default function EventDetailsPage({ navigation }) {
-  const { selectedEvent, selectedAccommodation, selectedOutboundFlight, selectedReturnFlight } = useEvent();
+  const { selectedEvent, selectedAccommodation, selectedOutboundFlight, selectedReturnFlight, clearEventDetails } = useEvent();
   const { currentUser } = useUser();
 
   useEffect(() => {
@@ -55,7 +55,10 @@ export default function EventDetailsPage({ navigation }) {
 
     if (response) {
       alert("Trip saved successfully!");
-      navigation.navigate("SearchPage");
+      clearEventDetails();
+      setTimeout(() => {
+        navigation.navigate("SearchPage");
+      }, 0);
     } else {
       alert("Error saving trip. Please try again.");
     }

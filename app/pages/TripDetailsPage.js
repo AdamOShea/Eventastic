@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -12,33 +12,38 @@ import TripAccommodationCard from "../components/TripAccommodationCard";
 import TripFlightCard from "../components/TripFlightCard";
 import { updateTripSharing } from "../methods/updateTripSharing";
 import { estimateTotal } from '../methods/estimateTripTotal';
+import { fetchTripById } from "../methods/fetchTripById"; // ✅ Make sure this exists
 
 export default function TripDetailsPage({ route, navigation }) {
-  const { trip } = route.params;
+  const { tripid } = route.params;
+  const [trip, setTrip] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  let accommImages = [];
-  let accommFirstImage;
+  useEffect(() => {
+    const fetchTrip = async () => {
+      try {
+        const latestTrip = await fetchTripById(tripid);
+        setTrip(latestTrip);
+      } catch (err) {
+        console.error("❌ Failed to fetch trip:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  try {
-    accommImages = JSON.parse(trip.accommImages || "[]");
-    if (accommImages.length > 0) {
-      accommFirstImage = accommImages[0];
-    }
-  } catch (err) {
-    console.warn("❌ Failed to parse accommImages:", err);
-  }
-
-  const [sharedStatus, setSharedStatus] = useState(trip.shared);
+    const unsubscribe = navigation.addListener("focus", fetchTrip);
+    return unsubscribe;
+  }, [navigation]);
 
   const toggleSharing = async () => {
     try {
       const updated = await updateTripSharing({
         tripid: trip.tripid,
-        shared: !sharedStatus,
+        shared: !trip.shared,
       });
 
       if (updated?.message === "Trip sharing status updated") {
-        setSharedStatus((prev) => !prev);
+        setTrip(prev => ({ ...prev, shared: !prev.shared }));
       } else {
         Alert.alert("Update failed", "Could not update sharing status.");
       }
@@ -47,6 +52,15 @@ export default function TripDetailsPage({ route, navigation }) {
       Alert.alert("Error", "An error occurred while sharing the trip.");
     }
   };
+
+  if (loading || !trip) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading trip...</Text>
+      </View>
+    );
+  }
+
 
   const event = {
     eventTitle: trip.eventTitle,

@@ -19,7 +19,7 @@ export default FormInput;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 20,
+
   },
   label: {
     fontWeight: 'bold',

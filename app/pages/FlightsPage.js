@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Switch,
   ActivityIndicator,
+  ScrollView
 } from 'react-native';
 import DatePicker from 'react-native-neat-date-picker';
 import { format } from 'date-fns';
@@ -123,111 +124,135 @@ export default function FlightsPage({ navigation }) {
         direct: directOnly
       });
     } else {
-      alert('No outbound flights found.');
+      alert('No outbound flights found. Try a different Airport or adjust the dates');
     }
   };
 
   return (
-    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
+    
       <NoImageInfoContainer event={selectedEvent} />
-
-      {autofillLoading ? (
-        <View style={styles.spinnerContainer}>
-          <ActivityIndicator size="large" color="#6785c7" />
-          <Text style={styles.loadingText}>Finding airports...</Text>
+  
+      {selectedAccommodation && (
+        <View style={styles.accommodationContainer}>
+          <Text style={styles.accomTitle}>Your Saved Accommodation</Text>
+          <Text style={styles.accomText}><Text style={styles.bold}>Name:</Text> {selectedAccommodation.accommName}</Text>
+          <Text style={styles.accomText}><Text style={styles.bold}>Check-In:</Text> {format(new Date(selectedAccommodation.accommCheckIn), 'dd-MMM-yyyy')}</Text>
+          <Text style={styles.accomText}><Text style={styles.bold}>Check-Out:</Text> {format(new Date(selectedAccommodation.accommCheckOut), 'dd-MMM-yyyy')}</Text>
         </View>
-      ) : (
-        <>
-          {selectedAccommodation && (
-            <View style={styles.accommodationContainer}>
-              <Text style={styles.accomTitle}>Your Saved Accommodation</Text>
-              <Text style={styles.accomText}><Text style={styles.bold}>Name:</Text> {selectedAccommodation.accommName}</Text>
-              <Text style={styles.accomText}><Text style={styles.bold}>Check-In:</Text> {format(new Date(selectedAccommodation.accommCheckIn), 'dd-MMM-yyyy')}</Text>
-              <Text style={styles.accomText}><Text style={styles.bold}>Check-Out:</Text> {format(new Date(selectedAccommodation.accommCheckOut), 'dd-MMM-yyyy')}</Text>
-            </View>
-          )}
-
-          <View style={styles.inputsContainer}>
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Departure Airport</Text>
-              <TextInput
-                style={styles.textInput}
-                value={departureAirport}
-                onChangeText={setDepartureAirport}
-                placeholder="Enter airport or location"
-                placeholderTextColor="#999"
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Arrival Airport</Text>
-              <TextInput
-                style={styles.textInput}
-                value={arrivalAirport}
-                onChangeText={setArrivalAirport}
-                placeholder="Enter airport or location"
-                placeholderTextColor="#999"
-              />
-            </View>
-
-            <View style={styles.rowContainer}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.dateLabel}>Dates</Text>
-                <TouchableOpacity style={styles.smallDateButton} onPress={() => setShowDatePicker(true)}>
-                  <Text style={styles.smallButtonText}>
-                    {format(departureDate, 'dd-MMM')} → {format(returnDate, 'dd-MMM')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.switchContainer}>
-                <Switch
-                  value={directOnly}
-                  onValueChange={setDirectOnly}
-                  trackColor={{ false: '#ccc', true: '#6785c7' }}
-                  thumbColor={directOnly ? '#fff' : '#f4f3f4'}
-                />
-                <Text style={styles.switchLabel}>Direct only</Text>
-              </View>
-            </View>
-
-            <DatePicker
-              isVisible={showDatePicker}
-              mode="range"
-              minDate={tomorrow}
-              startDate={departureDate}
-              endDate={returnDate}
-              onConfirm={(range) => {
-                setDepartureDate(new Date(range.startDate));
-                setReturnDate(new Date(range.endDate));
-                setShowDatePicker(false);
-              }}
-              onCancel={() => setShowDatePicker(false)}
-            />
-
-            <TouchableOpacity style={styles.searchButton} onPress={searchOutboundFlights}>
-              <Text style={styles.searchButtonText}>Search Flights</Text>
-            </TouchableOpacity>
-
-            {loading && (
-              <View style={styles.spinnerContainer}>
-                <ActivityIndicator size="large" color="#6785c7" />
-                <Text style={styles.loadingText}>Searching for flights...</Text>
-              </View>
-            )}
-          </View>
-        </>
       )}
-    </View>
+  
+      <View style={styles.infoContainer}>
+        <Text style={styles.infoText}>
+          We've filled in the nearest airports based on your location and the event's location.
+          You can change them by entering an airport code or city name.
+        </Text>
+      </View>
+  
+      <View style={styles.inputsContainer}>
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Departure Airport</Text>
+          <TextInput
+            style={styles.textInput}
+            value={departureAirport}
+            onChangeText={setDepartureAirport}
+            placeholder="Enter airport or location"
+            placeholderTextColor="#999"
+          />
+        </View>
+  
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Arrival Airport</Text>
+          <TextInput
+            style={styles.textInput}
+            value={arrivalAirport}
+            onChangeText={setArrivalAirport}
+            placeholder="Enter airport or location"
+            placeholderTextColor="#999"
+          />
+        </View>
+  
+        <View style={styles.rowContainer}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.dateLabel}>Dates</Text>
+            <TouchableOpacity style={styles.smallDateButton} onPress={() => setShowDatePicker(true)}>
+              <Text style={styles.smallButtonText}>
+                {format(departureDate, 'dd-MMM')} → {format(returnDate, 'dd-MMM')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+  
+          <View style={styles.switchContainer}>
+            <Switch
+              value={directOnly}
+              onValueChange={setDirectOnly}
+              trackColor={{ false: '#ccc', true: '#6785c7' }}
+              thumbColor={directOnly ? '#fff' : '#f4f3f4'}
+            />
+            <Text style={styles.switchLabel}>Direct only</Text>
+          </View>
+        </View>
+  
+        <DatePicker
+          isVisible={showDatePicker}
+          mode="range"
+          minDate={tomorrow}
+          startDate={departureDate}
+          endDate={returnDate}
+          onConfirm={(range) => {
+            setDepartureDate(new Date(range.startDate));
+            setReturnDate(new Date(range.endDate));
+            setShowDatePicker(false);
+          }}
+          onCancel={() => setShowDatePicker(false)}
+        />
+  
+        <TouchableOpacity style={styles.searchButton} onPress={searchOutboundFlights}>
+          <Text style={styles.searchButtonText}>Search Flights</Text>
+        </TouchableOpacity>
+  
+        {loading && (
+          <View style={styles.spinnerContainer}>
+            <ActivityIndicator size="large" color="#6785c7" />
+            <Text style={styles.loadingText}>Searching for flights...</Text>
+          </View>
+        )}
+      </View>
+  
+      {autofillLoading && (
+        <View style={styles.spinnerContainer}>
+          <ActivityIndicator size="small" color="#6785c7" />
+          <Text style={styles.loadingText}>Autofilling nearest airports...</Text>
+        </View>
+      )}
+    </ScrollView>
   );
+  
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingTop: 50,
     paddingHorizontal: 15,
+    paddingBottom: 30,
+    minHeight: '100%',
+
   },
+  
+  infoContainer: {
+    backgroundColor: '#f0f4ff',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 15,
+    borderColor: '#cdd9f0',
+    borderWidth: 1,
+  },
+  infoText: {
+    fontSize: 14,
+    color: '#333',
+    textAlign: 'center',
+  },
+  
   spinnerContainer: {
     marginTop: 20,
     alignItems: 'center',
