@@ -54,13 +54,24 @@ if len(sys.argv) < 5:
     sys.exit(1)
 
 departureDate = sys.argv[1]
-departureAirports = search_airport(sys.argv[2])
-arrivalAirports = search_airport(sys.argv[3])
+departureInput = sys.argv[2].strip()
+arrivalInput = sys.argv[3].strip()
 direct_arg = sys.argv[4].strip().lower()
 direct = direct_arg == "true"
-
-
 max_stops = 0 if direct else 2
+
+# Check if input is exactly 3 characters (likely IATA code), otherwise search
+if len(departureInput) == 3:
+    from fast_flights import Airport
+    departureAirports = [Airport.from_str(departureInput)]
+else:
+    departureAirports = search_airport(departureInput)
+
+if len(arrivalInput) == 3:
+    from fast_flights import Airport
+    arrivalAirports = [Airport.from_str(arrivalInput)]
+else:
+    arrivalAirports = search_airport(arrivalInput)
 
 print(f"🔍 Python received: Date={departureDate}, From={departureAirports}, To={arrivalAirports}, Direct={direct}, MaxStops={max_stops}", file=sys.stderr)
 

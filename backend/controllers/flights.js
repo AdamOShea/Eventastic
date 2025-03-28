@@ -132,13 +132,19 @@ const findNearestAirport = async (req, res) => {
         'X-Goog-FieldMask': 'places.displayName,places.location',
       },
       body: JSON.stringify({
-        location: {
-          latitude: latitude,
-          longitude: longitude,
-        },
+        includedTypes: ['international_airport'],
+        maxResultCount: 20,
         rankPreference: 'DISTANCE',
-        includedTypes: ['airport'],
-      }),
+        locationRestriction: {
+          circle: {
+            center: {
+              latitude: latitude,
+              longitude: longitude
+            },
+            radius: 50000 // in meters
+          }
+        }
+      })
     });
 
     const data = await googleResponse.json();
@@ -162,5 +168,6 @@ const findNearestAirport = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 module.exports = { flightsApis, detectAPIs, saveFlight, findNearestAirport  };
