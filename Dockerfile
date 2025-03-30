@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir pyairbnb==0.0.10
 RUN pip install --no-cache-dir fast-flights
 
 # Install dependencies for Chromium
-RUN apt-get update && apt-get install -y \
+RUN apk update && apk install -y \
     wget \
     ca-certificates \
     fonts-liberation \
@@ -34,7 +34,7 @@ RUN apt-get update && apt-get install -y \
     libu2f-udev \
     libvulkan1 \
     --no-install-recommends && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apk clean && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
