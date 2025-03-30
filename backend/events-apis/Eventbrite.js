@@ -77,46 +77,61 @@ const Eventbrite = async (values) => {
     }
 
     // Step 2: Scrape Eventbrite place ID using Puppeteer
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'], executablePath: '/usr/bin/chromium-browser', });
-    const page = await browser.newPage();
-    await page.setExtraHTTPHeaders({ "x-csrftoken": CSRFTOKEN });
+    let browser;
+let ebPlaceId = null;
+let ebSlug = null;
 
-    const cookies = COOKIE_STRING.split(";").map(cookie => {
-      const [name, ...valParts] = cookie.trim().split("=");
-      return {
-        name,
-        value: valParts.join("="),
-        domain: ".eventbrite.com",
-        path: "/"
-      };
+try {
+  browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    executablePath: '/usr/bin/chromium-browser', // or chromium-browser if that's correct
+  });
+
+  const page = await browser.newPage();
+  await page.setExtraHTTPHeaders({ "x-csrftoken": CSRFTOKEN });
+
+  const cookies = COOKIE_STRING.split(";").map(cookie => {
+    const [name, ...valParts] = cookie.trim().split("=");
+    return {
+      name,
+      value: valParts.join("="),
+      domain: ".eventbrite.com",
+      path: "/",
+    };
+  });
+
+  await page.setCookie(...cookies);
+  await page.goto("https://www.eventbrite.com", { waitUntil: "domcontentloaded", timeout: 15000 });
+
+  const eventbritePlace = await page.evaluate(async (placeId) => {
+    const query = new URLSearchParams({
+      google_place_id: placeId,
+      enable_neighborhoods_and_boroughs: "true"
+    }).toString();
+
+    const response = await fetch(`https://www.eventbrite.com/api/v3/geo/place_from_google_place_id/?${query}`, {
+      method: "GET",
+      headers: { "x-requested-with": "XMLHttpRequest" },
+      credentials: "include"
     });
 
-    await page.setCookie(...cookies);
-    await page.goto("https://www.eventbrite.com", { waitUntil: "domcontentloaded" });
+    return await response.json();
+  }, google_place_id);
 
-    const eventbritePlace = await page.evaluate(async (placeId) => {
-      const query = new URLSearchParams({
-        google_place_id: placeId,
-        enable_neighborhoods_and_boroughs: "true"
-      }).toString();
+  ebPlaceId = eventbritePlace.place?.id;
+  ebSlug = eventbritePlace.place?.location_slug;
+} catch (puppeteerErr) {
+  console.error("Puppeteer failed:", puppeteerErr.message);
+} finally {
+  if (browser) await browser.close();
+}
 
-      const response = await fetch(`https://www.eventbrite.com/api/v3/geo/place_from_google_place_id/?${query}`, {
-        method: "GET",
-        headers: { "x-requested-with": "XMLHttpRequest" },
-        credentials: "include"
-      });
+if (!ebPlaceId) {
+  console.warn("Skipping Eventbrite API – Place ID unavailable.");
+  return { message: "Eventbrite skipped due to Puppeteer error." };
+}
 
-      return await response.json();
-    }, google_place_id);
-
-    await browser.close();
-
-    const ebPlaceId = eventbritePlace.place?.id;
-    const ebSlug = eventbritePlace.place?.location_slug;
-
-    if (!ebPlaceId) {
-      throw new Error("Eventbrite place ID not found");
-    }
 
     let ebDate = '';
     if (date) {
