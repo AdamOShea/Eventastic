@@ -1,10 +1,10 @@
 FROM node:18-slim
 
-# Install necessary system dependencies for Chromium
+# Install system dependencies, including Chromium and Python + pip
 RUN apt-get update && apt-get install -y \
     wget \
     python3 \
-    py3-pip \
+    python3-pip \
     ca-certificates \
     fonts-liberation \
     libappindicator3-1 \
@@ -26,32 +26,27 @@ RUN apt-get update && apt-get install -y \
     chromium \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-
 # Set environment variables for Puppeteer
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
-
-# Set Puppeteer flags for Docker compatibility
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
-# Create and activate a Python virtual environment
+# Optional: Python venv
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install Python packages
 RUN pip install --no-cache-dir pyairbnb==0.0.10 fast-flights
 
-# Create app directory
+# Set app working directory
 WORKDIR /usr/src/app
 
-# Copy and install Node dependencies
+# Install Node.js dependencies
 COPY backend/package*.json ./
 RUN npm install
 
-# Copy the app source
+# Copy app code
 COPY backend/ .
 
-# Expose the port your app runs on
 EXPOSE 3000
 
-# Start the app
 CMD ["npm", "start"]
