@@ -41,7 +41,7 @@ const fetchAllPages = async (initialSearchData, headers) => {
   };
 
 const Eventbrite = async (values) => {
-  const { location, query, date } = values;
+  const { location, keyword, date } = values;
 
   if (!location) {
     throw new Error("Missing 'location' query param");
@@ -77,72 +77,63 @@ const Eventbrite = async (values) => {
     }
 
     // Step 2: Scrape Eventbrite place ID using Puppeteer
-    let browser;
-let ebPlaceId = null;
-let ebSlug = null;
-
-try {
-    const browser = await puppeteer.launch({
-        headless: true,
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      });
-      
-
-  const page = await browser.newPage();
-  await page.setExtraHTTPHeaders({ "x-csrftoken": CSRFTOKEN });
-
-  const cookies = COOKIE_STRING.split(";").map(cookie => {
-    const [name, ...valParts] = cookie.trim().split("=");
-    return {
-      name,
-      value: valParts.join("="),
-      domain: ".eventbrite.com",
-      path: "/",
-    };
-  });
-
-  await page.setCookie(...cookies);
-  await page.goto("https://www.eventbrite.com", { waitUntil: "domcontentloaded", timeout: 15000 });
-
-  const eventbritePlace = await page.evaluate(async (placeId) => {
-    const query = new URLSearchParams({
-      google_place_id: placeId,
-      enable_neighborhoods_and_boroughs: "true"
-    }).toString();
-
-    const response = await fetch(`https://www.eventbrite.com/api/v3/geo/place_from_google_place_id/?${query}`, {
-      method: "GET",
-      headers: { "x-requested-with": "XMLHttpRequest" },
-      credentials: "include"
-    });
-
-    return await response.json();
-  }, google_place_id);
-
-  ebPlaceId = eventbritePlace.place?.id;
-  ebSlug = eventbritePlace.place?.location_slug;
-} catch (puppeteerErr) {
-  console.error("Puppeteer failed:", puppeteerErr.message);
-} finally {
-  if (browser) await browser.close();
-}
-
-if (!ebPlaceId) {
-  console.warn("Skipping Eventbrite API – Place ID unavailable.");
-  return { message: "Eventbrite skipped due to Puppeteer error." };
-}
-
-
-    let ebDate = '';
-    if (date) {
-      ebDate = `start_date=${date}&end_date=${date}`;
-    }
+    const ebPlaceRes = await axios.get(
+        `https://www.eventbrite.com/api/v3/geo/place_from_google_place_id/?google_place_id=${google_place_id}&enable_neighborhoods_and_boroughs=true`,
+        {
+          headers: {
+            "x-requested-with": "XMLHttpRequest",
+            "x-csrftoken": CSRFTOKEN,
+            "cookie": COOKIE_STRING,
+            "user-agent":
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate, zstd",
+            "accept-language": "en-IE,en-US;q=0.9,en;q=0.8",
+            "content-type": "application/json",
+            "referer": "https://www.eventbrite.com/",
+            "sec-ch-ua":
+              '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": '"Windows"',
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin",
+            "dnt": "1",
+            "origin": "https://www.eventbrite.com",
+            "priority": "u=1, i",
+          },
+        }
+      );
+  
+      const ebPlace = ebPlaceRes.data.place;
+      const ebPlaceId = ebPlace?.id;
+      const ebSlug = ebPlace?.location_slug;
+  
+      if (!ebPlaceId) {
+        console.warn("Skipping Eventbrite API – Place ID unavailable.");
+        return { message: "Eventbrite skipped due to missing place ID." };
+      }
+  
+      let ebDate = "";
+      if (date) {
+        ebDate = `start_date=${date}&end_date=${date}`;
+      }
 
     // Step 3: Query Eventbrite for events
+    const formatEventbriteSlug = (query) => {
+        return query
+          .toLowerCase()
+          .trim()
+          .replace(/[^\w\s-]/g, '')       // Remove special characters
+          .replace(/\s+/g, '-')           // Replace spaces with hyphens
+          .replace(/-+/g, '-');           // Replace multiple hyphens with a single one
+      };
+
+    const formattedQuery = formatEventbriteSlug(keyword);
+
     const searchData = {
       event_search: {
-        q: query,
+        q: keyword,
         date_range: date ? { from: date, to: date } : undefined,
         dates: "current_future",
         dedup: true,
@@ -177,7 +168,7 @@ if (!ebPlaceId) {
       "dnt": "1",
       "origin": "https://www.eventbrite.com",
       "priority": "u=1, i",
-      "referer": `https://www.eventbrite.com/d/${ebSlug}/${query}/${ebDate}`,
+      "referer": `https://www.eventbrite.com/d/${ebSlug}/${formattedQuery}/${ebDate}`,
       "sec-ch-ua": '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
       "sec-ch-ua-mobile": "?0",
       "sec-ch-ua-platform": '"Windows"',
