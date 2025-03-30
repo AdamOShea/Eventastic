@@ -77,7 +77,7 @@ const Eventbrite = async (values) => {
     }
 
     // Step 2: Scrape Eventbrite place ID using Puppeteer
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     await page.setExtraHTTPHeaders({ "x-csrftoken": CSRFTOKEN });
 
