@@ -115,9 +115,14 @@ const Eventbrite = async (values) => {
       }
   
       let ebDate = "";
-      if (date) {
-        ebDate = `start_date=${date}&end_date=${date}`;
-      }
+      let formattedDate = "";
+
+    if (date) {
+        const isoDate = new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD
+        formattedDate = isoDate;
+        ebDate = `start_date=${isoDate}&end_date=${isoDate}`;
+    }
+
 
     // Step 3: Query Eventbrite for events
     const formatEventbriteSlug = (query) => {
@@ -134,7 +139,9 @@ const Eventbrite = async (values) => {
     const searchData = {
       event_search: {
         q: keyword,
-        date_range: date ? { from: date, to: date } : undefined,
+        date_range: formattedDate
+        ? { from: formattedDate, to: formattedDate }
+        : undefined,
         dates: "current_future",
         dedup: true,
         places: [String(ebPlaceId)],
