@@ -24,7 +24,6 @@ export default function SearchPage({ navigation }) {
   const { filters, setFilters } = useFilters();
   const [searchQuery, setSearchQuery] = useState({ keyword: '', location: '', apis: [], date: '' });
   const [events, setEvents] = useState([]);
-  const [selectedAPIs, setSelectedAPIs] = useState([]);
   const [manualLocationMode, setManualLocationMode] = useState(false);
   const [loadingLocation, setLoadingLocation] = useState(true); // starts true until location fetch finishes
 
@@ -83,7 +82,8 @@ export default function SearchPage({ navigation }) {
   // Fetches events based on current search query and filters, applies sorting and updates event state.
   const getFilteredEvents = async () => {
     try {
-      const response = await fetchEvents({ ...searchQuery, apis: selectedAPIs, date: filters.customDate || null });
+      const response = await fetchEvents({ ...searchQuery, apis: filters.selectedAPIs, date: filters.customDate || null });
+
 
       if (response?.events?.length > 0) {
         let sortedEvents = [...response.events];
