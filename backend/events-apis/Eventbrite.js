@@ -82,11 +82,12 @@ let ebPlaceId = null;
 let ebSlug = null;
 
 try {
-  browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    executablePath: '/usr/bin/chromium-browser', // or chromium-browser if that's correct
-  });
+    const browser = await puppeteer.launch({
+        headless: true,
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      });
+      
 
   const page = await browser.newPage();
   await page.setExtraHTTPHeaders({ "x-csrftoken": CSRFTOKEN });
