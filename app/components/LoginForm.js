@@ -12,8 +12,8 @@ import { useUser } from "./UserContext";
 
 const LoginForm = ({ navigation }) => {
   const [userInfo, setUserInfo] = useState({
-    email: 'marta@gmail.com',
-    password: 'password',
+    email: '',
+    password: '',
   });
 
   const { email, password } = userInfo;

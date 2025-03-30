@@ -22,5 +22,32 @@ const ticketmasterMapper = (events) => {
     });
   };
   
-  module.exports = { ticketmasterMapper };
+const eventbriteMapper = (events) => {
+    return events.map((event) => {
+      const imageUrls = event.image?.url ? [event.image.url] : [];
+  
+      const tags = event.tags?.map(tag => tag.display_name).filter(Boolean) || [];
+  
+      return {
+        eventVenue: event.primary_venue?.name || 'Unknown Venue',
+        eventLocation: event.primary_venue?.address?.localized_area_display || 'Unknown City',
+        eventSeller: 'Eventbrite',
+        eventDate: event.start_date || null,
+        eventTime: event.start_time || null,
+        eventArtist: event.primary_organizer?.name || 'Unknown Organizer',
+        eventType: tags.find(tag => tag.includes('Concert')) || 'Unknown Type',
+        eventGenre: tags.find(tag => tag !== 'Concert' && tag !== 'Event') || 'Unknown Genre',
+        eventPrice: event.ticket_availability?.minimum_ticket_price?.major_value
+          ? parseFloat(event.ticket_availability.minimum_ticket_price.major_value)
+          : 0,
+        eventLink: event.url || 'No Link',
+        eventTitle: event.name || 'Untitled Event',
+        eventDescription: event.summary || 'No event description found :/',
+        eventImages: JSON.stringify(imageUrls), // match Ticketmaster format
+      };
+    });
+};
+  
+
+  module.exports = { ticketmasterMapper, eventbriteMapper };
   
