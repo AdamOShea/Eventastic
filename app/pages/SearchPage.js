@@ -25,7 +25,10 @@ export default function SearchPage({ navigation }) {
   const [searchQuery, setSearchQuery] = useState({ keyword: '', location: '', apis: [], date: '' });
   const [events, setEvents] = useState([]);
   const [manualLocationMode, setManualLocationMode] = useState(false);
-  const [loadingLocation, setLoadingLocation] = useState(true); // starts true until location fetch finishes
+  const [loadingLocation, setLoadingLocation] = useState(true); 
+  const [loadingEvents, setLoadingEvents] = useState(false);
+  const hasAutoSearched = useRef(false);
+
 
   const { keyword, location } = searchQuery;
 
@@ -59,7 +62,8 @@ export default function SearchPage({ navigation }) {
   // Triggers filtered events retrieval based on updated filters and location validity.
   useFocusEffect(
     React.useCallback(() => {
-      if (isLocationValid && !loadingLocation) {
+      if (!hasAutoSearched.current && !loadingEvents && isLocationValid && !loadingLocation) {
+        hasAutoSearched.current = true;
         // Only update date from filters, not location
         setSearchQuery((prev) => ({
           ...prev,
@@ -71,6 +75,7 @@ export default function SearchPage({ navigation }) {
     }, [
       isLocationValid,
       loadingLocation,
+      loadingEvents,
       filters.sortBy,
       filters.selectedAPIs,
       filters.selectedDateOption,
@@ -81,6 +86,7 @@ export default function SearchPage({ navigation }) {
   
   // Fetches events based on current search query and filters, applies sorting and updates event state.
   const getFilteredEvents = async () => {
+    setLoadingEvents(true);
     try {
       const response = await fetchEvents({ ...searchQuery, apis: filters.selectedAPIs, date: filters.customDate || null });
 
@@ -110,6 +116,8 @@ export default function SearchPage({ navigation }) {
     } catch (err) {
       console.error('Error fetching events:', err);
       Alert.alert('Error', 'Failed to fetch events.');
+    } finally {
+      setLoadingEvents(false);
     }
   };
 
@@ -270,6 +278,26 @@ export default function SearchPage({ navigation }) {
         >
           <ActivityIndicator size="large" color="#6785c7" />
           <Text style={{ marginTop: 10, fontSize: 16, fontWeight: '500' }}>Getting your location...</Text>
+        </BlurView>
+      )}
+
+      {loadingEvents && (
+        <BlurView
+          intensity={60}
+          tint="light"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 100,
+          }}
+        >
+          <ActivityIndicator size="large" color="#6785c7" />
+          <Text style={{ marginTop: 10, fontSize: 16, fontWeight: '500' }}>Finding great events...</Text>
         </BlurView>
       )}
 

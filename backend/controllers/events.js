@@ -39,7 +39,6 @@ const apiToDb = async (req, res) => {
       // Wait for all API calls to complete asynchronously in parallel
       const results = await Promise.allSettled(apiPromises);
 
-      // Optionally, you can log results or process them
       results.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           console.log(`${selectedAPIs[index]} succeeded:`, result.value);

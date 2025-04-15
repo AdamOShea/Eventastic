@@ -6,7 +6,7 @@ import { View, Text, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } fr
 
 export default function FormContainer({children}) {
   return (
-    <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? 'padding' : null} style={styles.container}>{children}</KeyboardAvoidingView>
+    <KeyboardAvoidingView enabled behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>{children}</KeyboardAvoidingView>
   );
 }
 

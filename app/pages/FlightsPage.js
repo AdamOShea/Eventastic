@@ -1,5 +1,6 @@
 // Screen for searching outbound flights, including autofill functionality for airports, date selection, direct flight filtering, and displaying loading states.
 import React, { useState, useEffect } from 'react';
+import { BlurView } from 'expo-blur';
 import {
   View,
   Text,
@@ -215,13 +216,28 @@ export default function FlightsPage({ navigation }) {
           <Text style={styles.searchButtonText}>Search Flights</Text>
         </TouchableOpacity>
   
-        {loading && (
-          <View style={styles.spinnerContainer}>
-            <ActivityIndicator size="large" color="#6785c7" />
-            <Text style={styles.loadingText}>Searching for flights...</Text>
-          </View>
-        )}
+        
       </View>
+
+      {loading && (
+                    <BlurView
+                      intensity={60}
+                      tint="light"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        right: 0,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 100,
+                      }}
+                    >
+                      <ActivityIndicator size="large" color="#6785c7" />
+                      <Text style={{marginTop: 10, fontSize: 16, fontWeight: '500' }}>Finding suitable flights...</Text>
+                    </BlurView>
+                  )}
   
       {autofillLoading && (
         <View style={styles.spinnerContainer}>

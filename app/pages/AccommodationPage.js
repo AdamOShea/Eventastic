@@ -18,7 +18,7 @@ import NoImageInfoContainer from '../components/NoImageInfoContainer';
 import { fetchAccom } from '../methods/fetchAccom';
 import { getGeolocation } from '../methods/getGeolocation';
 import { useEvent } from '../components/EventContext';
-import SearchPageHeader from '../components/SearchPageHeader';
+import { BlurView } from 'expo-blur';
 
 export default function AccommodationPage({ navigation }) {
   const { selectedEvent } = useEvent();
@@ -88,7 +88,7 @@ export default function AccommodationPage({ navigation }) {
         .filter(api => api.status === 'fulfilled' && Array.isArray(api.data))
         .flatMap(api => api.data);
       setAccommodations(allAccommodations);
-      console.log(allAccommodations);
+      //console.log(allAccommodations);
       applySorting(allAccommodations);
     }
 
@@ -146,7 +146,7 @@ export default function AccommodationPage({ navigation }) {
               onCancel={() => setShowDatePicker(false)}
             />
 
-            {loading && <ActivityIndicator size="large" color="#6785c7" style={{ marginTop: 20 }} />}
+            
           </View>
         }
         data={displayedAccommodations}
@@ -154,6 +154,26 @@ export default function AccommodationPage({ navigation }) {
         renderItem={({ item }) => <AccommodationCard navigation={navigation} {...item} />}
         contentContainerStyle={{ paddingBottom: 100 }}
       />
+
+      {loading && (
+                    <BlurView
+                      intensity={60}
+                      tint="light"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        right: 0,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 100,
+                      }}
+                    >
+                      <ActivityIndicator size="large" color="#6785c7" />
+                      <Text style={{marginTop: 10, fontSize: 16, fontWeight: '500' }}>Finding beautiful accommodations...</Text>
+                    </BlurView>
+                  )}
 
       {/* Sort Modal */}
       <Modal

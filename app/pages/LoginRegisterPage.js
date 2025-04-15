@@ -27,30 +27,37 @@ export default function LoginRegisterPage({navigation}) {
   
 
   return (
-        <View style={{flex: 1, paddingTop: 90, backgroundColor: 'white'}}>
+      <View style={{flex: 1, paddingTop: 90, backgroundColor: 'white'}}>
+        <ScrollView>
           <View style={{height:160}}>
             <LoginHeader >
             </LoginHeader>
           </View>
           <View style={{flexDirection:'row', padding: 30}}>
-            <LoginSelector backgroundColor={loginColourInterpolate} title='Login' onPress={() => scrollView.current.scrollTo({x: 0})}></LoginSelector>
-            <LoginSelector backgroundColor={registerColourInterpolate} title='Register' onPress={() => scrollView.current.scrollToEnd()}></LoginSelector>
+            <LoginSelector 
+              backgroundColor={loginColourInterpolate} 
+              title='Login' onPress={() => scrollView.current.scrollTo({x: 0})}>
+            </LoginSelector>
+            <LoginSelector 
+              backgroundColor={registerColourInterpolate} 
+              title='Register' onPress={() => scrollView.current.scrollToEnd()}>
+            </LoginSelector>
               
           </View>
           <ScrollView 
-          ref={scrollView}
-          horizontal 
-          pagingEnabled 
-          showsHorizontalScrollIndicator={false}
-          scrollEventThrottle={16}
-          onScroll={Animated.event([{nativeEvent: {contentOffset: {x: animation}}}], {useNativeDriver: false})}
-          >
+            ref={scrollView}
+            horizontal 
+            pagingEnabled 
+            showsHorizontalScrollIndicator={false}
+            scrollEventThrottle={16}
+            onScroll={Animated.event(
+              [{nativeEvent: {contentOffset: {x: animation}}}], 
+              {useNativeDriver: false})}
+          >         
             <LoginForm navigation = {navigation}></LoginForm>
-            <ScrollView>
-              <RegisterForm navigation = {navigation}></RegisterForm>
-            </ScrollView>
+            <RegisterForm navigation = {navigation}></RegisterForm>      
           </ScrollView>
-        </View>
-        
+        </ScrollView>
+      </View>
   );
 }

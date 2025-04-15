@@ -12,7 +12,6 @@ const login = async (values) => {
       console.log("Login successful");
       return { message: 'Signed in', user: response.data.user };
     } else {
-      // Handle other responses that are not 404 but still have success false
       console.log("login 404");
       return { message: response.data.message };
     }
