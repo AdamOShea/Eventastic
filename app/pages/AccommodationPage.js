@@ -23,10 +23,7 @@ import { BlurView } from 'expo-blur';
 export default function AccommodationPage({ navigation }) {
   const { selectedEvent } = useEvent();
 
-  if (!selectedEvent) {
-    navigation.navigate("SearchPage");
-    return null;
-  }
+  
 
   const eventDate = new Date(selectedEvent.eventDate);
   const [checkInDate, setCheckInDate] = useState(eventDate);

@@ -34,19 +34,34 @@ const RegisterForm = ({ navigation }) => {
 
   // Handles form submission, user registration, and auto-login on successful registration.
   const submitForm = async () => {
-    console.log(userInfo);
-    register(userInfo).then(async (response) => {
-      console.log(response);
-
-      if (response.message === "User created successfully") {
-        const loginResponse = await login(email, password);
-        setCurrentUser(loginResponse.user);
-        navigation.dispatch(StackActions.replace('Tabs'));
+    try {
+      console.log("userInfo at submit:", userInfo); // Confirm values here explicitly
+      const registerResponse = await register(userInfo);
+      console.log("Register response:", registerResponse);
+  
+      if (registerResponse.message === "User created successfully") {
+        
+        const loginResponse = await login(userInfo);
+        console.log("Login response after registration:", loginResponse);
+  
+        if (loginResponse.message === "Signed in") {
+          setCurrentUser(loginResponse.user);
+          navigation.dispatch(StackActions.replace('Tabs'));
+        } else {
+          Alert.alert('Login Error', loginResponse.message);
+        }
+      } else if (registerResponse.message === "User already exists") {
+        Alert.alert('Error', 'User already exists. Please login instead.');
       } else {
-        Alert.alert('Error', response);
+        Alert.alert('Registration Error', registerResponse);
       }
-    });
+    } catch (err) {
+      console.error("Registration/Login error:", err);
+      Alert.alert('Error', 'Something went wrong while registering or logging in.');
+    }
   };
+  
+  
 
   return (
     <FormContainer>

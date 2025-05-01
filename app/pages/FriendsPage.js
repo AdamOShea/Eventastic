@@ -21,6 +21,7 @@ export default function FriendsPage({ navigation }) {
 
 
   useEffect(() => {
+    console.log("Current User in FriendsPage:", currentUser);
     if (currentUser?.userid) {
       loadFriendsAndTrips(currentUser.userid);
     }
@@ -95,6 +96,9 @@ export default function FriendsPage({ navigation }) {
       console.log("Adding friend:", selectedUser.username, selectedUser.userid);
       try {
         const response = await addFriend({userId_1: currentUser.userid, userId_2: selectedUser.userid});
+
+        setAddFriendModal(false);
+        loadFriendsAndTrips(currentUser.userid);
         return response;
       } catch (err) {
         console.log("handleaddfriend: ", err);

@@ -12,6 +12,7 @@ import { getEventId } from '../methods/getEventId';
 import { saveAccomm } from '../methods/saveAccomm';
 import { saveFlights } from '../methods/saveFlights';
 import { useUser } from "../components/UserContext";
+import { CommonActions } from '@react-navigation/native';
 
 export default function EventDetailsPage({ navigation }) {
   const { selectedEvent, selectedAccommodation, selectedOutboundFlight, selectedReturnFlight, clearEventDetails } = useEvent();
@@ -22,7 +23,7 @@ export default function EventDetailsPage({ navigation }) {
       console.warn("No event selected. Redirecting to search page...");
       navigation.navigate("SearchPage");
     }
-  }, [selectedEvent]);
+  }, [selectedEvent, navigation]);
 
   // Saves the complete trip (event, accommodation, flights) to the user's account, clearing context and navigating after successful save.
   const saveEvent = async () => {
@@ -58,9 +59,12 @@ export default function EventDetailsPage({ navigation }) {
     if (response) {
       alert("Trip saved successfully!");
       clearEventDetails();
-      setTimeout(() => {
-        navigation.navigate("SearchPage");
-      }, 0);
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'SearchPage' }],
+        })
+      );
     } else {
       alert("Error saving trip. Please try again.");
     }
